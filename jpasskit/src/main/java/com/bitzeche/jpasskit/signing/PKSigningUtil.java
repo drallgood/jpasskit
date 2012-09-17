@@ -3,14 +3,30 @@ package com.bitzeche.jpasskit.signing;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.PrivateKey;
+import java.security.Security;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FileUtils;
+import org.bouncycastle.cert.jcajce.JcaCertStore;
+import org.bouncycastle.cms.CMSProcessableFile;
+import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.CMSSignedDataGenerator;
+import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
+import org.bouncycastle.util.Store;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
@@ -21,15 +37,17 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 
 public final class PKSigningUtil {
-    
+
     private PKSigningUtil() {
     }
 
-    public static byte[] createSignedAndZippedPkPassArchive(final PKPass pass, final String pathToTemplateDirectory) throws IOException {
+    public static byte[] createSignedAndZippedPkPassArchive(final PKPass pass, final String pathToTemplateDirectory,
+            final X509Certificate signCertificate, final PrivateKey privateKey, final X509Certificate intermediateCertificate)
+            throws Exception {
         File tempPassDir = Files.createTempDir();
         FileUtils.copyDirectory(new File(pathToTemplateDirectory), tempPassDir);
         File passJSONFile = new File(tempPassDir.getAbsolutePath() + File.separator + "pass.json");
-
+        System.out.println(tempPassDir.getAbsolutePath());
         ObjectMapper jsonObjectMapper = new ObjectMapper();
         jsonObjectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         jsonObjectMapper.writeValue(passJSONFile, pass);
@@ -42,7 +60,7 @@ public final class PKSigningUtil {
         File manifestJSONFile = new File(tempPassDir.getAbsolutePath() + File.separator + "manifest.json");
         jsonObjectMapper.writeValue(manifestJSONFile, fileWithHashMap);
 
-        signManifestFile(manifestJSONFile);
+        signManifestFile(tempPassDir, manifestJSONFile, signCertificate, privateKey, intermediateCertificate);
 
         ByteArrayOutputStream byteArrayOutputStreamForZippedPass = new ByteArrayOutputStream();
         ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStreamForZippedPass);
@@ -53,8 +71,33 @@ public final class PKSigningUtil {
         return byteArrayOutputStreamForZippedPass.toByteArray();
     }
 
-    private static void signManifestFile(final File manifestJSONFile) {
-        // TODO Auto-generated method stub
+    public static void signManifestFile(final File temporaryPassDirectory, final File manifestJSONFile,
+            final X509Certificate signCertificate, final PrivateKey privateKey, final X509Certificate intermediateCertificate)
+            throws Exception {
+
+        Security.addProvider(new BouncyCastleProvider());
+
+        CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
+        ContentSigner sha1Signer = new JcaContentSignerBuilder("SHA1withRSA").setProvider("BC").build(privateKey);
+
+        generator.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(new JcaDigestCalculatorProviderBuilder().setProvider("BC")
+                .build()).build(sha1Signer, signCertificate));
+
+        List<X509Certificate> certList = new ArrayList<X509Certificate>();
+        certList.add(intermediateCertificate);
+        certList.add(signCertificate);
+
+        Store certs = new JcaCertStore(certList);
+
+        generator.addCertificates(certs);
+
+        CMSSignedData sigData = generator.generate(new CMSProcessableFile(manifestJSONFile), false);
+        byte[] signedDataBytes = sigData.getEncoded();
+
+        File signatureFile = new File(temporaryPassDirectory.getAbsolutePath() + File.separator + "signature");
+        FileOutputStream signatureOutputStream = new FileOutputStream(signatureFile);
+        signatureOutputStream.write(signedDataBytes);
+        signatureOutputStream.close();
 
     }
 

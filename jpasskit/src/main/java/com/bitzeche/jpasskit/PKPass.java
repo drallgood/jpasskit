@@ -1,8 +1,13 @@
 package com.bitzeche.jpasskit;
 
-import java.awt.Color;
 import java.net.URL;
 import java.util.List;
+
+import com.bitzeche.jpasskit.passes.PKBoardingPass;
+import com.bitzeche.jpasskit.passes.PKCoupon;
+import com.bitzeche.jpasskit.passes.PKEventTicket;
+import com.bitzeche.jpasskit.passes.PKGenericPass;
+import com.bitzeche.jpasskit.passes.PKStoreCard;
 
 public class PKPass {
     private String serialNumber;
@@ -17,12 +22,18 @@ public class PKPass {
 
     private String organizationName;
     private String logoText;
-    private Color foregroundColor;
-    private Color backgroundColor;
+    private String foregroundColor;
+    private String backgroundColor;
 
     private List<PKLocation> locations;
 
     private PKBarcode barcode;
+
+    private PKEventTicket eventTicket;
+    private PKCoupon coupon;
+    private PKStoreCard storeCard;
+    private PKBoardingPass boardingPass;
+    private PKGenericPass generic;
 
     public String getSerialNumber() {
         return serialNumber;
@@ -96,19 +107,19 @@ public class PKPass {
         this.logoText = logoText;
     }
 
-    public Color getForegroundColor() {
+    public String getForegroundColor() {
         return foregroundColor;
     }
 
-    public void setForegroundColor(final Color foregroundColor) {
+    public void setForegroundColor(final String foregroundColor) {
         this.foregroundColor = foregroundColor;
     }
 
-    public Color getBackgroundColor() {
+    public String getBackgroundColor() {
         return backgroundColor;
     }
 
-    public void setBackgroundColor(final Color backgroundColor) {
+    public void setBackgroundColor(final String backgroundColor) {
         this.backgroundColor = backgroundColor;
     }
 
@@ -126,6 +137,46 @@ public class PKPass {
 
     public void setBarcode(final PKBarcode barcode) {
         this.barcode = barcode;
+    }
+
+    public PKEventTicket getEventTicket() {
+        return eventTicket;
+    }
+
+    public void setEventTicket(final PKEventTicket eventTicket) {
+        this.eventTicket = eventTicket;
+    }
+
+    public PKCoupon getCoupon() {
+        return coupon;
+    }
+
+    public void setCoupon(final PKCoupon coupon) {
+        this.coupon = coupon;
+    }
+
+    public PKStoreCard getStoreCard() {
+        return storeCard;
+    }
+
+    public void setStoreCard(final PKStoreCard storeCard) {
+        this.storeCard = storeCard;
+    }
+
+    public PKBoardingPass getBoardingPass() {
+        return boardingPass;
+    }
+
+    public void setBoardingPass(final PKBoardingPass boardingPass) {
+        this.boardingPass = boardingPass;
+    }
+
+    public PKGenericPass getGeneric() {
+        return generic;
+    }
+
+    public void setGeneric(final PKGenericPass generic) {
+        this.generic = generic;
     }
 
 }

@@ -2,15 +2,15 @@ package com.bitzeche.jpasskit;
 
 public class PKSerialNumbersOfPassesForDeviceResponse {
 
-    private String lastUpdate;
+    private String lastUpdated;
     private String[] serialNumbers;
 
-    public String getLastUpdate() {
-        return lastUpdate;
+    public String getLastUpdated() {
+        return lastUpdated;
     }
 
-    public void setLastUpdate(final String lastUpdate) {
-        this.lastUpdate = lastUpdate;
+    public void setLastUpdated(final String lastUpdate) {
+        this.lastUpdated = lastUpdate;
     }
 
     public String[] getSerialNumbers() {
