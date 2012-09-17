@@ -1,5 +1,7 @@
 package com.bitzeche.jpasskit;
 
+import java.util.Date;
+
 public class PKField {
     private String key;
     private String label;
@@ -92,6 +94,25 @@ public class PKField {
 
     public void setRelative(final boolean isRelative) {
         this.isRelative = isRelative;
+    }
+
+    public boolean isValid() {
+        boolean valid = true;
+
+        if (value == null || key == null) {
+            valid = false;
+        } else if (!(value instanceof String || value instanceof Integer || value instanceof Float || value instanceof Long
+                || value instanceof Double || value instanceof Date)) {
+            valid = false;
+        } else if (currencyCode != null && numberStyle != null) {
+            valid = false;
+        } else if (currencyCode != null && numberStyle != null) {
+            valid = false;
+        } else if (currencyCode != null && numberStyle != null) {
+            valid = false;
+        }
+
+        return valid;
     }
 
 }

@@ -1,19 +1,17 @@
 package com.bitzeche.jpasskit.signing;
 
-import org.testng.annotations.Test;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.security.KeyPair;
 import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.Security;
 import java.security.cert.X509Certificate;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.provider.X509CertificateObject;
 import org.bouncycastle.openssl.PEMReader;
+import org.testng.annotations.Test;
 
 public class PKSigningUtilTest {
 

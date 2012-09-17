@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <fileset-config file-format-version="1.2.0" simple-config="true" sync-formatter="true">
-  <local-check-config name="Checkstyle" location="internal_config__1347821949063.xml" type="internal" description=""/>
+  <local-check-config name="Checkstyle" location="checkstyle.xml" type="project" description="">
+    <additional-data name="protect-config-file" value="false"/>
+  </local-check-config>
   <fileset name="all" enabled="true" check-config-name="Checkstyle" local="true">
     <file-match-pattern match-pattern="." include-pattern="true"/>
   </fileset>

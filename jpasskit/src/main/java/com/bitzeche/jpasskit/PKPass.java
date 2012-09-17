@@ -1,6 +1,7 @@
 package com.bitzeche.jpasskit;
 
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 
 import com.bitzeche.jpasskit.passes.PKBoardingPass;
@@ -10,11 +11,13 @@ import com.bitzeche.jpasskit.passes.PKGenericPass;
 import com.bitzeche.jpasskit.passes.PKStoreCard;
 
 public class PKPass {
+    private static final int EXPECTED_AUTHTOKEN_LENGTH = 16;
+    private int formatVersion = 1;
     private String serialNumber;
     private String passTypeIdentifier;
+
     private URL webServiceURL;
     private String authenticationToken;
-    private int formatVersion = 1;
 
     private String description;
 
@@ -22,8 +25,10 @@ public class PKPass {
 
     private String organizationName;
     private String logoText;
+
     private String foregroundColor;
     private String backgroundColor;
+    private String labelColor;
 
     private List<PKLocation> locations;
 
@@ -34,6 +39,13 @@ public class PKPass {
     private PKStoreCard storeCard;
     private PKBoardingPass boardingPass;
     private PKGenericPass generic;
+    private PKGenericPass passThatWasSet;
+
+    private List<String> associatedStoreIdentifiers;
+
+    private Date relevantDate;
+
+    private boolean suppressStripShine;
 
     public String getSerialNumber() {
         return serialNumber;
@@ -145,6 +157,11 @@ public class PKPass {
 
     public void setEventTicket(final PKEventTicket eventTicket) {
         this.eventTicket = eventTicket;
+        this.passThatWasSet = eventTicket;
+        this.storeCard = null;
+        this.coupon = null;
+        this.generic = null;
+        this.boardingPass = null;
     }
 
     public PKCoupon getCoupon() {
@@ -153,6 +170,11 @@ public class PKPass {
 
     public void setCoupon(final PKCoupon coupon) {
         this.coupon = coupon;
+        this.eventTicket = null;
+        this.storeCard = null;
+        this.generic = null;
+        this.boardingPass = null;
+        this.passThatWasSet = coupon;
     }
 
     public PKStoreCard getStoreCard() {
@@ -161,6 +183,11 @@ public class PKPass {
 
     public void setStoreCard(final PKStoreCard storeCard) {
         this.storeCard = storeCard;
+        this.eventTicket = null;
+        this.coupon = null;
+        this.generic = null;
+        this.boardingPass = null;
+        this.passThatWasSet = storeCard;
     }
 
     public PKBoardingPass getBoardingPass() {
@@ -169,6 +196,11 @@ public class PKPass {
 
     public void setBoardingPass(final PKBoardingPass boardingPass) {
         this.boardingPass = boardingPass;
+        this.eventTicket = null;
+        this.storeCard = null;
+        this.coupon = null;
+        this.generic = null;
+        this.passThatWasSet = boardingPass;
     }
 
     public PKGenericPass getGeneric() {
@@ -177,6 +209,58 @@ public class PKPass {
 
     public void setGeneric(final PKGenericPass generic) {
         this.generic = generic;
+        this.eventTicket = null;
+        this.storeCard = null;
+        this.coupon = null;
+        this.boardingPass = null;
+        this.passThatWasSet = generic;
     }
 
+    public String getLabelColor() {
+        return labelColor;
+    }
+
+    public void setLabelColor(final String labelColor) {
+        this.labelColor = labelColor;
+    }
+
+    public List<String> getAssociatedStoreIdentifiers() {
+        return associatedStoreIdentifiers;
+    }
+
+    public void setAssociatedStoreIdentifiers(final List<String> associatedStoreIdentifiers) {
+        this.associatedStoreIdentifiers = associatedStoreIdentifiers;
+    }
+
+    public Date getRelevantDate() {
+        return relevantDate;
+    }
+
+    public void setRelevantDate(final Date relevantDate) {
+        this.relevantDate = relevantDate;
+    }
+
+    public boolean isSuppressStripShine() {
+        return suppressStripShine;
+    }
+
+    public void setSuppressStripShine(final boolean suppressStripShine) {
+        this.suppressStripShine = suppressStripShine;
+    }
+
+    public boolean isValid() {
+        boolean valid = true;
+
+        if (serialNumber == null || passTypeIdentifier == null || teamIdentifier == null) {
+            valid = false;
+        } else if (passThatWasSet == null) {
+            valid = false;
+        } else if (authenticationToken != null && authenticationToken.length() < EXPECTED_AUTHTOKEN_LENGTH) {
+            valid = false;
+        } else if (!passThatWasSet.isValid()) {
+            valid = false;
+        }
+
+        return valid;
+    }
 }
