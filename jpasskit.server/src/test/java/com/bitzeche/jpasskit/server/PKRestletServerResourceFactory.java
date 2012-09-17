@@ -3,41 +3,32 @@ package com.bitzeche.jpasskit.server;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.X509Certificate;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
+import java.util.Random;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.provider.X509CertificateObject;
 import org.bouncycastle.openssl.PEMReader;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import org.restlet.data.ChallengeResponse;
 import org.restlet.data.Status;
 import org.restlet.representation.Representation;
 
-import com.bitzeche.jpasskit.PKBarcode;
-import com.bitzeche.jpasskit.PKBarcodeFormat;
 import com.bitzeche.jpasskit.PKField;
 import com.bitzeche.jpasskit.PKPass;
-import com.bitzeche.jpasskit.PKSerialNumbersOfPassesForDeviceResponse;
+import com.bitzeche.jpasskit.PKPushToken;
 import com.bitzeche.jpasskit.passes.PKStoreCard;
-import com.bitzeche.jpasskit.server.IPKRestletServerResourceFactory;
-import com.bitzeche.jpasskit.server.PKAuthTokenNotValidException;
-import com.bitzeche.jpasskit.server.PKDeviceResource;
-import com.bitzeche.jpasskit.server.PKLogResource;
-import com.bitzeche.jpasskit.server.PKPassResource;
 
-public class PKRestletServerResourceFactory implements
-		IPKRestletServerResourceFactory {
+public class PKRestletServerResourceFactory implements IPKRestletServerResourceFactory {
 
-	protected static final String AppleWWDRCACert_PATH = "/Users/patrice/Documents/bitzeche/Projects/passkit/AppleWWDRCA.pem";
+	protected static final String APPLE_WWDRCA_CERT_PATH = "/Users/patrice/Documents/bitzeche/Projects/passkit/AppleWWDRCA.pem";
 	protected static final String KEY_FILE_PATH = "/Users/patrice/Documents/bitzeche/Projects/passkit/key_pktest.pem";
 	protected static final String CERT_FILE_PATH = "/Users/patrice/Documents/bitzeche/Projects/passkit/cert_pktest.pem";
 	private X509CertificateObject signingCert;
@@ -49,36 +40,26 @@ public class PKRestletServerResourceFactory implements
 		return new PKDeviceResource() {
 
 			@Override
-			protected Status handleRegisterDeviceRequest(
-					final String deviceLibraryIdentifier,
-					final String passTypeIdentifier, final String serialNumber,
-					final String authString)
-					throws PKAuthTokenNotValidException {
+			protected Status handleRegisterDeviceRequest(final String deviceLibraryIdentifier, final String passTypeIdentifier,
+					final String serialNumber, final String authString, final PKPushToken pushToken) throws PKAuthTokenNotValidException {
 				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
-			protected Status handleUnregisterDeviceRequest(
-					final String deviceLibraryIdentifier,
-					final String passTypeIdentifier, final String serialNumber,
-					final ChallengeResponse authString)
-					throws PKAuthTokenNotValidException {
+			protected Status handleUnregisterDeviceRequest(final String deviceLibraryIdentifier, final String passTypeIdentifier,
+					final String serialNumber, final ChallengeResponse authString) throws PKAuthTokenNotValidException {
 				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
-			protected PKSerialNumbersOfPassesForDeviceResponse getSerialNumberOfPassesForDevice(
-					final String deviceLibraryIdentifier,
-					final String passTypeIdentifier,
-					final String passesUpdatedSince) {
+			protected PKSerialNumbersOfPassesForDeviceResponse getSerialNumberOfPassesForDevice(final String deviceLibraryIdentifier,
+					final String passTypeIdentifier, final String passesUpdatedSince) {
 				PKSerialNumbersOfPassesForDeviceResponse serialNumbersOfPassesForDeviceResponse = new PKSerialNumbersOfPassesForDeviceResponse();
-				serialNumbersOfPassesForDeviceResponse.setLastUpdated(""
-						+ System.currentTimeMillis());
+				serialNumbersOfPassesForDeviceResponse.setLastUpdated("" + System.currentTimeMillis());
 				String[] serialNumbers = new String[] { "p69f2J" };
-				serialNumbersOfPassesForDeviceResponse
-						.setSerialNumbers(serialNumbers);
+				serialNumbersOfPassesForDeviceResponse.setSerialNumbers(serialNumbers);
 				return serialNumbersOfPassesForDeviceResponse;
 			}
 
@@ -87,8 +68,7 @@ public class PKRestletServerResourceFactory implements
 
 	public PKPassResource getPKPassResource() {
 		try {
-			loadKeysAndCerts(CERT_FILE_PATH, KEY_FILE_PATH,
-					AppleWWDRCACert_PATH);
+			loadKeysAndCerts(CERT_FILE_PATH, KEY_FILE_PATH, APPLE_WWDRCA_CERT_PATH);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -96,23 +76,30 @@ public class PKRestletServerResourceFactory implements
 		return new PKPassResource() {
 
 			@Override
-			protected PKPass handleGetLatestVersionOfPass(
-					final String passTypeIdentifier, final String serialNumber,
-					final String authString)
-					throws PKAuthTokenNotValidException {
+			protected GetPKPassResponse handleGetLatestVersionOfPass(final String passTypeIdentifier, final String serialNumber,
+					final String authString, final Date modifiedSince) throws PKAuthTokenNotValidException, PKPassNotModifiedException {
 				PKPass pass = new PKPass();
 				try {
-					pass = jsonObjectMapper
-							.readValue(
-									new File(
-											"/Users/patrice/Downloads/passbook/Passes/bitzecheCoupons.raw/pass2.json"),
-									PKPass.class);
+					pass = jsonObjectMapper.readValue(new File("/Users/patrice/Downloads/passbook/Passes/bitzecheCoupons.raw/pass2.json"),
+							PKPass.class);
+
+					float newAmount = getNewRandomAmount();
+
 					PKStoreCard storeCard = pass.getStoreCard();
 					List<PKField> primaryFields = storeCard.getPrimaryFields();
 					for (PKField field : primaryFields) {
 						if ("balance".equals(field.getKey())) {
-							field.setValue(23.40);
-							field.setChangeMessage("Amount changed to 23.40");
+							field.setValue(newAmount);
+							field.setChangeMessage("Amount changed to %@");
+							break;
+						}
+
+					}
+					List<PKField> headerFields = storeCard.getHeaderFields();
+					for (PKField field : headerFields) {
+						if ("balanceHeader".equals(field.getKey())) {
+							field.setValue(newAmount);
+							field.setChangeMessage("Amount changed to %@");
 							break;
 						}
 
@@ -122,7 +109,16 @@ public class PKRestletServerResourceFactory implements
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				return pass;
+				GetPKPassResponse getPKPassResponse = new GetPKPassResponse(pass, new Date());
+
+				return getPKPassResponse;
+			}
+
+			private float getNewRandomAmount() {
+				Random random = new Random();
+				float amount = random.nextInt(100) + random.nextFloat();
+				BigDecimal bigDecimalForRounding = new BigDecimal(amount).setScale(2, RoundingMode.HALF_EVEN);
+				return bigDecimalForRounding.floatValue();
 			}
 
 			@Override
@@ -155,8 +151,7 @@ public class PKRestletServerResourceFactory implements
 		};
 	}
 
-	private void loadKeysAndCerts(String certFilePath, String keyFilePath,
-			String appleWWDRCACertPath) throws IOException {
+	private void loadKeysAndCerts(final String certFilePath, final String keyFilePath, final String appleWWDRCACertPath) throws IOException {
 		Security.addProvider(new BouncyCastleProvider());
 		signingCert = (X509CertificateObject) readKeyPair(certFilePath);
 		KeyPair privateKeyPair = (KeyPair) readKeyPair(keyFilePath);
@@ -171,8 +166,7 @@ public class PKRestletServerResourceFactory implements
 		try {
 			return r.readObject();
 		} catch (IOException ex) {
-			throw new IOException("The key from '" + file
-					+ "' could not be decrypted", ex);
+			throw new IOException("The key from '" + file + "' could not be decrypted", ex);
 		} finally {
 			r.close();
 			fileReader.close();

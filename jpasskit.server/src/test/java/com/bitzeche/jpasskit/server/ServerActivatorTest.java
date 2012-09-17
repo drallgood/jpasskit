@@ -8,19 +8,19 @@ import com.bitzeche.jpasskit.server.PKRestServer;
 
 public class ServerActivatorTest {
 
-    public static void main(final String[] args) {
+	public static void main(final String[] args) {
 
-        Properties serverConfigurationProperties = new Properties();
-        serverConfigurationProperties.put("rest.bindIP", "::");
-        serverConfigurationProperties.put("rest.bindPort", "8082");
+		Properties serverConfigurationProperties = new Properties();
+		serverConfigurationProperties.put("rest.bindIP", "::");
+		serverConfigurationProperties.put("rest.bindPort", "8082");
 
-        IPKRestletServerResourceFactory pkRestletServerResourceFactory = new PKRestletServerResourceFactory();
-        PKRestServer pkRestServer = new PKRestServer(serverConfigurationProperties, pkRestletServerResourceFactory);
-        try {
-            pkRestServer.start();
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
+		IPKRestletServerResourceFactory pkRestletServerResourceFactory = new PKRestletServerResourceFactory();
+		PKRestServer pkRestServer = new PKRestServer(serverConfigurationProperties, pkRestletServerResourceFactory);
+		try {
+			pkRestServer.start();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }
