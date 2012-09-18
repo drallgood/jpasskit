@@ -37,7 +37,7 @@ Example:
 
 
 In Addition to the pass, there needs to be a template directory that contains the other resources (like images and translations). The content of this directory is defined in the PassKit Developer Documentation.
-<img src="passFolder.png">
+<img src="https://github.com/bitzeche/jpasskit/blob/master/passFolder.png">
 
 Using the PKSigningUtil method createSignedAndZippedPkPassArchive (which takes the PKPass, the template directory, the certificate/private key and the Apple intermediate certificate as parameters), you can create the finished Pass archive.
 
