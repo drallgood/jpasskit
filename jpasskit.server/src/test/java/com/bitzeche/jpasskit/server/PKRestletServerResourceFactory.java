@@ -1,15 +1,25 @@
 package com.bitzeche.jpasskit.server;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.security.Key;
 import java.security.KeyPair;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.Security;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Random;
 
@@ -29,8 +39,8 @@ import com.bitzeche.jpasskit.passes.PKStoreCard;
 public class PKRestletServerResourceFactory implements IPKRestletServerResourceFactory {
 
 	protected static final String APPLE_WWDRCA_CERT_PATH = "/Users/patrice/Documents/bitzeche/Projects/passkit/AppleWWDRCA.pem";
-	protected static final String KEY_FILE_PATH = "/Users/patrice/Documents/bitzeche/Projects/passkit/key_pktest.pem";
-	protected static final String CERT_FILE_PATH = "/Users/patrice/Documents/bitzeche/Projects/passkit/cert_pktest.pem";
+	protected static final String PKCS12_FILE_PATH = "/Users/patrice/Documents/bitzeche/Projects/passkit/Certificates.p12";
+	protected static final String PKCS12_FILE_PASSWORD = "cert";
 	private X509CertificateObject signingCert;
 	private PrivateKey signingPrivateKey;
 	private X509CertificateObject appleWWDRCACert;
@@ -68,8 +78,8 @@ public class PKRestletServerResourceFactory implements IPKRestletServerResourceF
 
 	public PKPassResource getPKPassResource() {
 		try {
-			loadKeysAndCerts(CERT_FILE_PATH, KEY_FILE_PATH, APPLE_WWDRCA_CERT_PATH);
-		} catch (IOException e) {
+			loadKeysAndCerts();
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -99,7 +109,6 @@ public class PKRestletServerResourceFactory implements IPKRestletServerResourceF
 					for (PKField field : headerFields) {
 						if ("balanceHeader".equals(field.getKey())) {
 							field.setValue(newAmount);
-							field.setChangeMessage("Amount changed to %@");
 							break;
 						}
 
@@ -151,13 +160,35 @@ public class PKRestletServerResourceFactory implements IPKRestletServerResourceF
 		};
 	}
 
-	private void loadKeysAndCerts(final String certFilePath, final String keyFilePath, final String appleWWDRCACertPath) throws IOException {
+	private void loadKeysAndCerts() throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException,
+			NoSuchProviderException, UnrecoverableKeyException {
 		Security.addProvider(new BouncyCastleProvider());
-		signingCert = (X509CertificateObject) readKeyPair(certFilePath);
-		KeyPair privateKeyPair = (KeyPair) readKeyPair(keyFilePath);
-		signingPrivateKey = privateKeyPair.getPrivate();
 
-		appleWWDRCACert = (X509CertificateObject) readKeyPair(appleWWDRCACertPath);
+		KeyStore pkcs12KeyStore = readPKCS12File(PKCS12_FILE_PATH, PKCS12_FILE_PASSWORD);
+		Enumeration<String> aliases = pkcs12KeyStore.aliases();
+		while (aliases.hasMoreElements()) {
+			String aliasName = aliases.nextElement();
+
+			Key key = pkcs12KeyStore.getKey(aliasName, PKCS12_FILE_PASSWORD.toCharArray());
+			if (key instanceof PrivateKey) {
+				signingPrivateKey = (PrivateKey) key;
+				Object cert = pkcs12KeyStore.getCertificate(aliasName);
+				if (cert instanceof X509Certificate) {
+					signingCert = (X509CertificateObject) cert;
+					break;
+				}
+			}
+		}
+
+		appleWWDRCACert = (X509CertificateObject) readKeyPair(APPLE_WWDRCA_CERT_PATH);
+	}
+
+	private KeyStore readPKCS12File(final String file, final String password) throws IOException, NoSuchAlgorithmException,
+			CertificateException, KeyStoreException, NoSuchProviderException {
+		KeyStore keystore = KeyStore.getInstance("PKCS12", "BC");
+
+		keystore.load(new FileInputStream(file), password.toCharArray());
+		return keystore;
 	}
 
 	private Object readKeyPair(final String file) throws IOException {

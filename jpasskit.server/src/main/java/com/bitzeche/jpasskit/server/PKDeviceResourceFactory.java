@@ -7,15 +7,15 @@ import org.restlet.resource.ServerResource;
 
 public final class PKDeviceResourceFactory extends Finder {
 
-    private IPKRestletServerResourceFactory pkRestletServerResourceFactory;
+	private IPKRestletServerResourceFactory pkRestletServerResourceFactory;
 
-    public PKDeviceResourceFactory(final IPKRestletServerResourceFactory pkRestletServerResourceFactory) {
-        this.pkRestletServerResourceFactory = pkRestletServerResourceFactory;
-    }
+	public PKDeviceResourceFactory(final IPKRestletServerResourceFactory pkRestletServerResourceFactory) {
+		this.pkRestletServerResourceFactory = pkRestletServerResourceFactory;
+	}
 
-    @Override
-    public ServerResource create(final Request request, final Response response) {
-        return pkRestletServerResourceFactory.getPKDeviceResource();
-    }
+	@Override
+	public ServerResource create(final Request request, final Response response) {
+		return pkRestletServerResourceFactory.getPKDeviceResource();
+	}
 
 }

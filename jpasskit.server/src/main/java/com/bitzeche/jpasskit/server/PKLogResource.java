@@ -2,7 +2,6 @@ package com.bitzeche.jpasskit.server;
 
 import java.io.IOException;
 
-import org.restlet.Request;
 import org.restlet.representation.Representation;
 import org.restlet.resource.Delete;
 import org.restlet.resource.Post;
@@ -19,7 +18,6 @@ public abstract class PKLogResource extends ServerResource {
      */
     @Post("json")
     public final Representation postLogMessage(final Representation entity) {
-        Request request = getRequest();
         try {
             LOGGER.debug("postLogMessage: Log {}", entity.getText());
         } catch (IOException e) {

@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 
 import com.bitzeche.jpasskit.PKPass;
 import com.bitzeche.jpasskit.signing.PKSigningUtil;
-import com.google.common.net.HttpHeaders;
 
 public abstract class PKPassResource extends ServerResource {
 

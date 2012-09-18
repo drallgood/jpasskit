@@ -27,6 +27,7 @@ public abstract class PKDeviceResource extends ServerResource {
 
 	public PKDeviceResource() {
 		jsonObjectMapper = new ObjectMapper();
+
 	}
 
 	/*
@@ -79,6 +80,8 @@ public abstract class PKDeviceResource extends ServerResource {
 			LOGGER.debug("registerDeviceRequest - passTypeIdentifier: {}", passTypeIdentifier);
 			LOGGER.debug("registerDeviceRequest - serialNumber: {}", serialNumber);
 			LOGGER.debug("registerDeviceRequest - authString: {}", authString);
+			LOGGER.debug("registerDeviceRequest - jsonPushToken: {}", jsonPushToken);
+			LOGGER.debug("registerDeviceRequest - pkPushToken: {}", pkPushToken);
 			responseStatus = handleRegisterDeviceRequest(deviceLibraryIdentifier, passTypeIdentifier, serialNumber, authString, pkPushToken);
 		} catch (PKAuthTokenNotValidException e) {
 			responseStatus = Status.CLIENT_ERROR_UNAUTHORIZED;
