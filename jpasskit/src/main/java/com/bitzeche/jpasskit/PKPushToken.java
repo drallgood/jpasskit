@@ -1,5 +1,7 @@
 package com.bitzeche.jpasskit;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 public class PKPushToken {
     private String pushToken;
 
@@ -11,4 +13,8 @@ public class PKPushToken {
         this.pushToken = pushToken;
     }
 
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
 }

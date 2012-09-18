@@ -13,4 +13,11 @@ public class PKBoardingPass extends PKGenericPass {
         this.transitType = transitType;
     }
 
+    public boolean isValid() {
+        boolean valid = super.isValid();
+        if (transitType == null) {
+            valid = false;
+        }
+        return valid;
+    }
 }

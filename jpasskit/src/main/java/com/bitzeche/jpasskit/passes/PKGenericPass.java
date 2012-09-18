@@ -2,6 +2,8 @@ package com.bitzeche.jpasskit.passes;
 
 import java.util.List;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import com.bitzeche.jpasskit.PKField;
 import com.google.common.collect.Lists;
 
@@ -73,5 +75,10 @@ public class PKGenericPass {
         }
 
         return valid;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 }

@@ -4,6 +4,8 @@ import java.net.URL;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import com.bitzeche.jpasskit.passes.PKBoardingPass;
 import com.bitzeche.jpasskit.passes.PKCoupon;
 import com.bitzeche.jpasskit.passes.PKEventTicket;
@@ -262,5 +264,10 @@ public class PKPass {
         }
 
         return valid;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 }

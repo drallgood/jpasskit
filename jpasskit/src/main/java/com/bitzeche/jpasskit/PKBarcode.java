@@ -2,6 +2,8 @@ package com.bitzeche.jpasskit;
 
 import java.nio.charset.Charset;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 public class PKBarcode {
 
     private PKBarcodeFormat format;
@@ -50,4 +52,8 @@ public class PKBarcode {
         return valid;
     }
 
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
 }

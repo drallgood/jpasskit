@@ -1,5 +1,6 @@
 package com.bitzeche.jpasskit;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class PKLocation {
     private float latitude;
@@ -45,5 +46,10 @@ public class PKLocation {
         // nothing to check here?
 
         return valid;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 }

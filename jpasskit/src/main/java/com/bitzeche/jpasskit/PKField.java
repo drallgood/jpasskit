@@ -2,6 +2,8 @@ package com.bitzeche.jpasskit;
 
 import java.util.Date;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 public class PKField {
     private String key;
     private String label;
@@ -113,6 +115,11 @@ public class PKField {
         }
 
         return valid;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 
 }
