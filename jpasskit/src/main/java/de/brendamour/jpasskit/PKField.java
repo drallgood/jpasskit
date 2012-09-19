@@ -131,14 +131,18 @@ public class PKField implements IPKValidateable {
         List<String> validationErrors = new ArrayList<String>();
         if (value == null || StringUtils.isEmpty(key)) {
             validationErrors.add("Not all required Fields are set. Key: " + key + " Value:" + value);
-        } else if (!(value instanceof String || value instanceof Integer || value instanceof Float || value instanceof Long
-                || value instanceof Double || value instanceof Date || value instanceof BigDecimal)) {
+        }
+        if (!(value instanceof String || value instanceof Integer || value instanceof Float || value instanceof Long || value instanceof Double
+                || value instanceof Date || value instanceof BigDecimal)) {
             validationErrors.add("Invalid value type: String, Integer, Float, Long, Double, java.util.Date, BigDecimal");
-        } else if (currencyCode != null && numberStyle != null) {
+        }
+        if (currencyCode != null && numberStyle != null) {
             validationErrors.add("CurrencyCode and numberStyle are both set");
-        } else if ((currencyCode != null || numberStyle != null) && (dateStyle != null || timeStyle != null)) {
+        }
+        if ((currencyCode != null || numberStyle != null) && (dateStyle != null || timeStyle != null)) {
             validationErrors.add("Can't be number/currency and date at the same time");
-        } else if (changeMessage != null && !changeMessage.contains("%@")) {
+        }
+        if (changeMessage != null && !changeMessage.contains("%@")) {
             validationErrors.add("ChangeMessage needs to contain %@ placeholder");
         }
         return validationErrors;

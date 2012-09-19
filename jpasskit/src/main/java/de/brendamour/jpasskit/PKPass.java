@@ -305,11 +305,14 @@ public class PKPass implements IPKValidateable {
             validationErrors.add("Not all required Fields are set. SerialNumber" + serialNumber + " PassTypeIdentifier: " + passTypeIdentifier
                     + " teamIdentifier" + teamIdentifier + " Description: " + description + " FormatVersion: " + formatVersion
                     + " OrganizationName: " + organizationName);
-        } else if (passThatWasSet == null) {
+        }
+        if (passThatWasSet == null) {
             validationErrors.add("No pass was defined");
-        } else if (authenticationToken != null && authenticationToken.length() < EXPECTED_AUTHTOKEN_LENGTH) {
+        }
+        if (authenticationToken != null && authenticationToken.length() < EXPECTED_AUTHTOKEN_LENGTH) {
             validationErrors.add("The authenticationToken needs to be at least " + EXPECTED_AUTHTOKEN_LENGTH + " long");
-        } else if (!passThatWasSet.isValid()) {
+        }
+        if (!passThatWasSet.isValid()) {
             validationErrors.addAll(passThatWasSet.getValidationErrors());
         }
 
@@ -322,18 +325,23 @@ public class PKPass implements IPKValidateable {
     }
 
     protected String convertColorToString(final Color color) {
-        return "rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ")";
+        if (color != null) {
+            return "rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ")";
+        }
+        return null;
     }
 
     protected Color convertStringToColor(final String colorString) {
-        String rgbValues = colorString.replace("rgb(", "").replace(")", "");
-        String[] rgbValuesArray = rgbValues.split(",");
         Color color = null;
-        if (rgbValuesArray.length == 3) {
-            int r = Integer.parseInt(rgbValuesArray[0]);
-            int g = Integer.parseInt(rgbValuesArray[1]);
-            int b = Integer.parseInt(rgbValuesArray[2]);
-            color = new Color(r, g, b);
+        if (colorString != null) {
+            String rgbValues = colorString.replace("rgb(", "").replace(")", "");
+            String[] rgbValuesArray = rgbValues.split(",");
+            if (rgbValuesArray.length == 3) {
+                int r = Integer.parseInt(rgbValuesArray[0]);
+                int g = Integer.parseInt(rgbValuesArray[1]);
+                int b = Integer.parseInt(rgbValuesArray[2]);
+                color = new Color(r, g, b);
+            }
         }
         return color;
     }
