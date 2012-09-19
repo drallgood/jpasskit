@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.brendamour</groupId>
 	<artifactId>jpasskit</artifactId>
-	<version>0.0.1</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<name>Java Library for Apples PassBook Webservice API</name>
 	<inceptionYear>2012</inceptionYear>
 	<licenses>
