@@ -118,7 +118,6 @@ public class PKRestletServerResourceFactory implements IPKRestletServerResourceF
 							PKPass.class);
 
 					float newAmount = getNewRandomAmount();
-
 					PKStoreCard storeCard = pass.getStoreCard();
 					List<PKField> primaryFields = storeCard.getPrimaryFields();
 					for (PKField field : primaryFields) {
