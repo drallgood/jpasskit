@@ -107,7 +107,7 @@ public class PKRestletServerResourceFactory implements IPKRestletServerResourceF
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return new PKPassResource() {
+		return new PKPassResource("/Users/patrice/Downloads/passbook/Passes/bitzecheCoupons.raw") {
 
 			@Override
 			protected GetPKPassResponse handleGetLatestVersionOfPass(final String passTypeIdentifier, final String serialNumber,

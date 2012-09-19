@@ -40,8 +40,9 @@ public abstract class PKPassResource extends ServerResource {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PKPassResource.class);
 	private ObjectMapper jsonObjectMapper;
+	private String pathToPassTemplate;
 
-	public PKPassResource() {
+	public PKPassResource(final String pathToPassTemplate) {
 		jsonObjectMapper = new ObjectMapper();
 		jsonObjectMapper.setSerializationInclusion(Inclusion.NON_NULL);
 	}
@@ -70,9 +71,8 @@ public abstract class PKPassResource extends ServerResource {
 			if (getPKPassResponse != null && getPKPassResponse.getPass().isValid()) {
 				latestPassVersion = getPKPassResponse.getPass();
 
-				byte[] signedAndZippedPkPassArchive = PKSigningUtil.createSignedAndZippedPkPassArchive(latestPassVersion,
-						"/Users/patrice/Downloads/passbook/Passes/bitzecheCoupons.raw", getSigningCert(), getSigningPrivateKey(),
-						getAppleWWDRCACert());
+				byte[] signedAndZippedPkPassArchive = PKSigningUtil.createSignedAndZippedPkPassArchive(latestPassVersion, pathToPassTemplate,
+						getSigningCert(), getSigningPrivateKey(), getAppleWWDRCACert());
 				String responseJSONString = jsonObjectMapper.writeValueAsString(latestPassVersion);
 				LOGGER.debug(responseJSONString);
 

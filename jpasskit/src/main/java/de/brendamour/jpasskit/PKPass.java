@@ -16,10 +16,12 @@
 
 package de.brendamour.jpasskit;
 
+import java.awt.Color;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import de.brendamour.jpasskit.passes.PKBoardingPass;
@@ -44,9 +46,9 @@ public class PKPass {
     private String organizationName;
     private String logoText;
 
-    private String foregroundColor;
-    private String backgroundColor;
-    private String labelColor;
+    private Color foregroundColor;
+    private Color backgroundColor;
+    private Color labelColor;
 
     private List<PKLocation> locations;
 
@@ -138,18 +140,34 @@ public class PKPass {
     }
 
     public String getForegroundColor() {
-        return foregroundColor;
+        return convertColorToString(foregroundColor);
     }
 
     public void setForegroundColor(final String foregroundColor) {
-        this.foregroundColor = foregroundColor;
+        this.foregroundColor = convertStringToColor(foregroundColor);
     }
 
     public String getBackgroundColor() {
-        return backgroundColor;
+        return convertColorToString(backgroundColor);
     }
 
     public void setBackgroundColor(final String backgroundColor) {
+        this.backgroundColor = convertStringToColor(backgroundColor);
+    }
+
+    public Color getForegroundColorAsObject() {
+        return foregroundColor;
+    }
+
+    public void setForegroundColorAsObject(final Color foregroundColor) {
+        this.foregroundColor = foregroundColor;
+    }
+
+    public Object getBackgroundColorAsObject() {
+        return backgroundColor;
+    }
+
+    public void setBackgroundColorAsObject(final Color backgroundColor) {
         this.backgroundColor = backgroundColor;
     }
 
@@ -235,10 +253,18 @@ public class PKPass {
     }
 
     public String getLabelColor() {
-        return labelColor;
+        return convertColorToString(labelColor);
     }
 
     public void setLabelColor(final String labelColor) {
+        this.labelColor = convertStringToColor(labelColor);
+    }
+
+    public Color getLabelColorAsObject() {
+        return labelColor;
+    }
+
+    public void setLabelColorAsObject(final Color labelColor) {
         this.labelColor = labelColor;
     }
 
@@ -269,7 +295,8 @@ public class PKPass {
     public boolean isValid() {
         boolean valid = true;
 
-        if (serialNumber == null || passTypeIdentifier == null || teamIdentifier == null) {
+        if (StringUtils.isEmpty(serialNumber) || StringUtils.isEmpty(passTypeIdentifier) || StringUtils.isEmpty(teamIdentifier)
+                || StringUtils.isEmpty(description)) {
             valid = false;
         } else if (passThatWasSet == null) {
             valid = false;
@@ -286,4 +313,22 @@ public class PKPass {
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
+
+    protected String convertColorToString(final Color color) {
+        return "rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ")";
+    }
+
+    protected Color convertStringToColor(final String colorString) {
+        String rgbValues = colorString.replace("rgb(", "").replace(")", "");
+        String[] rgbValuesArray = rgbValues.split(",");
+        Color color = null;
+        if (rgbValuesArray.length == 3) {
+            int r = Integer.parseInt(rgbValuesArray[0]);
+            int g = Integer.parseInt(rgbValuesArray[0]);
+            int b = Integer.parseInt(rgbValuesArray[0]);
+            color = new Color(r, g, b);
+        }
+        return color;
+    }
+
 }
