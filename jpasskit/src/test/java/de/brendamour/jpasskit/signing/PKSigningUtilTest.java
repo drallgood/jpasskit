@@ -37,7 +37,10 @@ public class PKSigningUtilTest {
     private String certFilePath = "/Users/patrice/Documents/bitzeche/Projects/passkit/cert_pktest.pem";
     private String keyFilePath = "/Users/patrice/Documents/bitzeche/Projects/passkit/key_pktest.pem";
 
-    @Test
+    
+    
+    
+//    @Test
     public void execute() throws IOException, Exception {
 
         Security.addProvider(new BouncyCastleProvider());
