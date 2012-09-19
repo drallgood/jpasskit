@@ -16,6 +16,7 @@
 
 package de.brendamour.jpasskit;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -120,7 +121,7 @@ public class PKField {
         if (value == null || key == null) {
             valid = false;
         } else if (!(value instanceof String || value instanceof Integer || value instanceof Float || value instanceof Long
-                || value instanceof Double || value instanceof Date)) {
+                || value instanceof Double || value instanceof Date || value instanceof BigDecimal)) {
             valid = false;
         } else if (currencyCode != null && numberStyle != null) {
             valid = false;
