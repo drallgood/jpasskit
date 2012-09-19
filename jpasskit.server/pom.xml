@@ -92,9 +92,25 @@
 
 	<repositories>
 		<repository>
-			<id>mirror</id>
+			<id>bitzeche-mirror</id>
 			<name>Bitzeche Mirror</name>
 			<url>http://trac.bitzeche.de/archiva/repository/mirror/</url>
+		</repository>
+		<repository>
+			<id>bitzeche-release</id>
+			<name>Bitzeche Release</name>
+			<url>http://trac.bitzeche.de/archiva/repository/release/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>bitzeche-snapshots</id>
+			<name>Bitzeche Release</name>
+			<url>http://trac.bitzeche.de/archiva/repository/snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
 		</repository>
 		<repository>
 			<id>maven-restlet</id>
