@@ -18,6 +18,7 @@ package de.brendamour.jpasskit;
 
 import java.awt.Color;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -30,7 +31,7 @@ import de.brendamour.jpasskit.passes.PKEventTicket;
 import de.brendamour.jpasskit.passes.PKGenericPass;
 import de.brendamour.jpasskit.passes.PKStoreCard;
 
-public class PKPass {
+public class PKPass implements IPKValidateable {
     private static final int EXPECTED_AUTHTOKEN_LENGTH = 16;
     private int formatVersion = 1;
     private String serialNumber;
@@ -163,7 +164,7 @@ public class PKPass {
         this.foregroundColor = foregroundColor;
     }
 
-    public Object getBackgroundColorAsObject() {
+    public Color getBackgroundColorAsObject() {
         return backgroundColor;
     }
 
@@ -293,20 +294,26 @@ public class PKPass {
     }
 
     public boolean isValid() {
-        boolean valid = true;
+        return getValidationErrors().isEmpty();
+    }
+
+    public List<String> getValidationErrors() {
+        List<String> validationErrors = new ArrayList<String>();
 
         if (StringUtils.isEmpty(serialNumber) || StringUtils.isEmpty(passTypeIdentifier) || StringUtils.isEmpty(teamIdentifier)
-                || StringUtils.isEmpty(description)) {
-            valid = false;
+                || StringUtils.isEmpty(description) || formatVersion == 0 || StringUtils.isEmpty(organizationName)) {
+            validationErrors.add("Not all required Fields are set. SerialNumber" + serialNumber + " PassTypeIdentifier: " + passTypeIdentifier
+                    + " teamIdentifier" + teamIdentifier + " Description: " + description + " FormatVersion: " + formatVersion
+                    + " OrganizationName: " + organizationName);
         } else if (passThatWasSet == null) {
-            valid = false;
+            validationErrors.add("No pass was defined");
         } else if (authenticationToken != null && authenticationToken.length() < EXPECTED_AUTHTOKEN_LENGTH) {
-            valid = false;
+            validationErrors.add("The authenticationToken needs to be at least " + EXPECTED_AUTHTOKEN_LENGTH + " long");
         } else if (!passThatWasSet.isValid()) {
-            valid = false;
+            validationErrors.addAll(passThatWasSet.getValidationErrors());
         }
 
-        return valid;
+        return validationErrors;
     }
 
     @Override
@@ -324,8 +331,8 @@ public class PKPass {
         Color color = null;
         if (rgbValuesArray.length == 3) {
             int r = Integer.parseInt(rgbValuesArray[0]);
-            int g = Integer.parseInt(rgbValuesArray[0]);
-            int b = Integer.parseInt(rgbValuesArray[0]);
+            int g = Integer.parseInt(rgbValuesArray[1]);
+            int b = Integer.parseInt(rgbValuesArray[2]);
             color = new Color(r, g, b);
         }
         return color;

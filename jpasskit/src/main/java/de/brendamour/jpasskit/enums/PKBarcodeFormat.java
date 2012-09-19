@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package de.brendamour.jpasskit;
+package de.brendamour.jpasskit.enums;
 
 public enum PKBarcodeFormat {
-    PKBarcodeFormatQR;
+    PKBarcodeFormatQR, PKBarcodeFormatPDF417, PKBarcodeFormatAztec;
 }

@@ -16,7 +16,9 @@
 
 package de.brendamour.jpasskit.passes;
 
-import de.brendamour.jpasskit.PKTransitType;
+import java.util.List;
+
+import de.brendamour.jpasskit.enums.PKTransitType;
 
 public class PKBoardingPass extends PKGenericPass {
     private PKTransitType transitType;
@@ -30,10 +32,15 @@ public class PKBoardingPass extends PKGenericPass {
     }
 
     public boolean isValid() {
-        boolean valid = super.isValid();
+        return getValidationErrors().isEmpty();
+    }
+
+    @Override
+    public List<String> getValidationErrors() {
+        List<String> validationErrors = super.getValidationErrors();
         if (transitType == null) {
-            valid = false;
+            validationErrors.add("TransitType is not set");
         }
-        return valid;
+        return validationErrors;
     }
 }

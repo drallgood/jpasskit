@@ -17,10 +17,15 @@
 package de.brendamour.jpasskit;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class PKBarcode {
+import de.brendamour.jpasskit.enums.PKBarcodeFormat;
+
+public class PKBarcode implements IPKValidateable {
 
     private PKBarcodeFormat format;
     private String altText;
@@ -59,17 +64,22 @@ public class PKBarcode {
         this.altText = altText;
     }
 
-    public boolean isValid() {
-        boolean valid = true;
-
-        if (format == null || message == null || messageEncoding == null) {
-            valid = false;
-        }
-        return valid;
-    }
-
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+    public boolean isValid() {
+        return getValidationErrors().isEmpty();
+    }
+
+    public List<String> getValidationErrors() {
+        List<String> validationErrors = new ArrayList<String>();
+
+        if (format == null || StringUtils.isEmpty(message) || messageEncoding == null) {
+            validationErrors.add("Not all required Fields are set. Format: " + format + " Message: " + message + " MessageEncoding: "
+                    + messageEncoding);
+        }
+        return validationErrors;
     }
 }

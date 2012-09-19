@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package de.brendamour.jpasskit;
+package de.brendamour.jpasskit.enums;
 
-public enum PKTransitType {
-    PKTransitTypeAir, PKTransitTypeBoat, PKTransitTypeBus, PKTransitTypeGeneric, PKTransitTypeTrain;
+public enum PKDateStyle {
+    PKDateStyleNone, PKDateStyleShort, PKDateStyleMedium, PKDateStyleLong, PKDateStyleFull;
 }

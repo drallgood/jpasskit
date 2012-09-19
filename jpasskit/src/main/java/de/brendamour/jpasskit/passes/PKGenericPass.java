@@ -16,15 +16,17 @@
 
 package de.brendamour.jpasskit.passes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.google.common.collect.Lists;
 
+import de.brendamour.jpasskit.IPKValidateable;
 import de.brendamour.jpasskit.PKField;
 
-public class PKGenericPass {
+public class PKGenericPass implements IPKValidateable {
 
     protected List<PKField> headerFields;
     protected List<PKField> primaryFields;
@@ -73,7 +75,12 @@ public class PKGenericPass {
     }
 
     public boolean isValid() {
-        boolean valid = true;
+        return getValidationErrors().isEmpty();
+    }
+
+    public List<String> getValidationErrors() {
+
+        List<String> validationErrors = new ArrayList<String>();
 
         List<List<PKField>> lists = Lists.newArrayList();
         lists.add(primaryFields);
@@ -85,13 +92,13 @@ public class PKGenericPass {
             if (list != null) {
                 for (PKField pkField : list) {
                     if (!pkField.isValid()) {
-                        return false;
+                        validationErrors.addAll(pkField.getValidationErrors());
                     }
                 }
             }
         }
 
-        return valid;
+        return validationErrors;
     }
 
     @Override

@@ -16,35 +16,38 @@
 
 package de.brendamour.jpasskit;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class PKLocation {
-    private float latitude;
-    private float longitude;
-    private float altitude;
+public class PKLocation implements IPKValidateable {
+    private double latitude;
+    private double longitude;
+    private double altitude;
     private String relevantText;
 
-    public float getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(final float latitude) {
+    public void setLatitude(final double latitude) {
         this.latitude = latitude;
     }
 
-    public float getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(final float longitude) {
+    public void setLongitude(final double longitude) {
         this.longitude = longitude;
     }
 
-    public float getAltitude() {
+    public double getAltitude() {
         return altitude;
     }
 
-    public void setAltitude(final float altitude) {
+    public void setAltitude(final double altitude) {
         this.altitude = altitude;
     }
 
@@ -57,11 +60,16 @@ public class PKLocation {
     }
 
     public boolean isValid() {
-        boolean valid = true;
+        return getValidationErrors().isEmpty();
+    }
 
-        // nothing to check here?
+    public List<String> getValidationErrors() {
 
-        return valid;
+        List<String> validationErrors = new ArrayList<String>();
+        if (longitude == 0 || latitude == 0) {
+            validationErrors.add("Not all required Fields are set: longitude, latitude");
+        }
+        return validationErrors;
     }
 
     @Override

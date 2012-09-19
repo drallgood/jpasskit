@@ -17,19 +17,26 @@
 package de.brendamour.jpasskit;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class PKField {
+import de.brendamour.jpasskit.enums.PKDateStyle;
+import de.brendamour.jpasskit.enums.PKNumberStyle;
+import de.brendamour.jpasskit.enums.PKTextAlignment;
+
+public class PKField implements IPKValidateable {
     private String key;
     private String label;
     private Object value;
     private String changeMessage;
-    private String textAlignment;
+    private PKTextAlignment textAlignment;
 
     private String currencyCode;
-    private String numberStyle;
+    private PKNumberStyle numberStyle;
 
     private PKDateStyle dateStyle;
     private PKDateStyle timeStyle;
@@ -67,11 +74,11 @@ public class PKField {
         this.changeMessage = changeMessage;
     }
 
-    public String getTextAlignment() {
+    public PKTextAlignment getTextAlignment() {
         return textAlignment;
     }
 
-    public void setTextAlignment(final String textAlignment) {
+    public void setTextAlignment(final PKTextAlignment textAlignment) {
         this.textAlignment = textAlignment;
     }
 
@@ -83,11 +90,11 @@ public class PKField {
         this.currencyCode = currencyCode;
     }
 
-    public String getNumberStyle() {
+    public PKNumberStyle getNumberStyle() {
         return numberStyle;
     }
 
-    public void setNumberStyle(final String numberStyle) {
+    public void setNumberStyle(final PKNumberStyle numberStyle) {
         this.numberStyle = numberStyle;
     }
 
@@ -116,22 +123,25 @@ public class PKField {
     }
 
     public boolean isValid() {
-        boolean valid = true;
+        return getValidationErrors().isEmpty();
+    }
 
-        if (value == null || key == null) {
-            valid = false;
+    public List<String> getValidationErrors() {
+
+        List<String> validationErrors = new ArrayList<String>();
+        if (value == null || StringUtils.isEmpty(key)) {
+            validationErrors.add("Not all required Fields are set. Key: " + key + " Value:" + value);
         } else if (!(value instanceof String || value instanceof Integer || value instanceof Float || value instanceof Long
                 || value instanceof Double || value instanceof Date || value instanceof BigDecimal)) {
-            valid = false;
+            validationErrors.add("Invalid value type: String, Integer, Float, Long, Double, java.util.Date, BigDecimal");
         } else if (currencyCode != null && numberStyle != null) {
-            valid = false;
-        } else if (currencyCode != null && numberStyle != null) {
-            valid = false;
-        } else if (currencyCode != null && numberStyle != null) {
-            valid = false;
+            validationErrors.add("CurrencyCode and numberStyle are both set");
+        } else if ((currencyCode != null || numberStyle != null) && (dateStyle != null || timeStyle != null)) {
+            validationErrors.add("Can't be number/currency and date at the same time");
+        } else if (changeMessage != null && !changeMessage.contains("%@")) {
+            validationErrors.add("ChangeMessage needs to contain %@ placeholder");
         }
-
-        return valid;
+        return validationErrors;
     }
 
     @Override
