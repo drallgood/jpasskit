@@ -3,8 +3,6 @@ package de.brendamour.jpasskit.signing;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 
-import org.bouncycastle.jce.provider.X509CertificateObject;
-
 public class PKSigningInformation {
 
     private X509Certificate signingCert;
@@ -24,7 +22,7 @@ public class PKSigningInformation {
         return signingCert;
     }
 
-    public void setSigningCert(final X509CertificateObject signingCert) {
+    public void setSigningCert(final X509Certificate signingCert) {
         this.signingCert = signingCert;
     }
 
@@ -40,7 +38,7 @@ public class PKSigningInformation {
         return appleWWDRCACert;
     }
 
-    public void setAppleWWDRCACert(final X509CertificateObject appleWWDRCACert) {
+    public void setAppleWWDRCACert(final X509Certificate appleWWDRCACert) {
         this.appleWWDRCACert = appleWWDRCACert;
     }
 

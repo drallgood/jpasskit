@@ -29,7 +29,7 @@ public class PKSigningUtilTest {
     private String keyStorePath = "/Users/patrice/Documents/bitzeche/Projects/passkit/Certificates.p12";
     private String keyStorePassword = "cert";
 
-     @Test
+    // @Test
     public void execute() throws IOException, Exception {
 
         Security.addProvider(new BouncyCastleProvider());
