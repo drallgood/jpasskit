@@ -47,6 +47,8 @@ Repositories:
 
 Using jPasskit is pretty straight forward:
 
+### Creating a Pass
+
 The class PKPass is the toplevel class. It represents the pass.json file. Everything else can just be added like one would add it on the JSON side.
 
 Example:
@@ -87,5 +89,20 @@ Example:
 In Addition to the pass, there needs to be a template directory that contains the other resources (like images and translations). The content of this directory is defined in the PassKit Developer Documentation.
 <img src="https://github.com/bitzeche/jpasskit/blob/master/passFolder.png">
 
-Using the PKSigningUtil method createSignedAndZippedPkPassArchive (which takes the PKPass, the template directory, the certificate/private key and the Apple intermediate certificate as parameters), you can create the finished Pass archive.
+### Signing and Zipping a Pass
 
+The PKSigningUtil contains all necessary methods to:
+
+1. Load the Pass Certificate
+2. Load the Apple Worldwide Developer Relations CA (AppleWWDRCA)
+3. Create the pass.json file
+4. Hash all files in the Pass directory and create the Manifest file (manifest.json)
+5. Sign the Manifest file
+6. ZIP the finished Pass directory
+
+
+Example to do it all in one step: 
+
+	PKSigningInformation pkSigningInformation = PKSigningUtil.loadSigningInformationFromPKCS12FileAndIntermediateCertificateFile(
+               keyStorePath, keyStorePassword, appleWWDRCA);
+	PKSigningUtil.createSignedAndZippedPkPassArchive(pass, pathToTemplateDirectory, pkSigningInformation);
