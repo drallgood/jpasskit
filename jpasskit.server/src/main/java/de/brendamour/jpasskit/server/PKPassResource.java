@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.brendamour.jpasskit.PKPass;
+import de.brendamour.jpasskit.signing.PKSigningInformation;
 import de.brendamour.jpasskit.signing.PKSigningUtil;
 
 public abstract class PKPassResource extends ServerResource {
@@ -70,9 +71,11 @@ public abstract class PKPassResource extends ServerResource {
 
 			if (getPKPassResponse != null && getPKPassResponse.getPass().isValid()) {
 				latestPassVersion = getPKPassResponse.getPass();
+				PKSigningInformation pkSigningInformation = new PKSigningInformation(getSigningCert(), getSigningPrivateKey(),
+						getAppleWWDRCACert());
 
 				byte[] signedAndZippedPkPassArchive = PKSigningUtil.createSignedAndZippedPkPassArchive(latestPassVersion, pathToPassTemplate,
-						getSigningCert(), getSigningPrivateKey(), getAppleWWDRCACert());
+						pkSigningInformation);
 				String responseJSONString = jsonObjectMapper.writeValueAsString(latestPassVersion);
 				LOGGER.debug(responseJSONString);
 

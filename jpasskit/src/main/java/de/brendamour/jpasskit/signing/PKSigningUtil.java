@@ -21,10 +21,20 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.Key;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.Security;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +43,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.CMSProcessableFile;
 import org.bouncycastle.cms.CMSSignedData;
@@ -43,6 +54,8 @@ import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.util.Store;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
@@ -55,54 +68,49 @@ import de.brendamour.jpasskit.PKPass;
 
 public final class PKSigningUtil {
 
+    private static final int ZIP_BUFFER_SIZE = 8192;
+    private static final String MANIFEST_JSON_FILE_NAME = "manifest.json";
+    private static final String PASS_JSON_FILE_NAME = "pass.json";
+
     private PKSigningUtil() {
     }
 
     public static byte[] createSignedAndZippedPkPassArchive(final PKPass pass, final String pathToTemplateDirectory,
-            final X509Certificate signCertificate, final PrivateKey privateKey, final X509Certificate intermediateCertificate)
-            throws Exception {
+            final PKSigningInformation signingInformation) throws Exception {
+
         File tempPassDir = Files.createTempDir();
         FileUtils.copyDirectory(new File(pathToTemplateDirectory), tempPassDir);
-        File passJSONFile = new File(tempPassDir.getAbsolutePath() + File.separator + "pass.json");
-        System.out.println(tempPassDir.getAbsolutePath());
-        ObjectMapper jsonObjectMapper = new ObjectMapper();
-        jsonObjectMapper.setSerializationInclusion(Inclusion.NON_NULL);
-        jsonObjectMapper.writeValue(passJSONFile, pass);
 
-        Map<String, String> fileWithHashMap = new HashMap<String, String>();
+        ObjectMapper jsonObjectMapper = createPassJSONFile(pass, tempPassDir);
 
-        HashFunction hashFunction = Hashing.sha1();
-        File[] filesInTempDir = tempPassDir.listFiles();
-        hashFilesInDirectory(filesInTempDir, fileWithHashMap, tempPassDir.getAbsolutePath() + File.separator, hashFunction);
-        File manifestJSONFile = new File(tempPassDir.getAbsolutePath() + File.separator + "manifest.json");
-        jsonObjectMapper.writeValue(manifestJSONFile, fileWithHashMap);
+        File manifestJSONFile = createManifestJSONFile(tempPassDir, jsonObjectMapper);
 
-        signManifestFile(tempPassDir, manifestJSONFile, signCertificate, privateKey, intermediateCertificate);
+        signManifestFile(tempPassDir, manifestJSONFile, signingInformation);
 
-        ByteArrayOutputStream byteArrayOutputStreamForZippedPass = new ByteArrayOutputStream();
-        ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStreamForZippedPass);
-        zip(tempPassDir, tempPassDir, zipOutputStream);
-        zipOutputStream.close();
+        byte[] zippedPass = createZippedPassAndReturnAsByteArray(tempPassDir);
 
         FileUtils.deleteDirectory(tempPassDir);
-        return byteArrayOutputStreamForZippedPass.toByteArray();
+        return zippedPass;
     }
 
     public static void signManifestFile(final File temporaryPassDirectory, final File manifestJSONFile,
-            final X509Certificate signCertificate, final PrivateKey privateKey, final X509Certificate intermediateCertificate)
-            throws Exception {
+            final PKSigningInformation signingInformation) throws Exception {
 
-        Security.addProvider(new BouncyCastleProvider());
+        if (temporaryPassDirectory == null || manifestJSONFile == null || signingInformation == null || !signingInformation.isValid()) {
+            throw new IllegalArgumentException("Null params are not supported");
+        }
+        addBCProvider();
 
         CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
-        ContentSigner sha1Signer = new JcaContentSignerBuilder("SHA1withRSA").setProvider("BC").build(privateKey);
+        ContentSigner sha1Signer = new JcaContentSignerBuilder("SHA1withRSA").setProvider(BouncyCastleProvider.PROVIDER_NAME).build(
+                signingInformation.getSigningPrivateKey());
 
-        generator.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(new JcaDigestCalculatorProviderBuilder().setProvider("BC")
-                .build()).build(sha1Signer, signCertificate));
+        generator.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(new JcaDigestCalculatorProviderBuilder().setProvider(
+                BouncyCastleProvider.PROVIDER_NAME).build()).build(sha1Signer, signingInformation.getSigningCert()));
 
         List<X509Certificate> certList = new ArrayList<X509Certificate>();
-        certList.add(intermediateCertificate);
-        certList.add(signCertificate);
+        certList.add(signingInformation.getAppleWWDRCACert());
+        certList.add(signingInformation.getSigningCert());
 
         Store certs = new JcaCertStore(certList);
 
@@ -115,7 +123,95 @@ public final class PKSigningUtil {
         FileOutputStream signatureOutputStream = new FileOutputStream(signatureFile);
         signatureOutputStream.write(signedDataBytes);
         signatureOutputStream.close();
+    }
 
+    public static PKSigningInformation loadSigningInformationFromPKCS12FileAndIntermediateCertificateFile(final String pkcs12KeyStoreFilePath,
+            final String keyStorePassword, final String appleWWDRCAFilePath) throws IOException, NoSuchAlgorithmException, CertificateException,
+            KeyStoreException, NoSuchProviderException, UnrecoverableKeyException {
+        addBCProvider();
+
+        KeyStore pkcs12KeyStore = loadPKCS12File(pkcs12KeyStoreFilePath, keyStorePassword);
+        Enumeration<String> aliases = pkcs12KeyStore.aliases();
+
+        PrivateKey signingPrivateKey = null;
+        X509Certificate signingCert = null;
+
+        while (aliases.hasMoreElements()) {
+            String aliasName = aliases.nextElement();
+
+            Key key = pkcs12KeyStore.getKey(aliasName, keyStorePassword.toCharArray());
+            if (key instanceof PrivateKey) {
+                signingPrivateKey = (PrivateKey) key;
+                Object cert = pkcs12KeyStore.getCertificate(aliasName);
+                if (cert instanceof X509Certificate) {
+                    signingCert = (X509Certificate) cert;
+                    break;
+                }
+            }
+        }
+
+        X509Certificate appleWWDRCACert = loadDERCertificate(appleWWDRCAFilePath);
+        if (signingCert == null || signingPrivateKey == null || appleWWDRCACert == null) {
+            throw new IOException("Couldn#t load all the neccessary certificates/keys");
+        }
+
+        return new PKSigningInformation(signingCert, signingPrivateKey, appleWWDRCACert);
+    }
+
+    public static KeyStore loadPKCS12File(final String filePath, final String password) throws IOException, NoSuchAlgorithmException,
+            CertificateException, KeyStoreException, NoSuchProviderException {
+        addBCProvider();
+        KeyStore keystore = KeyStore.getInstance("PKCS12", "BC");
+
+        keystore.load(new FileInputStream(filePath), password.toCharArray());
+        return keystore;
+    }
+
+    public static X509Certificate loadDERCertificate(final String filePath) throws IOException, CertificateException {
+        FileInputStream certificateFileInputStream = null;
+        try {
+            certificateFileInputStream = new FileInputStream(filePath);
+            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509", BouncyCastleProvider.PROVIDER_NAME);
+            Certificate certificate = certificateFactory.generateCertificate(certificateFileInputStream);
+            if (certificate instanceof X509Certificate) {
+                return (X509Certificate) certificate;
+            }
+            throw new IOException("The key from '" + filePath + "' could not be decrypted");
+        } catch (IOException ex) {
+            throw new IOException("The key from '" + filePath + "' could not be decrypted", ex);
+        } catch (NoSuchProviderException ex) {
+            throw new IOException("The key from '" + filePath + "' could not be decrypted", ex);
+        } finally {
+            IOUtils.closeQuietly(certificateFileInputStream);
+        }
+    }
+
+    private static void addBCProvider() {
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
+
+    }
+
+    private static ObjectMapper createPassJSONFile(final PKPass pass, final File tempPassDir) throws IOException, JsonGenerationException,
+            JsonMappingException {
+        File passJSONFile = new File(tempPassDir.getAbsolutePath() + File.separator + PASS_JSON_FILE_NAME);
+        ObjectMapper jsonObjectMapper = new ObjectMapper();
+        jsonObjectMapper.setSerializationInclusion(Inclusion.NON_NULL);
+        jsonObjectMapper.writeValue(passJSONFile, pass);
+        return jsonObjectMapper;
+    }
+
+    private static File createManifestJSONFile(final File tempPassDir, final ObjectMapper jsonObjectMapper) throws IOException,
+            JsonGenerationException, JsonMappingException {
+        Map<String, String> fileWithHashMap = new HashMap<String, String>();
+
+        HashFunction hashFunction = Hashing.sha1();
+        File[] filesInTempDir = tempPassDir.listFiles();
+        hashFilesInDirectory(filesInTempDir, fileWithHashMap, tempPassDir.getAbsolutePath() + File.separator, hashFunction);
+        File manifestJSONFile = new File(tempPassDir.getAbsolutePath() + File.separator + MANIFEST_JSON_FILE_NAME);
+        jsonObjectMapper.writeValue(manifestJSONFile, fileWithHashMap);
+        return manifestJSONFile;
     }
 
     private static void hashFilesInDirectory(final File[] files, final Map<String, String> fileWithHashMap, final String workingDirectory,
@@ -131,9 +227,17 @@ public final class PKSigningUtil {
         }
     }
 
+    private static byte[] createZippedPassAndReturnAsByteArray(final File tempPassDir) throws IOException {
+        ByteArrayOutputStream byteArrayOutputStreamForZippedPass = new ByteArrayOutputStream();
+        ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStreamForZippedPass);
+        zip(tempPassDir, tempPassDir, zipOutputStream);
+        zipOutputStream.close();
+        return byteArrayOutputStreamForZippedPass.toByteArray();
+    }
+
     private static final void zip(final File directory, final File base, final ZipOutputStream zipOutputStream) throws IOException {
         File[] files = directory.listFiles();
-        byte[] buffer = new byte[8192];
+        byte[] buffer = new byte[ZIP_BUFFER_SIZE];
         int read = 0;
         for (int i = 0, n = files.length; i < n; i++) {
             if (files[i].isDirectory()) {
@@ -149,5 +253,4 @@ public final class PKSigningUtil {
             }
         }
     }
-
 }
