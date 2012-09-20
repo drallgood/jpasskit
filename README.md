@@ -105,4 +105,5 @@ Example to do it all in one step:
 
 	PKSigningInformation pkSigningInformation = PKSigningUtil.loadSigningInformationFromPKCS12FileAndIntermediateCertificateFile(
                keyStorePath, keyStorePassword, appleWWDRCA);
-	PKSigningUtil.createSignedAndZippedPkPassArchive(pass, pathToTemplateDirectory, pkSigningInformation);
+	byte[] passZipAsByteArray = PKSigningUtil.createSignedAndZippedPkPassArchive(pass, pathToTemplateDirectory, pkSigningInformation);
+	...
