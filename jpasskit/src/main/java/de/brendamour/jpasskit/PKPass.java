@@ -337,9 +337,9 @@ public class PKPass implements IPKValidateable {
             String rgbValues = colorString.replace("rgb(", "").replace(")", "");
             String[] rgbValuesArray = rgbValues.split(",");
             if (rgbValuesArray.length == 3) {
-                int r = Integer.parseInt(rgbValuesArray[0]);
-                int g = Integer.parseInt(rgbValuesArray[1]);
-                int b = Integer.parseInt(rgbValuesArray[2]);
+                int r = Integer.parseInt(rgbValuesArray[0].trim());
+                int g = Integer.parseInt(rgbValuesArray[1].trim());
+                int b = Integer.parseInt(rgbValuesArray[2].trim());
                 color = new Color(r, g, b);
             }
         }
