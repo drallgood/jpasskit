@@ -244,7 +244,7 @@ public final class PKSigningUtil {
                 zip(files[i], base, zipOutputStream);
             } else {
                 FileInputStream fileInputStream = new FileInputStream(files[i]);
-                ZipEntry entry = new ZipEntry(files[i].getPath().substring(base.getPath().length() + 1));
+                ZipEntry entry = new ZipEntry(getRelativePathOfZipEntry(files[i], base));
                 zipOutputStream.putNextEntry(entry);
                 while (-1 != (read = fileInputStream.read(buffer))) {
                     zipOutputStream.write(buffer, 0, read);
@@ -252,5 +252,14 @@ public final class PKSigningUtil {
                 fileInputStream.close();
             }
         }
+    }
+
+    private static String getRelativePathOfZipEntry(final File fileToZip, final File base) {
+        String relativePathOfFile = fileToZip.getPath().substring(base.getPath().length() + 1);
+        if (File.separatorChar != '/') {
+            relativePathOfFile = relativePathOfFile.replace(File.separatorChar, '/');
+        }
+
+        return relativePathOfFile;
     }
 }
