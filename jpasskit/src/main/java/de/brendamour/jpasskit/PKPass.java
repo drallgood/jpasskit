@@ -293,11 +293,11 @@ public class PKPass implements IPKValidateable {
         this.suppressStripShine = suppressStripShine;
     }
 
-    public boolean isValid() {
-        return getValidationErrors().isEmpty();
+    public boolean checkValidity() {
+        return returnValidationErrors().isEmpty();
     }
 
-    public List<String> getValidationErrors() {
+    public List<String> returnValidationErrors() {
         List<String> validationErrors = new ArrayList<String>();
 
         if (StringUtils.isEmpty(serialNumber) || StringUtils.isEmpty(passTypeIdentifier) || StringUtils.isEmpty(teamIdentifier)
@@ -312,8 +312,8 @@ public class PKPass implements IPKValidateable {
         if (authenticationToken != null && authenticationToken.length() < EXPECTED_AUTHTOKEN_LENGTH) {
             validationErrors.add("The authenticationToken needs to be at least " + EXPECTED_AUTHTOKEN_LENGTH + " long");
         }
-        if (!passThatWasSet.isValid()) {
-            validationErrors.addAll(passThatWasSet.getValidationErrors());
+        if (!passThatWasSet.checkValidity()) {
+            validationErrors.addAll(passThatWasSet.returnValidationErrors());
         }
 
         return validationErrors;

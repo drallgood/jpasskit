@@ -67,10 +67,10 @@ public class PKPassTest {
 
         pkPass.setGeneric(subPass);
 
-        when(subPass.isValid()).thenReturn(false);
-        when(subPass.getValidationErrors()).thenReturn(subArrayListWithErrors);
+        when(subPass.checkValidity()).thenReturn(false);
+        when(subPass.returnValidationErrors()).thenReturn(subArrayListWithErrors);
 
-        List<String> validationErrors = pkPass.getValidationErrors();
+        List<String> validationErrors = pkPass.returnValidationErrors();
 
         Assert.assertTrue(validationErrors.size() > 0);
         Assert.assertTrue(validationErrors.contains(someValidationMessage));

@@ -19,7 +19,7 @@ package de.brendamour.jpasskit;
 import java.util.List;
 
 public interface IPKValidateable {
-    public boolean isValid();
+    public boolean checkValidity();
 
-    public List<String> getValidationErrors();
+    public List<String> returnValidationErrors();
 }

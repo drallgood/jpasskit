@@ -69,11 +69,11 @@ public class PKBarcode implements IPKValidateable {
         return ToStringBuilder.reflectionToString(this);
     }
 
-    public boolean isValid() {
-        return getValidationErrors().isEmpty();
+    public boolean checkValidity() {
+        return returnValidationErrors().isEmpty();
     }
 
-    public List<String> getValidationErrors() {
+    public List<String> returnValidationErrors() {
         List<String> validationErrors = new ArrayList<String>();
 
         if (format == null || StringUtils.isEmpty(message) || messageEncoding == null) {

@@ -122,11 +122,11 @@ public class PKField implements IPKValidateable {
         this.isRelative = isRelative;
     }
 
-    public boolean isValid() {
-        return getValidationErrors().isEmpty();
+    public boolean checkValidity() {
+        return returnValidationErrors().isEmpty();
     }
 
-    public List<String> getValidationErrors() {
+    public List<String> returnValidationErrors() {
 
         List<String> validationErrors = new ArrayList<String>();
         if (value == null || StringUtils.isEmpty(key)) {

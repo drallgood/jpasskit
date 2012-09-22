@@ -39,7 +39,7 @@ public class PKLocationTest {
         Assert.assertEquals(pkLocation.getLatitude(), LATITUDE);
         Assert.assertEquals(pkLocation.getLongitude(), LONGITUDE);
         Assert.assertEquals(pkLocation.getRelevantText(), RELEVANT_TEXT);
-        Assert.assertTrue(pkLocation.isValid());
+        Assert.assertTrue(pkLocation.checkValidity());
 
     }
 
@@ -47,7 +47,7 @@ public class PKLocationTest {
     public void test_getterSetter_NoLongitude() {
         pkLocation.setLongitude(0);
 
-        Assert.assertFalse(pkLocation.isValid());
+        Assert.assertFalse(pkLocation.checkValidity());
 
     }
 
@@ -55,7 +55,7 @@ public class PKLocationTest {
     public void test_getterSetter_NoLatitude() {
         pkLocation.setLatitude(0);
 
-        Assert.assertFalse(pkLocation.isValid());
+        Assert.assertFalse(pkLocation.checkValidity());
     }
 
     public void fillLocation() {
