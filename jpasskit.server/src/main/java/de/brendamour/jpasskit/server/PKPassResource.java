@@ -69,7 +69,7 @@ public abstract class PKPassResource extends ServerResource {
 		try {
 			GetPKPassResponse getPKPassResponse = handleGetLatestVersionOfPass(passTypeIdentifier, serialNumber, authString, modifiedSince);
 
-			if (getPKPassResponse != null && getPKPassResponse.getPass().checkValidity()) {
+			if (getPKPassResponse != null && getPKPassResponse.getPass().isValid()) {
 				latestPassVersion = getPKPassResponse.getPass();
 				PKSigningInformation pkSigningInformation = new PKSigningInformation(getSigningCert(), getSigningPrivateKey(),
 						getAppleWWDRCACert());

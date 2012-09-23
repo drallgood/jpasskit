@@ -16,12 +16,18 @@
 
 package de.brendamour.jpasskit.signing;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.Security;
 
+import org.apache.commons.io.IOUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.testng.annotations.Test;
+
+import de.brendamour.jpasskit.PKPass;
 
 public class PKSigningUtilTest {
 
@@ -29,16 +35,24 @@ public class PKSigningUtilTest {
     private String keyStorePath = "/Users/patrice/Documents/bitzeche/Projects/passkit/Certificates.p12";
     private String keyStorePassword = "cert";
 
-    // @Test
+    @Test
     public void execute() throws IOException, Exception {
 
         Security.addProvider(new BouncyCastleProvider());
         File temporaryPassDir = new File("/Users/patrice/Documents/bitzeche/Projects/passkit/");
         File manifestJSONFile = new File("/Users/patrice/Downloads/passbook/Passes/BoardingPass.zip Folder/manifest.json");
 
+        ObjectMapper jsonObjectMapper = new ObjectMapper();
+        PKPass pass = jsonObjectMapper.readValue(new File("/Users/patrice/Downloads/passbook/Passes/bitzecheCoupons.raw/pass2.json"),
+                PKPass.class);
+
         PKSigningInformation pkSigningInformation = PKSigningUtil.loadSigningInformationFromPKCS12FileAndIntermediateCertificateFile(
                 keyStorePath, keyStorePassword, appleWWDRCA);
-        PKSigningUtil.signManifestFile(temporaryPassDir, manifestJSONFile, pkSigningInformation);
+        // PKSigningUtil.signManifestFile(temporaryPassDir, manifestJSONFile, pkSigningInformation);
+        byte[] signedAndZippedPkPassArchive = PKSigningUtil.createSignedAndZippedPkPassArchive(pass,
+                "/Users/patrice/Downloads/passbook/Passes/bitzecheCoupons.raw", pkSigningInformation);
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(signedAndZippedPkPassArchive);
+        IOUtils.copy(inputStream, new FileOutputStream("/Users/patrice/Downloads/pass.zip"));
     }
 
 }

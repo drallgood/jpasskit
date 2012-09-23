@@ -57,7 +57,12 @@ import org.bouncycastle.util.Store;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.ObjectWriter;
+import org.codehaus.jackson.map.annotate.JsonFilter;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
+import org.codehaus.jackson.map.ser.FilterProvider;
+import org.codehaus.jackson.map.ser.impl.SimpleBeanPropertyFilter;
+import org.codehaus.jackson.map.ser.impl.SimpleFilterProvider;
 
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
@@ -196,9 +201,16 @@ public final class PKSigningUtil {
     private static ObjectMapper createPassJSONFile(final PKPass pass, final File tempPassDir) throws IOException, JsonGenerationException,
             JsonMappingException {
         File passJSONFile = new File(tempPassDir.getAbsolutePath() + File.separator + PASS_JSON_FILE_NAME);
+
         ObjectMapper jsonObjectMapper = new ObjectMapper();
+
+        FilterProvider filters = new SimpleFilterProvider().addFilter("pkPassFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid",
+                "validationErrors", "foregroundColorAsObject", "backgroundColorAsObject", "labelColorAsObject"));
         jsonObjectMapper.setSerializationInclusion(Inclusion.NON_NULL);
-        jsonObjectMapper.writeValue(passJSONFile, pass);
+        jsonObjectMapper.getSerializationConfig().addMixInAnnotations(Object.class, PropertyFilterMixIn.class);
+
+        ObjectWriter objectWriter = jsonObjectMapper.writer(filters);
+        objectWriter.writeValue(passJSONFile, pass);
         return jsonObjectMapper;
     }
 
@@ -261,5 +273,10 @@ public final class PKSigningUtil {
         }
 
         return relativePathOfFile;
+    }
+
+    @JsonFilter("pkPassFilter")
+    class PropertyFilterMixIn {
+        // just a dummy
     }
 }

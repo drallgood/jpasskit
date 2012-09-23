@@ -74,11 +74,11 @@ public class PKGenericPass implements IPKValidateable {
         this.headerFields = headerFields;
     }
 
-    public boolean checkValidity() {
-        return returnValidationErrors().isEmpty();
+    public boolean isValid() {
+        return getValidationErrors().isEmpty();
     }
 
-    public List<String> returnValidationErrors() {
+    public List<String> getValidationErrors() {
 
         List<String> validationErrors = new ArrayList<String>();
 
@@ -91,8 +91,8 @@ public class PKGenericPass implements IPKValidateable {
         for (List<PKField> list : lists) {
             if (list != null) {
                 for (PKField pkField : list) {
-                    if (!pkField.checkValidity()) {
-                        validationErrors.addAll(pkField.returnValidationErrors());
+                    if (!pkField.isValid()) {
+                        validationErrors.addAll(pkField.getValidationErrors());
                     }
                 }
             }

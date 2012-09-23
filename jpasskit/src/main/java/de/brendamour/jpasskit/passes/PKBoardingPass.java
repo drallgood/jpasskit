@@ -31,13 +31,13 @@ public class PKBoardingPass extends PKGenericPass {
         this.transitType = transitType;
     }
 
-    public boolean checkValidity() {
-        return returnValidationErrors().isEmpty();
+    public boolean isValid() {
+        return getValidationErrors().isEmpty();
     }
 
     @Override
-    public List<String> returnValidationErrors() {
-        List<String> validationErrors = super.returnValidationErrors();
+    public List<String> getValidationErrors() {
+        List<String> validationErrors = super.getValidationErrors();
         if (transitType == null) {
             validationErrors.add("TransitType is not set");
         }

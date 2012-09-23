@@ -49,7 +49,7 @@ public class PKFieldTest {
         Assert.assertEquals(pkField.getValue(), VALUE_TEXT);
         Assert.assertEquals(pkField.getChangeMessage(), CHANGEMESSAGE);
         Assert.assertEquals(pkField.getLabel(), LABEL);
-        Assert.assertTrue(pkField.checkValidity());
+        Assert.assertTrue(pkField.isValid());
 
     }
 
@@ -58,7 +58,7 @@ public class PKFieldTest {
         fillFieldsText();
         pkField.setKey(null);
 
-        Assert.assertFalse(pkField.checkValidity());
+        Assert.assertFalse(pkField.isValid());
 
     }
 
@@ -67,7 +67,7 @@ public class PKFieldTest {
         fillFieldsText();
         pkField.setKey("");
 
-        Assert.assertFalse(pkField.checkValidity());
+        Assert.assertFalse(pkField.isValid());
 
     }
 
@@ -76,7 +76,7 @@ public class PKFieldTest {
         fillFieldsText();
         pkField.setValue(null);
 
-        Assert.assertFalse(pkField.checkValidity());
+        Assert.assertFalse(pkField.isValid());
 
     }
 
@@ -85,7 +85,7 @@ public class PKFieldTest {
         fillFieldsText();
         pkField.setValue(new PKField());
 
-        Assert.assertFalse(pkField.checkValidity());
+        Assert.assertFalse(pkField.isValid());
 
     }
 
@@ -94,7 +94,7 @@ public class PKFieldTest {
         fillFieldsCurrency();
 
         Assert.assertEquals(pkField.getValue(), VALUE_CURRENCY);
-        Assert.assertTrue(pkField.checkValidity());
+        Assert.assertTrue(pkField.isValid());
 
     }
 
@@ -103,7 +103,7 @@ public class PKFieldTest {
         fillFieldsCurrency();
         pkField.setNumberStyle(PKNumberStyle.PKNumberStyleDecimal);
 
-        Assert.assertFalse(pkField.checkValidity());
+        Assert.assertFalse(pkField.isValid());
 
     }
 
@@ -112,7 +112,7 @@ public class PKFieldTest {
         fillFieldsCurrency();
         pkField.setDateStyle(PKDateStyle.PKDateStyleFull);
 
-        Assert.assertFalse(pkField.checkValidity());
+        Assert.assertFalse(pkField.isValid());
 
     }
 
@@ -121,7 +121,7 @@ public class PKFieldTest {
         fillFieldsCurrency();
         pkField.setTimeStyle(PKDateStyle.PKDateStyleFull);
 
-        Assert.assertFalse(pkField.checkValidity());
+        Assert.assertFalse(pkField.isValid());
 
     }
 
@@ -132,7 +132,7 @@ public class PKFieldTest {
         pkField.setNumberStyle(PKNumberStyle.PKNumberStyleDecimal);
         pkField.setDateStyle(PKDateStyle.PKDateStyleFull);
 
-        Assert.assertFalse(pkField.checkValidity());
+        Assert.assertFalse(pkField.isValid());
 
     }
 
@@ -142,7 +142,7 @@ public class PKFieldTest {
 
         pkField.setChangeMessage("Change");
 
-        Assert.assertFalse(pkField.checkValidity());
+        Assert.assertFalse(pkField.isValid());
 
     }
 

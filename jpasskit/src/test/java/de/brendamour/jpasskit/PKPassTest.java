@@ -22,6 +22,12 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.ObjectWriter;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
+import org.codehaus.jackson.map.ser.FilterProvider;
+import org.codehaus.jackson.map.ser.impl.SimpleBeanPropertyFilter;
+import org.codehaus.jackson.map.ser.impl.SimpleFilterProvider;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -67,14 +73,13 @@ public class PKPassTest {
 
         pkPass.setGeneric(subPass);
 
-        when(subPass.checkValidity()).thenReturn(false);
-        when(subPass.returnValidationErrors()).thenReturn(subArrayListWithErrors);
+        when(subPass.isValid()).thenReturn(false);
+        when(subPass.getValidationErrors()).thenReturn(subArrayListWithErrors);
 
-        List<String> validationErrors = pkPass.returnValidationErrors();
+        List<String> validationErrors = pkPass.getValidationErrors();
 
         Assert.assertTrue(validationErrors.size() > 0);
         Assert.assertTrue(validationErrors.contains(someValidationMessage));
-        
 
     }
 }

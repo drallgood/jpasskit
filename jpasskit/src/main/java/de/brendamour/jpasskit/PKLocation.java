@@ -59,11 +59,11 @@ public class PKLocation implements IPKValidateable {
         this.relevantText = relevantText;
     }
 
-    public boolean checkValidity() {
-        return returnValidationErrors().isEmpty();
+    public boolean isValid() {
+        return getValidationErrors().isEmpty();
     }
 
-    public List<String> returnValidationErrors() {
+    public List<String> getValidationErrors() {
 
         List<String> validationErrors = new ArrayList<String>();
         if (longitude == 0 || latitude == 0) {

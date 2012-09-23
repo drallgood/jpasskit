@@ -45,7 +45,7 @@ public class PKBarcodeTest {
         Assert.assertEquals(pkBarcode.getAltText(), ALT_TEXT);
         Assert.assertEquals(pkBarcode.getMessageEncoding(), CHARSET);
         Assert.assertEquals(pkBarcode.getFormat(), PKBARCODEFORMAT);
-        Assert.assertTrue(pkBarcode.checkValidity());
+        Assert.assertTrue(pkBarcode.isValid());
     }
 
     private void fillBarcode() {
@@ -59,34 +59,34 @@ public class PKBarcodeTest {
     public void test_noFormat() {
         pkBarcode.setFormat(null);
 
-        Assert.assertFalse(pkBarcode.checkValidity());
+        Assert.assertFalse(pkBarcode.isValid());
     }
 
     @Test
     public void test_noMessage() {
         pkBarcode.setMessage(null);
 
-        Assert.assertFalse(pkBarcode.checkValidity());
+        Assert.assertFalse(pkBarcode.isValid());
     }
 
     @Test
     public void test_emptyMessage() {
         pkBarcode.setMessage("");
 
-        Assert.assertFalse(pkBarcode.checkValidity());
+        Assert.assertFalse(pkBarcode.isValid());
     }
 
     @Test
     public void test_noMessageEncoding() {
         pkBarcode.setMessageEncoding(null);
 
-        Assert.assertFalse(pkBarcode.checkValidity());
+        Assert.assertFalse(pkBarcode.isValid());
     }
 
     @Test
     public void test_noAltText() {
         pkBarcode.setAltText(null);
 
-        Assert.assertTrue(pkBarcode.checkValidity());
+        Assert.assertTrue(pkBarcode.isValid());
     }
 }
