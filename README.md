@@ -8,6 +8,7 @@ There are two separate projects:
 2. jPasskit.server -  Which contains an additional REST Webservice, that can be included in existing Applications that do not use their own Webservice already. Note: This is still no standalone implementation. Things like storing passes and handling device (un)registrations are left open for the Application to implement.
 
 **Current Version:** 0.0.2-SNAPSHOT
+
 Stable release coming soon...
 
 ## Installation
