@@ -91,6 +91,7 @@ Example:
 
 
 In Addition to the pass, there needs to be a template directory that contains the other resources (like images and translations). The content of this directory is defined in the PassKit Developer Documentation.
+
 <img src="https://github.com/bitzeche/jpasskit/raw/master/passFolder.png">
 
 ### Signing and Zipping a Pass
@@ -119,6 +120,7 @@ The jPasskit Server doesn't provide a full fledged PassKit Web Service but merel
 ### Setup
 
 The set up and start the Server you need two things:
+
 1. Create a Java Property object containing the two keys 'rest.bindIP' and 'rest.bindPort'
 2. An implementation of IPKRestletServerResourceFactory.
 
