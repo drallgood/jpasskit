@@ -60,6 +60,7 @@
 		<target.dir>target</target.dir>
 		<org.slf4j.version>1.6.1</org.slf4j.version>
 		<current.year>2012</current.year>
+		<restlet.version>2.0.15</restlet.version>
 	</properties>
 
 	<dependencies>
@@ -72,7 +73,18 @@
 		<dependency>
 			<groupId>org.restlet.jse</groupId>
 			<artifactId>org.restlet</artifactId>
-			<version>2.0.0</version>
+			<version>${restlet.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.restlet.jse</groupId>
+			<artifactId>org.restlet.ext.ssl</artifactId>
+			<version>${restlet.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.restlet.jse</groupId>
+			<artifactId>org.restlet.ext.simple</artifactId>
+			<version>${restlet.version}</version>
 		</dependency>
 
 		<dependency>

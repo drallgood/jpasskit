@@ -121,7 +121,16 @@ The jPasskit Server doesn't provide a full fledged PassKit Web Service but merel
 
 The set up and start the Server you need two things:
 
-1. Create a Java Property object containing the two keys 'rest.bindIP' and 'rest.bindPort'
+1. Create a Java Property object containing at least the three keys 'rest.bindIP', 'rest.bindPort' and 'rest.ssl.enabled'.
+    
+	**Note:**
+	For the Production mode, you'll have to enable SSL and provide the following 4 keys:
+	- rest.ssl.keystore.path : The path to the keystore where the SSL certificate for this server is stored
+	- rest.ssl.keystore.type : The type of this keystore (e.g. PKCS12 or JKS)
+	- rest.ssl.keystore.password : The password to access the keystore
+	- rest.ssl.key.password : The password to access the private key
+	
+	Apple requires all production passes to use SSL.
 2. An implementation of IPKRestletServerResourceFactory.
 
 The IPKRestletServerResourceFactory is used to create instances of three classes: PKDeviceResource. PKPassResource, PKLogResource. You'll need to subclass each of these and provide your own implementations. 
@@ -131,3 +140,19 @@ The IPKRestletServerResourceFactory is used to create instances of three classes
 *PKPassResource* is used to fetch the latest version of a pass.
 
 *PKLogResource* is used for the log messages, that the devices send in case of an error.
+
+Then you create the server instance:
+
+	Properties serverConfigurationProperties = new Properties();
+	serverConfigurationProperties.put("rest.bindIP", "::");
+	serverConfigurationProperties.put("rest.bindPort", "8082");
+
+	IPKRestletServerResourceFactory pkRestletServerResourceFactory = new MyOwnPKRestletServerResourceFactory();
+	PKRestServer pkRestServer = new PKRestServer(serverConfigurationProperties, pkRestletServerResourceFactory);
+	try {
+		pkRestServer.start();
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+	
+That's it. You webservice is running. Just point your passes to the URL where the server is running.

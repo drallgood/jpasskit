@@ -18,10 +18,13 @@ package de.brendamour.jpasskit.server;
 
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
 import org.restlet.Component;
 import org.restlet.Server;
+import org.restlet.data.Parameter;
 import org.restlet.data.Protocol;
 import org.restlet.routing.Router;
+import org.restlet.util.Series;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +32,11 @@ public class PKRestServer {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PKRestServer.class);
 	private static final String SERVER_BIND_IP_KEY = "rest.bindIP";
 	private static final String SERVER_BIND_PORT_KEY = "rest.bindPort";
+	private static final String SERVER_BIND_SSL_ENABLED_KEY = "rest.ssl.enabled";
+	private static final String SERVER_BIND_SSL_KEYSTORE_PATH_KEY = "rest.ssl.keystore.path";
+	private static final String SERVER_BIND_SSL_KEYSTORE_TYPE_KEY = "rest.ssl.keystore.type";
+	private static final String SERVER_BIND_SSL_KEYSTORE_PASSWORD_KEY = "rest.ssl.keystore.password";
+	private static final String SERVER_BIND_SSL_KEY_PASSWORD_KEY = "rest.ssl.key.password";
 	private Properties serverConfigurationProperties;
 	private Component restTrustedServerComponent;
 	private Server restTrustedServer;
@@ -52,7 +60,8 @@ public class PKRestServer {
 	private void checkConfigurationProperties() {
 		if (serverConfigurationProperties != null) {
 			boolean allPropertiesSet = serverConfigurationProperties.containsKey(SERVER_BIND_IP_KEY)
-					&& serverConfigurationProperties.containsKey(SERVER_BIND_PORT_KEY);
+					&& serverConfigurationProperties.containsKey(SERVER_BIND_PORT_KEY)
+					&& serverConfigurationProperties.containsKey(SERVER_BIND_SSL_ENABLED_KEY);
 			if (allPropertiesSet) {
 				LOGGER.debug("Checked properties. Everything we need is present");
 				return;
@@ -63,15 +72,25 @@ public class PKRestServer {
 
 	private void createPKRestWebService() {
 		restTrustedServerComponent = new Component();
-		String bindIp = serverConfigurationProperties.getProperty(SERVER_BIND_IP_KEY);
-		int bindPort = Integer.parseInt(serverConfigurationProperties.getProperty(SERVER_BIND_PORT_KEY));
 
-		// TODO: introduce HTTPS
-		restTrustedServer = new Server(Protocol.HTTP, bindIp, bindPort);
+		String bindIp = serverConfigurationProperties.getProperty(SERVER_BIND_IP_KEY);
+
+		int bindPort = Integer.parseInt(serverConfigurationProperties.getProperty(SERVER_BIND_PORT_KEY));
+		boolean useSSL = Boolean.parseBoolean(serverConfigurationProperties.getProperty(SERVER_BIND_SSL_ENABLED_KEY));
+
+		Protocol httpProtocol = Protocol.HTTP;
+		if (useSSL) {
+			httpProtocol = Protocol.HTTPS;
+		}
+
+		restTrustedServer = new Server(httpProtocol, bindIp, bindPort);
 		restTrustedServerComponent.getServers().add(restTrustedServer);
 
+		if (useSSL) {
+			setupSSL();
+		}
+
 		final Router router = new Router(restTrustedServerComponent.getContext().createChildContext());
-		// TODO: register Resources if needed
 		restTrustedServerComponent.getDefaultHost().attach("", router);
 
 		PKDeviceResourceFactory pkDeviceResourceFactory = new PKDeviceResourceFactory(pkRestletServerResourceFactory);
@@ -84,6 +103,26 @@ public class PKRestServer {
 		router.attach("/" + version + "/passes/{passTypeIdentifier}/{serialNumber}", pkPassResourceFactory);
 		router.attach("/" + version + "/log", pkLogResourceFactory);
 		LOGGER.debug("Created Restlet components");
+	}
+
+	private void setupSSL() {
+		LOGGER.info("Enabling SSL");
+
+		String keystorePath = serverConfigurationProperties.getProperty(SERVER_BIND_SSL_KEYSTORE_PATH_KEY);
+		String keystoreType = serverConfigurationProperties.getProperty(SERVER_BIND_SSL_KEYSTORE_TYPE_KEY);
+		String keystorePassword = serverConfigurationProperties.getProperty(SERVER_BIND_SSL_KEYSTORE_PASSWORD_KEY);
+		String keyPassword = serverConfigurationProperties.getProperty(SERVER_BIND_SSL_KEY_PASSWORD_KEY);
+
+		if (StringUtils.isEmpty(keystorePath) || StringUtils.isEmpty(keystoreType)) {
+			throw new RuntimeException("SSL is enabled but not set up correct. We need at least a keystore path and -type");
+		}
+
+		Series<Parameter> parameters = restTrustedServer.getContext().getParameters();
+		parameters.add("sslContextFactory", "org.restlet.ext.ssl.PkixSslContextFactory");
+		parameters.add("keystorePath", keystorePath);
+		parameters.add("keystorePassword", keystorePassword);
+		parameters.add("keyPassword", keyPassword);
+		parameters.add("keystoreType", keystoreType);
 	}
 
 	public final void stop() throws Exception {

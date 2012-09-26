@@ -30,6 +30,7 @@ public class ServerActivatorTest {
 		Properties serverConfigurationProperties = new Properties();
 		serverConfigurationProperties.put("rest.bindIP", "::");
 		serverConfigurationProperties.put("rest.bindPort", "8082");
+		serverConfigurationProperties.put("rest.ssl.enabled", false);
 
 		IPKRestletServerResourceFactory pkRestletServerResourceFactory = new PKRestletServerResourceFactory();
 		PKRestServer pkRestServer = new PKRestServer(serverConfigurationProperties, pkRestletServerResourceFactory);
