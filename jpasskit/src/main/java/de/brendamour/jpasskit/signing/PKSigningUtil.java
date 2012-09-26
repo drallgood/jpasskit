@@ -166,7 +166,7 @@ public final class PKSigningUtil {
     public static KeyStore loadPKCS12File(final String filePath, final String password) throws IOException, NoSuchAlgorithmException,
             CertificateException, KeyStoreException, NoSuchProviderException {
         addBCProvider();
-        KeyStore keystore = KeyStore.getInstance("PKCS12", "BC");
+        KeyStore keystore = KeyStore.getInstance("PKCS12", BouncyCastleProvider.PROVIDER_NAME);
 
         keystore.load(new FileInputStream(filePath), password.toCharArray());
         return keystore;

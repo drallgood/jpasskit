@@ -5,7 +5,7 @@ jPasskit is an Java&trade; implementation of the Apple&trade; PassKit Web Servic
 There are two separate projects:
 
 1. jPasskit - Which contains the Pass objects and useful utilities. It is designed to be included in existing Webservices, thus not including any request handling.
-2. jPasskit.server -  Which contains an additional REST Webservice, that can be included in existing Applications that do not use their own Webservice already. Note: This is still no standalone implementation. Things like storing passes and handling device (un)registrations are left open for the Application to implement.
+2. jPasskit Server -  Which contains an additional REST Webservice, that can be included in existing Applications that do not use their own Webservice already. Note: This is still no standalone implementation. Things like storing passes and handling device (un)registrations are left open for the Application to implement.
 
 **Current Version:** 0.0.2-SNAPSHOT
 
@@ -91,7 +91,7 @@ Example:
 
 
 In Addition to the pass, there needs to be a template directory that contains the other resources (like images and translations). The content of this directory is defined in the PassKit Developer Documentation.
-<img src="https://github.com/bitzeche/jpasskit/blob/master/passFolder.png">
+<img src="https://github.com/bitzeche/jpasskit/raw/master/passFolder.png">
 
 ### Signing and Zipping a Pass
 
@@ -111,3 +111,21 @@ Example to do it all in one step:
                keyStorePath, keyStorePassword, appleWWDRCA);
 	byte[] passZipAsByteArray = PKSigningUtil.createSignedAndZippedPkPassArchive(pass, pathToTemplateDirectory, pkSigningInformation);
 	...
+	
+## Using the jPasskit Server
+
+The jPasskit Server doesn't provide a full fledged PassKit Web Service but merely the basics you need implement your own standalone server. Things like storing passes and registrations still need to be implemented according to your own needs (or added to an existing Application).
+
+### Setup
+
+The set up and start the Server you need two things:
+1. Create a Java Property object containing the two keys 'rest.bindIP' and 'rest.bindPort'
+2. An implementation of IPKRestletServerResourceFactory.
+
+The IPKRestletServerResourceFactory is used to create instances of three classes: PKDeviceResource. PKPassResource, PKLogResource. You'll need to subclass each of these and provide your own implementations. 
+
+*PKDeviceResource* is used to register/unregister devices and to get the serialNumbers of changed passes.
+
+*PKPassResource* is used to fetch the latest version of a pass.
+
+*PKLogResource* is used for the log messages, that the devices send in case of an error.
