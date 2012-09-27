@@ -33,7 +33,7 @@ public class PKSendPushNotificationUtil {
         this.passwordForP12 = passwordForP12;
     }
 
-    public void execute(final String pushtoken) {
+    public void sendPushNotification(final String pushtoken) {
         String emptyJSONString = "{}";
 
         LOGGER.debug("Sending Push notification for key: {}", pushtoken);
