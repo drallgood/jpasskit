@@ -24,7 +24,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.notnoop.apns.APNS;
+import com.notnoop.apns.ApnsDelegate;
+import com.notnoop.apns.ApnsNotification;
 import com.notnoop.apns.ApnsService;
+import com.notnoop.apns.DeliveryError;
 
 public class PKSendPushNotificationUtil {
 
@@ -33,7 +36,12 @@ public class PKSendPushNotificationUtil {
     private ApnsService service;
 
     public PKSendPushNotificationUtil(final String pathToP12, final String passwordForP12) {
-        service = APNS.newService().withCert(pathToP12, passwordForP12).withProductionDestination().build();
+        this(pathToP12, passwordForP12, 10);
+    }
+
+    public PKSendPushNotificationUtil(final String pathToP12, final String passwordForP12, final int poolSize) {
+        service = APNS.newService().withCert(pathToP12, passwordForP12).withProductionDestination().withDelegate(new ApnsLoggingDelegate())
+                .asPool(poolSize).build();
     }
 
     public void sendPushNotification(final String pushtoken) {
@@ -58,5 +66,25 @@ public class PKSendPushNotificationUtil {
         Map<String, Date> inactiveDevices = service.getInactiveDevices();
         LOGGER.debug("Inactive devices: {}", inactiveDevices);
         return inactiveDevices;
+    }
+
+    class ApnsLoggingDelegate implements ApnsDelegate {
+
+        @Override
+        public void messageSent(final ApnsNotification message) {
+            LOGGER.debug("Message sent: {}", message);
+        }
+
+        @Override
+        public void messageSendFailed(final ApnsNotification message, final Throwable e) {
+            LOGGER.debug("Message failed: {}", message, e);
+        }
+
+        @Override
+        public void connectionClosed(final DeliveryError e, final int messageIdentifier) {
+            LOGGER.debug("Connection closed: {}", messageIdentifier, e);
+
+        }
+
     }
 }
