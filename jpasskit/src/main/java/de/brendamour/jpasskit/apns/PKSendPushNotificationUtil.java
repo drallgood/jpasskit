@@ -16,6 +16,10 @@
 
 package de.brendamour.jpasskit.apns;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,23 +29,34 @@ import com.notnoop.apns.ApnsService;
 public class PKSendPushNotificationUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PKSendPushNotificationUtil.class);
-    private final String pathToP12;
-    private final String passwordForP12;
+    private static final String EMPTY_PUSH_JSON_STRING = "{}";
+    private ApnsService service;
 
     public PKSendPushNotificationUtil(final String pathToP12, final String passwordForP12) {
-        this.pathToP12 = pathToP12;
-        this.passwordForP12 = passwordForP12;
+        service = APNS.newService().withCert(pathToP12, passwordForP12).withProductionDestination().build();
     }
 
     public void sendPushNotification(final String pushtoken) {
-        String emptyJSONString = "{}";
 
         LOGGER.debug("Sending Push notification for key: {}", pushtoken);
-        ApnsService service = APNS.newService().withCert(pathToP12, passwordForP12).withProductionDestination().build();
 
-        service.push(pushtoken, emptyJSONString);
+        service.push(pushtoken, EMPTY_PUSH_JSON_STRING);
         LOGGER.debug("Send Push notification for key: {}", pushtoken);
-        
+
     }
 
+    public void sendMultiplePushNotifications(final List<String> pushtokens) {
+
+        LOGGER.debug("Sending Push notification for keys: {}", pushtokens);
+        service.push(pushtokens, EMPTY_PUSH_JSON_STRING);
+        LOGGER.debug("Send Push notification for keys: {}", pushtokens);
+
+    }
+
+    public Map<String, Date> getInactiveDevices() {
+        LOGGER.debug("Querying inactive devices");
+        Map<String, Date> inactiveDevices = service.getInactiveDevices();
+        LOGGER.debug("Inactive devices: {}", inactiveDevices);
+        return inactiveDevices;
+    }
 }
