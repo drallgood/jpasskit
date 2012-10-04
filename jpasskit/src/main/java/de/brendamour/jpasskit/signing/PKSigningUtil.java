@@ -58,6 +58,7 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
+import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.annotate.JsonFilter;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import org.codehaus.jackson.map.ser.FilterProvider;
@@ -86,7 +87,10 @@ public final class PKSigningUtil {
         File tempPassDir = Files.createTempDir();
         FileUtils.copyDirectory(new File(pathToTemplateDirectory), tempPassDir);
 
-        ObjectMapper jsonObjectMapper = createPassJSONFile(pass, tempPassDir);
+        ObjectMapper jsonObjectMapper = new ObjectMapper();
+        jsonObjectMapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS, false);
+        
+        createPassJSONFile(pass, tempPassDir, jsonObjectMapper);
 
         File manifestJSONFile = createManifestJSONFile(tempPassDir, jsonObjectMapper);
 
@@ -198,11 +202,9 @@ public final class PKSigningUtil {
 
     }
 
-    private static ObjectMapper createPassJSONFile(final PKPass pass, final File tempPassDir) throws IOException, JsonGenerationException,
-            JsonMappingException {
+    private static void createPassJSONFile(final PKPass pass, final File tempPassDir, final ObjectMapper jsonObjectMapper) throws IOException,
+            JsonGenerationException, JsonMappingException {
         File passJSONFile = new File(tempPassDir.getAbsolutePath() + File.separator + PASS_JSON_FILE_NAME);
-
-        ObjectMapper jsonObjectMapper = new ObjectMapper();
 
         FilterProvider filters = new SimpleFilterProvider().addFilter("pkPassFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid",
                 "validationErrors", "foregroundColorAsObject", "backgroundColorAsObject", "labelColorAsObject"));
@@ -211,7 +213,6 @@ public final class PKSigningUtil {
 
         ObjectWriter objectWriter = jsonObjectMapper.writer(filters);
         objectWriter.writeValue(passJSONFile, pass);
-        return jsonObjectMapper;
     }
 
     private static File createManifestJSONFile(final File tempPassDir, final ObjectMapper jsonObjectMapper) throws IOException,
