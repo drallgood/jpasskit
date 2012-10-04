@@ -64,6 +64,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import org.codehaus.jackson.map.ser.FilterProvider;
 import org.codehaus.jackson.map.ser.impl.SimpleBeanPropertyFilter;
 import org.codehaus.jackson.map.ser.impl.SimpleFilterProvider;
+import org.codehaus.jackson.map.util.ISO8601DateFormat;
 
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
@@ -89,6 +90,7 @@ public final class PKSigningUtil {
 
         ObjectMapper jsonObjectMapper = new ObjectMapper();
         jsonObjectMapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS, false);
+        jsonObjectMapper.setDateFormat(new ISO8601DateFormat());
         
         createPassJSONFile(pass, tempPassDir, jsonObjectMapper);
 

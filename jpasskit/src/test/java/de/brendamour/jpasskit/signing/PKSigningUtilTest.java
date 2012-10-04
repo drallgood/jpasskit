@@ -49,7 +49,7 @@ public class PKSigningUtilTest {
         PKSigningUtil.signManifestFile(temporaryPassDir, manifestJSONFile, pkSigningInformation);
     }
 
-//    @Test
+    @Test
     public void testPassZipGeneration() throws IOException, Exception {
 
         Security.addProvider(new BouncyCastleProvider());
