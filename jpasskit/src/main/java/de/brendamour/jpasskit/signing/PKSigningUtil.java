@@ -21,6 +21,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -71,6 +74,7 @@ import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 
+import de.brendamour.jpasskit.IPKValidateable;
 import de.brendamour.jpasskit.PKPass;
 
 public final class PKSigningUtil {
@@ -82,6 +86,12 @@ public final class PKSigningUtil {
     private PKSigningUtil() {
     }
 
+    public static byte[] createSignedAndZippedPkPassArchive(final PKPass pass, final URL fileUrlOfTemplateDirectory,
+            final PKSigningInformation signingInformation) throws Exception {
+        String pathToTemplateDirectory = URLDecoder.decode(fileUrlOfTemplateDirectory.getFile(), "UTF-8");
+        return createSignedAndZippedPkPassArchive(pass, pathToTemplateDirectory, signingInformation);
+    }
+
     public static byte[] createSignedAndZippedPkPassArchive(final PKPass pass, final String pathToTemplateDirectory,
             final PKSigningInformation signingInformation) throws Exception {
 
@@ -91,7 +101,7 @@ public final class PKSigningUtil {
         ObjectMapper jsonObjectMapper = new ObjectMapper();
         jsonObjectMapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS, false);
         jsonObjectMapper.setDateFormat(new ISO8601DateFormat());
-        
+
         createPassJSONFile(pass, tempPassDir, jsonObjectMapper);
 
         File manifestJSONFile = createManifestJSONFile(tempPassDir, jsonObjectMapper);
@@ -208,10 +218,18 @@ public final class PKSigningUtil {
             JsonGenerationException, JsonMappingException {
         File passJSONFile = new File(tempPassDir.getAbsolutePath() + File.separator + PASS_JSON_FILE_NAME);
 
-        FilterProvider filters = new SimpleFilterProvider().addFilter("pkPassFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid",
-                "validationErrors", "foregroundColorAsObject", "backgroundColorAsObject", "labelColorAsObject"));
+        SimpleFilterProvider filters = new SimpleFilterProvider();
+
+        // haven't found out, how to stack filters. Copying the validation one for now.
+        filters.addFilter("validateFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors"));
+        filters.addFilter("pkPassFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors", "foregroundColorAsObject",
+                "backgroundColorAsObject", "labelColorAsObject"));
+        filters.addFilter("charset", SimpleBeanPropertyFilter.filterOutAllExcept("name"));
         jsonObjectMapper.setSerializationInclusion(Inclusion.NON_NULL);
-        jsonObjectMapper.getSerializationConfig().addMixInAnnotations(Object.class, PropertyFilterMixIn.class);
+        SerializationConfig serializationConfig = jsonObjectMapper.getSerializationConfig();
+        serializationConfig.addMixInAnnotations(Object.class, ValidateFilterMixIn.class);
+        serializationConfig.addMixInAnnotations(PKPass.class, PkPassFilterMixIn.class);
+        serializationConfig.addMixInAnnotations(Charset.class, CharsetFilterMixIn.class);
 
         ObjectWriter objectWriter = jsonObjectMapper.writer(filters);
         objectWriter.writeValue(passJSONFile, pass);
@@ -279,7 +297,17 @@ public final class PKSigningUtil {
     }
 
     @JsonFilter("pkPassFilter")
-    class PropertyFilterMixIn {
+    class PkPassFilterMixIn {
+        // just a dummy
+    }
+
+    @JsonFilter("validateFilter")
+    class ValidateFilterMixIn {
+        // just a dummy
+    }
+
+    @JsonFilter("charsetFilter")
+    class CharsetFilterMixIn {
         // just a dummy
     }
 }
