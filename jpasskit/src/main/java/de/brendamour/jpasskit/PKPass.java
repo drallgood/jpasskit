@@ -62,7 +62,7 @@ public class PKPass implements IPKValidateable {
     private PKGenericPass generic;
     private PKGenericPass passThatWasSet;
 
-    private List<String> associatedStoreIdentifiers;
+    private List<Long> associatedStoreIdentifiers;
 
     private Date relevantDate;
 
@@ -269,11 +269,11 @@ public class PKPass implements IPKValidateable {
         this.labelColor = labelColor;
     }
 
-    public List<String> getAssociatedStoreIdentifiers() {
+    public List<Long> getAssociatedStoreIdentifiers() {
         return associatedStoreIdentifiers;
     }
 
-    public void setAssociatedStoreIdentifiers(final List<String> associatedStoreIdentifiers) {
+    public void setAssociatedStoreIdentifiers(final List<Long> associatedStoreIdentifiers) {
         this.associatedStoreIdentifiers = associatedStoreIdentifiers;
     }
 
