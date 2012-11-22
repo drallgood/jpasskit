@@ -16,6 +16,7 @@
 
 package de.brendamour.jpasskit.apns;
 
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -40,8 +41,9 @@ public class PKSendPushNotificationUtil {
     }
 
     public PKSendPushNotificationUtil(final String pathToP12, final String passwordForP12, final int poolSize) {
-        service = APNS.newService().withCert(pathToP12, passwordForP12).withProductionDestination().withDelegate(new ApnsLoggingDelegate())
-                .asPool(poolSize).build();
+        InputStream certificateStream = PKSendPushNotificationUtil.class.getResourceAsStream(pathToP12);
+        service = APNS.newService().withCert(certificateStream, passwordForP12).withProductionDestination()
+                .withDelegate(new ApnsLoggingDelegate()).asPool(poolSize).build();
     }
 
     public void sendPushNotification(final String pushtoken) {
