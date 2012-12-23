@@ -16,9 +16,11 @@
 
 package de.brendamour.jpasskit.apns;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -43,9 +45,23 @@ public class PKSendPushNotificationUtil {
     }
 
     public PKSendPushNotificationUtil(final String pathToP12, final String passwordForP12, final int poolSize) throws FileNotFoundException {
-        InputStream certificateStream = new FileInputStream(pathToP12);
+
+        InputStream certificateStream = getStreamOfP12File(pathToP12);
         service = APNS.newService().withCert(certificateStream, passwordForP12).withProductionDestination()
                 .withDelegate(new ApnsLoggingDelegate()).asPool(poolSize).build();
+    }
+
+    private InputStream getStreamOfP12File(final String pathToP12) throws FileNotFoundException {
+        File p12File = new File(pathToP12);
+        if (!p12File.exists()) {
+            // try loading it from the classpath
+            URL localP12File = this.getClass().getClassLoader().getResource(pathToP12);
+            if (localP12File == null) {
+                throw new FileNotFoundException("File at " + pathToP12 + " not found");
+            }
+            p12File = new File(localP12File.getFile());
+        }
+        return new FileInputStream(p12File);
     }
 
     public void sendPushNotification(final String pushtoken) {
