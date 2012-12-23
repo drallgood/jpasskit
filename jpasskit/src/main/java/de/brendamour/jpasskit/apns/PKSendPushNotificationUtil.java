@@ -16,6 +16,8 @@
 
 package de.brendamour.jpasskit.apns;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
@@ -36,12 +38,12 @@ public class PKSendPushNotificationUtil {
     private static final String EMPTY_PUSH_JSON_STRING = "{}";
     private ApnsService service;
 
-    public PKSendPushNotificationUtil(final String pathToP12, final String passwordForP12) {
+    public PKSendPushNotificationUtil(final String pathToP12, final String passwordForP12) throws FileNotFoundException {
         this(pathToP12, passwordForP12, 10);
     }
 
-    public PKSendPushNotificationUtil(final String pathToP12, final String passwordForP12, final int poolSize) {
-        InputStream certificateStream = PKSendPushNotificationUtil.class.getResourceAsStream(pathToP12);
+    public PKSendPushNotificationUtil(final String pathToP12, final String passwordForP12, final int poolSize) throws FileNotFoundException {
+        InputStream certificateStream = new FileInputStream(pathToP12);
         service = APNS.newService().withCert(certificateStream, passwordForP12).withProductionDestination()
                 .withDelegate(new ApnsLoggingDelegate()).asPool(poolSize).build();
     }
