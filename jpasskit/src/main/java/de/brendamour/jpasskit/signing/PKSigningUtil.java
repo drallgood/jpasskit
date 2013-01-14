@@ -19,8 +19,10 @@ package de.brendamour.jpasskit.signing;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
@@ -179,19 +181,40 @@ public final class PKSigningUtil {
         return new PKSigningInformation(signingCert, signingPrivateKey, appleWWDRCACert);
     }
 
-    public static KeyStore loadPKCS12File(final String filePath, final String password) throws IOException, NoSuchAlgorithmException,
+    public static KeyStore loadPKCS12File(final String pathToP12, final String password) throws IOException, NoSuchAlgorithmException,
             CertificateException, KeyStoreException, NoSuchProviderException {
         addBCProvider();
-        KeyStore keystore = KeyStore.getInstance("PKCS12", BouncyCastleProvider.PROVIDER_NAME);
+        KeyStore keystore = KeyStore.getInstance("PKCS12");
 
-        keystore.load(new FileInputStream(filePath), password.toCharArray());
+        File p12File = new File(pathToP12);
+        if (!p12File.exists()) {
+            // try loading it from the classpath
+            URL localP12File = PKSigningUtil.class.getClassLoader().getResource(pathToP12);
+            if (localP12File == null) {
+                throw new FileNotFoundException("File at " + pathToP12 + " not found");
+            }
+            p12File = new File(localP12File.getFile());
+        }
+        InputStream streamOfFile = new FileInputStream(p12File);
+
+        keystore.load(streamOfFile, password.toCharArray());
         return keystore;
     }
 
     public static X509Certificate loadDERCertificate(final String filePath) throws IOException, CertificateException {
         FileInputStream certificateFileInputStream = null;
         try {
-            certificateFileInputStream = new FileInputStream(filePath);
+            File certFile = new File(filePath);
+            if (!certFile.exists()) {
+                // try loading it from the classpath
+                URL localCertFile = PKSigningUtil.class.getClassLoader().getResource(filePath);
+                if (localCertFile == null) {
+                    throw new FileNotFoundException("File at " + filePath + " not found");
+                }
+                certFile = new File(localCertFile.getFile());
+            }
+            certificateFileInputStream = new FileInputStream(certFile);
+            
             CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509", BouncyCastleProvider.PROVIDER_NAME);
             Certificate certificate = certificateFactory.generateCertificate(certificateFileInputStream);
             if (certificate instanceof X509Certificate) {
