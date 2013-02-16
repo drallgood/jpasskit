@@ -40,7 +40,7 @@ public class PKField implements IPKValidateable {
 
     private PKDateStyle dateStyle;
     private PKDateStyle timeStyle;
-    private boolean isRelative;
+    private Boolean isRelative;
 
     public String getKey() {
         return key;
@@ -114,11 +114,11 @@ public class PKField implements IPKValidateable {
         this.timeStyle = timeStyle;
     }
 
-    public boolean isRelative() {
+    public Boolean getIsRelative() {
         return isRelative;
     }
 
-    public void setRelative(final boolean isRelative) {
+    public void setIsRelative(final Boolean isRelative) {
         this.isRelative = isRelative;
     }
 
