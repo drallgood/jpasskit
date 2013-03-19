@@ -44,6 +44,7 @@ public abstract class PKPassResource extends ServerResource {
 	private String pathToPassTemplate;
 
 	public PKPassResource(final String pathToPassTemplate) {
+		this.pathToPassTemplate = pathToPassTemplate;
 		jsonObjectMapper = new ObjectMapper();
 		jsonObjectMapper.setSerializationInclusion(Inclusion.NON_NULL);
 	}
