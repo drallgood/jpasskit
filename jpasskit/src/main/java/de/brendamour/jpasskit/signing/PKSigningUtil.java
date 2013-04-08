@@ -16,36 +16,11 @@
 
 package de.brendamour.jpasskit.signing;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.Charset;
-import java.security.Key;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
-import java.security.Security;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
+import com.google.common.hash.HashCode;
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hashing;
+import com.google.common.io.Files;
+import de.brendamour.jpasskit.PKPass;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -66,18 +41,22 @@ import org.codehaus.jackson.map.ObjectWriter;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.annotate.JsonFilter;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
-import org.codehaus.jackson.map.ser.FilterProvider;
 import org.codehaus.jackson.map.ser.impl.SimpleBeanPropertyFilter;
 import org.codehaus.jackson.map.ser.impl.SimpleFilterProvider;
 import org.codehaus.jackson.map.util.ISO8601DateFormat;
 
-import com.google.common.hash.HashCode;
-import com.google.common.hash.HashFunction;
-import com.google.common.hash.Hashing;
-import com.google.common.io.Files;
-
-import de.brendamour.jpasskit.IPKValidateable;
-import de.brendamour.jpasskit.PKPass;
+import java.io.*;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
+import java.security.*;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public final class PKSigningUtil {
 
@@ -181,6 +160,59 @@ public final class PKSigningUtil {
         return new PKSigningInformation(signingCert, signingPrivateKey, appleWWDRCACert);
     }
 
+    /**
+     * Load all signing information necessary for pass generation using two input streams for the key store and the
+     * Apple WWDRCA certificate.
+     *
+     * The caller is responsible for closing the stream after this method returns successfully or fails.
+     *
+     * @param pkcs12KeyStoreInputStream <code>InputStream</code> of the key store
+     * @param keyStorePassword Password used to access the key store
+     * @param appleWWDRCAFileInputStream <code>InputStream</code> of the Apple WWDRCA certificate.
+     * @return Signing informatino necessary to sign a pass.
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     * @throws CertificateException
+     * @throws KeyStoreException
+     * @throws NoSuchProviderException
+     * @throws UnrecoverableKeyException
+     */
+    public static PKSigningInformation loadSigningInformationFromPKCS12AndIntermediateCertificateStreams(
+            final InputStream pkcs12KeyStoreInputStream,
+            final String keyStorePassword,
+            final InputStream appleWWDRCAFileInputStream)
+            throws IOException, NoSuchAlgorithmException, CertificateException,
+            KeyStoreException, NoSuchProviderException, UnrecoverableKeyException
+    {
+        addBCProvider();
+
+        KeyStore pkcs12KeyStore = loadPKCS12File(pkcs12KeyStoreInputStream, keyStorePassword);
+        Enumeration<String> aliases = pkcs12KeyStore.aliases();
+
+        PrivateKey signingPrivateKey = null;
+        X509Certificate signingCert = null;
+
+        while (aliases.hasMoreElements()) {
+            String aliasName = aliases.nextElement();
+
+            Key key = pkcs12KeyStore.getKey(aliasName, keyStorePassword.toCharArray());
+            if (key instanceof PrivateKey) {
+                signingPrivateKey = (PrivateKey) key;
+                Object cert = pkcs12KeyStore.getCertificate(aliasName);
+                if (cert instanceof X509Certificate) {
+                    signingCert = (X509Certificate) cert;
+                    break;
+                }
+            }
+        }
+
+        X509Certificate appleWWDRCACert = loadDERCertificate(appleWWDRCAFileInputStream);
+        if (signingCert == null || signingPrivateKey == null || appleWWDRCACert == null) {
+            throw new IOException("Couldn#t load all the neccessary certificates/keys");
+        }
+
+        return new PKSigningInformation(signingCert, signingPrivateKey, appleWWDRCACert);    }
+
     public static KeyStore loadPKCS12File(final String pathToP12, final String password) throws IOException, NoSuchAlgorithmException,
             CertificateException, KeyStoreException, NoSuchProviderException {
         addBCProvider();
@@ -198,6 +230,33 @@ public final class PKSigningUtil {
         InputStream streamOfFile = new FileInputStream(p12File);
 
         keystore.load(streamOfFile, password.toCharArray());
+        return keystore;
+    }
+
+    /**
+     * Load the keystore from an already opened input stream.
+     *
+     * The caller is responsible for closing the stream after this method returns successfully or fails.
+     *
+     * @param inputStreamOfP12 <code>InputStream</code> containing the signing key store.
+     * @param password Password to access the key store
+     * @return Key store loaded from <code>inputStreamOfP12</code>
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     * @throws CertificateException
+     * @throws KeyStoreException
+     * @throws NoSuchProviderException
+     * @throws IllegalArgumentException If the parameter <code>inputStreamOfP12</code> is <code>null</code>.
+     */
+    public static KeyStore loadPKCS12File(final InputStream inputStreamOfP12, final String password) throws IOException, NoSuchAlgorithmException,
+            CertificateException, KeyStoreException, NoSuchProviderException {
+        if (inputStreamOfP12 == null) {
+            throw new IllegalArgumentException("InputStream of key store must not be null");
+        }
+        addBCProvider();
+        KeyStore keystore = KeyStore.getInstance("PKCS12");
+
+        keystore.load(inputStreamOfP12, password.toCharArray());
         return keystore;
     }
 
@@ -227,6 +286,31 @@ public final class PKSigningUtil {
             throw new IOException("The key from '" + filePath + "' could not be decrypted", ex);
         } finally {
             IOUtils.closeQuietly(certificateFileInputStream);
+        }
+    }
+
+    /**
+     * Load a DEAR Certificate from an <code>InputStream</code>.
+     *
+     * The caller is responsible for closing the stream after this method returns successfully or fails.
+     *
+     * @param certificateInputStream <code>InputStream</code> containing the certificate.
+     * @return Loaded certificate.
+     * @throws IOException
+     * @throws CertificateException
+     */
+    public static X509Certificate loadDERCertificate(final InputStream certificateInputStream) throws IOException, CertificateException {
+        try {
+            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509", BouncyCastleProvider.PROVIDER_NAME);
+            Certificate certificate = certificateFactory.generateCertificate(certificateInputStream);
+            if (certificate instanceof X509Certificate) {
+                return (X509Certificate) certificate;
+            }
+            throw new IOException("The key from the input stream could not be decrypted");
+        } catch (IOException ex) {
+            throw new IOException("The key from the input stream could not be decrypted", ex);
+        } catch (NoSuchProviderException ex) {
+            throw new IOException("The key from the input stream could not be decrypted", ex);
         }
     }
 
