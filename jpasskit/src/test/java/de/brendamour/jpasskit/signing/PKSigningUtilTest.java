@@ -16,23 +16,19 @@
 
 package de.brendamour.jpasskit.signing;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.security.Security;
-import java.util.Date;
-
+import de.brendamour.jpasskit.PKBarcode;
+import de.brendamour.jpasskit.PKPass;
+import de.brendamour.jpasskit.enums.PKBarcodeFormat;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import de.brendamour.jpasskit.PKBarcode;
-import de.brendamour.jpasskit.PKPass;
-import de.brendamour.jpasskit.enums.PKBarcodeFormat;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.security.Security;
+import java.util.Date;
 
 public class PKSigningUtilTest {
 
@@ -74,6 +70,31 @@ public class PKSigningUtilTest {
         PKSigningInformation pkSigningInformation = PKSigningUtil.loadSigningInformationFromPKCS12FileAndIntermediateCertificateFile(
                 keyStorePath, keyStorePassword, appleWWDRCA);
         Assert.assertNotNull(pkSigningInformation);
+    }
+
+    @Test
+    public void testLoadStreams() throws IOException, Exception {
+        InputStream keyStoreFIS = null;
+        InputStream appleWWDRCAFIS = null;
+
+        try {
+            keyStoreFIS = this.getClass().getResourceAsStream("/"+keyStorePath);
+            Assert.assertNotNull(keyStoreFIS, "Could not find key store file");
+
+            appleWWDRCAFIS = this.getClass().getResourceAsStream("/"+appleWWDRCA);
+            Assert.assertNotNull(appleWWDRCAFIS, "Could not find certificate file");
+
+            PKSigningInformation pkSigningInformation = PKSigningUtil.loadSigningInformationFromPKCS12AndIntermediateCertificateStreams(
+                    keyStoreFIS, keyStorePassword, appleWWDRCAFIS);
+            Assert.assertNotNull(pkSigningInformation);
+        } finally {
+            if (keyStoreFIS != null) {
+                keyStoreFIS.close();
+            }
+            if (appleWWDRCAFIS != null) {
+                appleWWDRCAFIS.close();
+            }
+        }
     }
 
     // @Test
