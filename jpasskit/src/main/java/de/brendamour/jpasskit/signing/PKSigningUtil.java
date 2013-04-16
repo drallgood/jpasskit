@@ -161,14 +161,16 @@ public final class PKSigningUtil {
     }
 
     /**
-     * Load all signing information necessary for pass generation using two input streams for the key store and the
-     * Apple WWDRCA certificate.
-     *
+     * Load all signing information necessary for pass generation using two input streams for the key store and the Apple WWDRCA certificate.
+     * 
      * The caller is responsible for closing the stream after this method returns successfully or fails.
-     *
-     * @param pkcs12KeyStoreInputStream <code>InputStream</code> of the key store
-     * @param keyStorePassword Password used to access the key store
-     * @param appleWWDRCAFileInputStream <code>InputStream</code> of the Apple WWDRCA certificate.
+     * 
+     * @param pkcs12KeyStoreInputStream
+     *            <code>InputStream</code> of the key store
+     * @param keyStorePassword
+     *            Password used to access the key store
+     * @param appleWWDRCAFileInputStream
+     *            <code>InputStream</code> of the Apple WWDRCA certificate.
      * @return Signing informatino necessary to sign a pass.
      * @throws IOException
      * @throws NoSuchAlgorithmException
@@ -178,12 +180,9 @@ public final class PKSigningUtil {
      * @throws UnrecoverableKeyException
      */
     public static PKSigningInformation loadSigningInformationFromPKCS12AndIntermediateCertificateStreams(
-            final InputStream pkcs12KeyStoreInputStream,
-            final String keyStorePassword,
-            final InputStream appleWWDRCAFileInputStream)
-            throws IOException, NoSuchAlgorithmException, CertificateException,
-            KeyStoreException, NoSuchProviderException, UnrecoverableKeyException
-    {
+            final InputStream pkcs12KeyStoreInputStream, final String keyStorePassword, final InputStream appleWWDRCAFileInputStream)
+            throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, NoSuchProviderException,
+            UnrecoverableKeyException {
         addBCProvider();
 
         KeyStore pkcs12KeyStore = loadPKCS12File(pkcs12KeyStoreInputStream, keyStorePassword);
@@ -211,7 +210,8 @@ public final class PKSigningUtil {
             throw new IOException("Couldn#t load all the neccessary certificates/keys");
         }
 
-        return new PKSigningInformation(signingCert, signingPrivateKey, appleWWDRCACert);    }
+        return new PKSigningInformation(signingCert, signingPrivateKey, appleWWDRCACert);
+    }
 
     public static KeyStore loadPKCS12File(final String pathToP12, final String password) throws IOException, NoSuchAlgorithmException,
             CertificateException, KeyStoreException, NoSuchProviderException {
@@ -235,21 +235,24 @@ public final class PKSigningUtil {
 
     /**
      * Load the keystore from an already opened input stream.
-     *
+     * 
      * The caller is responsible for closing the stream after this method returns successfully or fails.
-     *
-     * @param inputStreamOfP12 <code>InputStream</code> containing the signing key store.
-     * @param password Password to access the key store
+     * 
+     * @param inputStreamOfP12
+     *            <code>InputStream</code> containing the signing key store.
+     * @param password
+     *            Password to access the key store
      * @return Key store loaded from <code>inputStreamOfP12</code>
      * @throws IOException
      * @throws NoSuchAlgorithmException
      * @throws CertificateException
      * @throws KeyStoreException
      * @throws NoSuchProviderException
-     * @throws IllegalArgumentException If the parameter <code>inputStreamOfP12</code> is <code>null</code>.
+     * @throws IllegalArgumentException
+     *             If the parameter <code>inputStreamOfP12</code> is <code>null</code>.
      */
-    public static KeyStore loadPKCS12File(final InputStream inputStreamOfP12, final String password) throws IOException, NoSuchAlgorithmException,
-            CertificateException, KeyStoreException, NoSuchProviderException {
+    public static KeyStore loadPKCS12File(final InputStream inputStreamOfP12, final String password) throws IOException,
+            NoSuchAlgorithmException, CertificateException, KeyStoreException, NoSuchProviderException {
         if (inputStreamOfP12 == null) {
             throw new IllegalArgumentException("InputStream of key store must not be null");
         }
@@ -273,7 +276,7 @@ public final class PKSigningUtil {
                 certFile = new File(localCertFile.getFile());
             }
             certificateFileInputStream = new FileInputStream(certFile);
-            
+
             CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509", BouncyCastleProvider.PROVIDER_NAME);
             Certificate certificate = certificateFactory.generateCertificate(certificateFileInputStream);
             if (certificate instanceof X509Certificate) {
@@ -291,10 +294,11 @@ public final class PKSigningUtil {
 
     /**
      * Load a DEAR Certificate from an <code>InputStream</code>.
-     *
+     * 
      * The caller is responsible for closing the stream after this method returns successfully or fails.
-     *
-     * @param certificateInputStream <code>InputStream</code> containing the certificate.
+     * 
+     * @param certificateInputStream
+     *            <code>InputStream</code> containing the certificate.
      * @return Loaded certificate.
      * @throws IOException
      * @throws CertificateException
