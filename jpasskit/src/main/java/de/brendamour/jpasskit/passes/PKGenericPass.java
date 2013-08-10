@@ -28,6 +28,8 @@ import de.brendamour.jpasskit.PKField;
 
 public class PKGenericPass implements IPKValidateable {
 
+    private static final long serialVersionUID = 3408389190364251557L;
+
     protected List<PKField> headerFields;
     protected List<PKField> primaryFields;
     protected List<PKField> secondaryFields;

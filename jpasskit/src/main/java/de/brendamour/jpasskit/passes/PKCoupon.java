@@ -18,4 +18,6 @@ package de.brendamour.jpasskit.passes;
 
 public class PKCoupon extends PKGenericPass {
 
+    private static final long serialVersionUID = 6125826774005991423L;
+
 }
