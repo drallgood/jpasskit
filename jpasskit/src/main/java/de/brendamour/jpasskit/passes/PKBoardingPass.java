@@ -21,6 +21,9 @@ import java.util.List;
 import de.brendamour.jpasskit.enums.PKTransitType;
 
 public class PKBoardingPass extends PKGenericPass {
+
+    private static final long serialVersionUID = 6099662826698064150L;
+
     private PKTransitType transitType;
 
     public PKTransitType getTransitType() {

@@ -32,6 +32,9 @@ import de.brendamour.jpasskit.passes.PKGenericPass;
 import de.brendamour.jpasskit.passes.PKStoreCard;
 
 public class PKPass implements IPKValidateable {
+
+    private static final long serialVersionUID = -1727648896679270606L;
+
     private static final int EXPECTED_AUTHTOKEN_LENGTH = 16;
     private int formatVersion = 1;
     private String serialNumber;
