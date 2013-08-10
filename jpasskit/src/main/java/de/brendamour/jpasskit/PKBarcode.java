@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 import de.brendamour.jpasskit.enums.PKBarcodeFormat;
 
@@ -52,8 +51,6 @@ public class PKBarcode implements IPKValidateable {
         this.format = format;
     }
 
-    // for back compatibility:
-    @Deprecated
     public Charset getMessageEncoding() {
         if (StringUtils.isNotEmpty(messageEncoding)) {
             return Charset.forName(messageEncoding);
@@ -62,18 +59,10 @@ public class PKBarcode implements IPKValidateable {
         }
     }
 
-    @JsonIgnore
-    public String getMessageEncodingName() {
+    public String getMessageEncodingAsString() {
         return messageEncoding;
     }
 
-    @JsonIgnore
-    public void setMessageEncodingName(final String messageEncoding) {
-        this.messageEncoding = messageEncoding;
-    }
-
-    // for back compatibility:
-    @Deprecated
     public void setMessageEncoding(final Charset messageEncoding) {
         if (messageEncoding != null) {
             this.messageEncoding = messageEncoding.name();

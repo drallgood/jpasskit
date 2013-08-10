@@ -20,7 +20,10 @@ import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
+
+import de.brendamour.jpasskit.PKBarcode;
 import de.brendamour.jpasskit.PKPass;
+
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -337,11 +340,13 @@ public final class PKSigningUtil {
         filters.addFilter("validateFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors"));
         filters.addFilter("pkPassFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors", "foregroundColorAsObject",
                 "backgroundColorAsObject", "labelColorAsObject"));
-        filters.addFilter("charset", SimpleBeanPropertyFilter.filterOutAllExcept("name"));
+        filters.addFilter("barcodeFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors", "messageEncodingAsString"));
+        filters.addFilter("charsetFilter", SimpleBeanPropertyFilter.filterOutAllExcept("name"));
         jsonObjectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         SerializationConfig serializationConfig = jsonObjectMapper.getSerializationConfig();
         serializationConfig.addMixInAnnotations(Object.class, ValidateFilterMixIn.class);
         serializationConfig.addMixInAnnotations(PKPass.class, PkPassFilterMixIn.class);
+        serializationConfig.addMixInAnnotations(PKBarcode.class, BarcodeFilterMixIn.class);
         serializationConfig.addMixInAnnotations(Charset.class, CharsetFilterMixIn.class);
 
         ObjectWriter objectWriter = jsonObjectMapper.writer(filters);
@@ -366,9 +371,10 @@ public final class PKSigningUtil {
             final Map<String, String> fileWithHashMap,
             final HashFunction hashFunction,
             final String parentName) throws IOException {
-        StringBuilder name = new StringBuilder();
+        StringBuilder name;
         HashCode hash;
         for (File passResourceFile : files) {
+            name = new StringBuilder();
             if (passResourceFile.isFile()) {
                 hash = Files.hash(passResourceFile, hashFunction);
                 if (StringUtils.isEmpty(parentName)) {
@@ -437,17 +443,22 @@ public final class PKSigningUtil {
     }
 
     @JsonFilter("pkPassFilter")
-    class PkPassFilterMixIn {
+    private static class PkPassFilterMixIn {
         // just a dummy
     }
 
     @JsonFilter("validateFilter")
-    class ValidateFilterMixIn {
+    private static class ValidateFilterMixIn {
+        // just a dummy
+    }
+
+    @JsonFilter("barcodeFilter")
+    private static class BarcodeFilterMixIn {
         // just a dummy
     }
 
     @JsonFilter("charsetFilter")
-    class CharsetFilterMixIn {
+    private static class CharsetFilterMixIn {
         // just a dummy
     }
 }
