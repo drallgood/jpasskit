@@ -16,9 +16,14 @@
 
 package de.brendamour.jpasskit;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class PKPushToken {
+public class PKPushToken implements Serializable {
+
+    private static final long serialVersionUID = 8729524057466381447L;
+
     private String pushToken;
 
     public String getPushToken() {

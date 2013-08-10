@@ -22,15 +22,19 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import de.brendamour.jpasskit.enums.PKBarcodeFormat;
 
 public class PKBarcode implements IPKValidateable {
 
+    private static final long serialVersionUID = -7661537217765974179L;
+
     private PKBarcodeFormat format;
     private String altText;
     private String message;
-    private Charset messageEncoding;
+    // updated as Charset is not serializable
+    private String messageEncoding;
 
     public String getMessage() {
         return message;
@@ -48,12 +52,34 @@ public class PKBarcode implements IPKValidateable {
         this.format = format;
     }
 
+    // for back compatibility:
+    @Deprecated
     public Charset getMessageEncoding() {
+        if (StringUtils.isNotEmpty(messageEncoding)) {
+            return Charset.forName(messageEncoding);
+        } else {
+            return null;
+        }
+    }
+
+    @JsonIgnore
+    public String getMessageEncodingName() {
         return messageEncoding;
     }
 
-    public void setMessageEncoding(final Charset messageEncoding) {
+    @JsonIgnore
+    public void setMessageEncodingName(final String messageEncoding) {
         this.messageEncoding = messageEncoding;
+    }
+
+    // for back compatibility:
+    @Deprecated
+    public void setMessageEncoding(final Charset messageEncoding) {
+        if (messageEncoding != null) {
+            this.messageEncoding = messageEncoding.name();
+        } else {
+            this.messageEncoding = null;
+        }
     }
 
     public String getAltText() {
@@ -74,11 +100,17 @@ public class PKBarcode implements IPKValidateable {
     }
 
     public List<String> getValidationErrors() {
-        List<String> validationErrors = new ArrayList<String>();
+        List<String> validationErrors = new ArrayList<String>(1);
 
-        if (format == null || StringUtils.isEmpty(message) || messageEncoding == null) {
-            validationErrors.add("Not all required Fields are set. Format: " + format + " Message: " + message + " MessageEncoding: "
-                    + messageEncoding);
+        if (format == null || StringUtils.isEmpty(message) || StringUtils.isEmpty(messageEncoding)) {
+            StringBuilder builder = new StringBuilder();
+            builder.append("Not all required Fields are set. Format: ");
+            builder.append(format);
+            builder.append(" Message: ");
+            builder.append(message);
+            builder.append(" MessageEncoding: ");
+            builder.append(messageEncoding);
+            validationErrors.add(builder.toString());
         }
         return validationErrors;
     }

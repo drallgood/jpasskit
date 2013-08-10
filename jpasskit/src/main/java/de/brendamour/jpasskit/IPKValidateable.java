@@ -16,9 +16,10 @@
 
 package de.brendamour.jpasskit;
 
+import java.io.Serializable;
 import java.util.List;
 
-public interface IPKValidateable {
+public interface IPKValidateable extends Serializable {
     public boolean isValid();
 
     public List<String> getValidationErrors();

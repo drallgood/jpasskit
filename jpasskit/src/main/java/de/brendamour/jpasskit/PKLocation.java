@@ -22,6 +22,9 @@ import java.util.List;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class PKLocation implements IPKValidateable {
+
+    private static final long serialVersionUID = -2017884967088954297L;
+
     private double latitude;
     private double longitude;
     private double altitude;

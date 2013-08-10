@@ -29,6 +29,9 @@ import de.brendamour.jpasskit.enums.PKNumberStyle;
 import de.brendamour.jpasskit.enums.PKTextAlignment;
 
 public class PKField implements IPKValidateable {
+
+    private static final long serialVersionUID = -6362596567978565530L;
+
     private String key;
     private String label;
     private Object value;
