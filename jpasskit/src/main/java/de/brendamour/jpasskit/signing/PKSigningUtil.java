@@ -24,6 +24,7 @@ import de.brendamour.jpasskit.PKPass;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.CMSProcessableFile;
 import org.bouncycastle.cms.CMSSignedData;
@@ -61,6 +62,7 @@ import java.util.zip.ZipOutputStream;
 public final class PKSigningUtil {
 
     private static final int ZIP_BUFFER_SIZE = 8192;
+    private static final String FILE_SEPARATOR_UNIX = "/";
     private static final String MANIFEST_JSON_FILE_NAME = "manifest.json";
     private static final String PASS_JSON_FILE_NAME = "pass.json";
 
@@ -352,21 +354,48 @@ public final class PKSigningUtil {
 
         HashFunction hashFunction = Hashing.sha1();
         File[] filesInTempDir = tempPassDir.listFiles();
-        hashFilesInDirectory(filesInTempDir, fileWithHashMap, tempPassDir.getAbsolutePath() + File.separator, hashFunction);
+        hashFilesInDirectory(filesInTempDir, fileWithHashMap, hashFunction, null);
         File manifestJSONFile = new File(tempPassDir.getAbsolutePath() + File.separator + MANIFEST_JSON_FILE_NAME);
         jsonObjectMapper.writeValue(manifestJSONFile, fileWithHashMap);
         return manifestJSONFile;
     }
 
-    private static void hashFilesInDirectory(final File[] files, final Map<String, String> fileWithHashMap, final String workingDirectory,
-            final HashFunction hashFunction) throws IOException {
+    /* Windows OS separators did not work */
+    private static void hashFilesInDirectory(
+            final File[] files,
+            final Map<String, String> fileWithHashMap,
+            final HashFunction hashFunction,
+            final String parentName) throws IOException {
+        StringBuilder name = new StringBuilder();
+        HashCode hash;
         for (File passResourceFile : files) {
             if (passResourceFile.isFile()) {
-                HashCode hash = Files.hash(passResourceFile, hashFunction);
-                String name = passResourceFile.getAbsolutePath().replace(workingDirectory, "");
-                fileWithHashMap.put(name, Hex.encodeHexString(hash.asBytes()));
+                hash = Files.hash(passResourceFile, hashFunction);
+                if (StringUtils.isEmpty(parentName)) {
+                    // direct call
+                    name.append(passResourceFile.getName());
+                } else {
+                    // recursive call (apeending parent directory)
+                    name.append(parentName);
+                    name.append(FILE_SEPARATOR_UNIX);
+                    name.append(passResourceFile.getName());
+                }
+                fileWithHashMap.put(name.toString(), Hex.encodeHexString(hash.asBytes()));
             } else if (passResourceFile.isDirectory()) {
-                hashFilesInDirectory(passResourceFile.listFiles(), fileWithHashMap, workingDirectory, hashFunction);
+                if (StringUtils.isEmpty(parentName)) {
+                    // direct call
+                    name.append(passResourceFile.getName());
+                } else {
+                    // recursive call (apeending parent directory)
+                    name.append(parentName);
+                    name.append(FILE_SEPARATOR_UNIX);
+                    name.append(passResourceFile.getName());
+                }
+                hashFilesInDirectory(
+                        passResourceFile.listFiles(),
+                        fileWithHashMap,
+                        hashFunction,
+                        name.toString());
             }
         }
     }
