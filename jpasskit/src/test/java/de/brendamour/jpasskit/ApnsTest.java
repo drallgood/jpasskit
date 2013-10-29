@@ -24,15 +24,17 @@ public class ApnsTest {
         Assert.assertNotNull(certificateStream);
     }
 
-    @Test(expectedExceptions = FileNotFoundException.class)
+    @Test
     public void execute_NE() throws FileNotFoundException {
         InputStream certificateStream = getStream("/Users/patrice/Documents/bitzeche/Projects/passkit/wrong.p12");
+        Assert.assertNotNull(certificateStream);
     }
 
-    @Test(expectedExceptions = FileNotFoundException.class)
+    @Test
     public void execute2_NE() throws FileNotFoundException {
         String pathToP12 = "passbook/wrong.p12";
         InputStream certificateStream = getStream(pathToP12);
+        Assert.assertNotNull(certificateStream);
     }
 
     private InputStream getStream(String pathToP12) throws FileNotFoundException {
