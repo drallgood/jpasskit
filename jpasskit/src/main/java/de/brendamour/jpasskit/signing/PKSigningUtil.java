@@ -16,13 +16,35 @@
 
 package de.brendamour.jpasskit.signing;
 
-import com.google.common.hash.HashCode;
-import com.google.common.hash.HashFunction;
-import com.google.common.hash.Hashing;
-import com.google.common.io.Files;
-
-import de.brendamour.jpasskit.PKBarcode;
-import de.brendamour.jpasskit.PKPass;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
+import java.security.Key;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
+import java.security.Security;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FileUtils;
@@ -38,29 +60,24 @@ import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.util.Store;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.ObjectWriter;
-import org.codehaus.jackson.map.SerializationConfig;
-import org.codehaus.jackson.map.annotate.JsonFilter;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
-import org.codehaus.jackson.map.ser.impl.SimpleBeanPropertyFilter;
-import org.codehaus.jackson.map.ser.impl.SimpleFilterProvider;
-import org.codehaus.jackson.map.util.ISO8601DateFormat;
 
-import java.io.*;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.Charset;
-import java.security.*;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
+import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hashing;
+import com.google.common.io.Files;
+
+import de.brendamour.jpasskit.PKBarcode;
+import de.brendamour.jpasskit.PKPass;
 
 public final class PKSigningUtil {
 
@@ -85,7 +102,7 @@ public final class PKSigningUtil {
         FileUtils.copyDirectory(new File(pathToTemplateDirectory), tempPassDir);
 
         ObjectMapper jsonObjectMapper = new ObjectMapper();
-        jsonObjectMapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS, false);
+        jsonObjectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         jsonObjectMapper.setDateFormat(new ISO8601DateFormat());
 
         createPassJSONFile(pass, tempPassDir, jsonObjectMapper);
@@ -342,12 +359,11 @@ public final class PKSigningUtil {
                 "backgroundColorAsObject", "labelColorAsObject"));
         filters.addFilter("barcodeFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors", "messageEncodingAsString"));
         filters.addFilter("charsetFilter", SimpleBeanPropertyFilter.filterOutAllExcept("name"));
-        jsonObjectMapper.setSerializationInclusion(Inclusion.NON_NULL);
-        SerializationConfig serializationConfig = jsonObjectMapper.getSerializationConfig();
-        serializationConfig.addMixInAnnotations(Object.class, ValidateFilterMixIn.class);
-        serializationConfig.addMixInAnnotations(PKPass.class, PkPassFilterMixIn.class);
-        serializationConfig.addMixInAnnotations(PKBarcode.class, BarcodeFilterMixIn.class);
-        serializationConfig.addMixInAnnotations(Charset.class, CharsetFilterMixIn.class);
+        jsonObjectMapper.setSerializationInclusion(Include.NON_NULL);
+        jsonObjectMapper.addMixInAnnotations(Object.class, ValidateFilterMixIn.class);
+        jsonObjectMapper.addMixInAnnotations(PKPass.class, PkPassFilterMixIn.class);
+        jsonObjectMapper.addMixInAnnotations(PKBarcode.class, BarcodeFilterMixIn.class);
+        jsonObjectMapper.addMixInAnnotations(Charset.class, CharsetFilterMixIn.class);
 
         ObjectWriter objectWriter = jsonObjectMapper.writer(filters);
         objectWriter.writeValue(passJSONFile, pass);
@@ -366,10 +382,7 @@ public final class PKSigningUtil {
     }
 
     /* Windows OS separators did not work */
-    private static void hashFilesInDirectory(
-            final File[] files,
-            final Map<String, String> fileWithHashMap,
-            final HashFunction hashFunction,
+    private static void hashFilesInDirectory(final File[] files, final Map<String, String> fileWithHashMap, final HashFunction hashFunction,
             final String parentName) throws IOException {
         StringBuilder name;
         HashCode hash;
@@ -397,11 +410,7 @@ public final class PKSigningUtil {
                     name.append(FILE_SEPARATOR_UNIX);
                     name.append(passResourceFile.getName());
                 }
-                hashFilesInDirectory(
-                        passResourceFile.listFiles(),
-                        fileWithHashMap,
-                        hashFunction,
-                        name.toString());
+                hashFilesInDirectory(passResourceFile.listFiles(), fileWithHashMap, hashFunction, name.toString());
             }
         }
     }
