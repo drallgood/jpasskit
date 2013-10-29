@@ -16,25 +16,19 @@
 
 package de.brendamour.jpasskit.signing;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.security.Security;
-import java.util.Date;
-
-import org.apache.commons.io.IOUtils;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import de.brendamour.jpasskit.PKBarcode;
 import de.brendamour.jpasskit.PKPass;
 import de.brendamour.jpasskit.enums.PKBarcodeFormat;
+import org.apache.commons.io.IOUtils;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import java.io.*;
+import java.nio.charset.Charset;
+import java.security.Security;
+import java.util.Date;
 
 public class PKSigningUtilTest {
 

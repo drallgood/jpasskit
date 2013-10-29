@@ -16,13 +16,18 @@
 
 package de.brendamour.jpasskit;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.ObjectWriter;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
+import org.codehaus.jackson.map.ser.FilterProvider;
+import org.codehaus.jackson.map.ser.impl.SimpleBeanPropertyFilter;
+import org.codehaus.jackson.map.ser.impl.SimpleFilterProvider;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

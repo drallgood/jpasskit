@@ -91,6 +91,11 @@ public class PKSendPushNotificationUtil {
     class ApnsLoggingDelegate implements ApnsDelegate {
 
         @Override
+        public void messageSent(final ApnsNotification message) {
+            LOGGER.debug("Message sent: {}", message);
+        }
+
+        @Override
         public void messageSendFailed(final ApnsNotification message, final Throwable e) {
             LOGGER.debug("Message failed: {}", message, e);
         }
@@ -99,21 +104,6 @@ public class PKSendPushNotificationUtil {
         public void connectionClosed(final DeliveryError e, final int messageIdentifier) {
             LOGGER.debug("Connection closed: {}", messageIdentifier, e);
 
-        }
-
-        @Override
-        public void cacheLengthExceeded(final int newCacheLength) {
-            LOGGER.debug("CacheLengthExceeded: {}", newCacheLength);
-        }
-
-        @Override
-        public void messageSent(final ApnsNotification message, final boolean resent) {
-            LOGGER.debug("Message sent: {} (resent={})", message, resent);
-        }
-
-        @Override
-        public void notificationsResent(final int resendCount) {
-            LOGGER.debug("Messages resent: {}", resendCount);
         }
 
     }
