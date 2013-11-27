@@ -252,6 +252,7 @@ public final class PKSigningUtil {
         InputStream streamOfFile = new FileInputStream(p12File);
 
         keystore.load(streamOfFile, password.toCharArray());
+        IOUtils.closeQuietly(streamOfFile);
         return keystore;
     }
 
