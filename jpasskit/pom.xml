@@ -49,11 +49,11 @@
 	<distributionManagement>
 		<repository>
 			<id>bitzeche-release</id>
-			<url>dav:http://svn.bitzeche.de:9080/archiva/repository/release/</url>
+			<url>dav:http://trac.bitzeche.de/archiva/repository/release/</url>
 		</repository>
 		<snapshotRepository>
 			<id>bitzeche-snapshots</id>
-			<url>dav:http://svn.bitzeche.de:9080/archiva/repository/snapshots/</url>
+			<url>dav:http://trac.bitzeche.de/archiva/repository/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
 
