@@ -41,6 +41,7 @@ public class PKPass implements IPKValidateable {
     private String passTypeIdentifier;
 
     private URL webServiceURL;
+    private String appLaunchURL;
     private String authenticationToken;
 
     private String description;
@@ -54,7 +55,16 @@ public class PKPass implements IPKValidateable {
     private Color backgroundColor;
     private Color labelColor;
 
+    private String groupingIdentifier;
+
+    private boolean voided = false;
+
+    private String userInfo;
+
+    private List<PKBeacon> beacons;
     private List<PKLocation> locations;
+
+    private Long maxDistance;
 
     private PKBarcode barcode;
 
@@ -68,6 +78,7 @@ public class PKPass implements IPKValidateable {
     private List<Long> associatedStoreIdentifiers;
 
     private Date relevantDate;
+    private Date expirationDate;
 
     private boolean suppressStripShine;
 
@@ -94,6 +105,10 @@ public class PKPass implements IPKValidateable {
     public void setWebServiceURL(final URL webServiceURL) {
         this.webServiceURL = webServiceURL;
     }
+
+    public String getAppLaunchURL() { return appLaunchURL; }
+
+    public void setAppLaunchURL(String appLaunchURL) { this.appLaunchURL = appLaunchURL; }
 
     public String getAuthenticationToken() {
         return authenticationToken;
@@ -135,6 +150,10 @@ public class PKPass implements IPKValidateable {
         this.organizationName = organizationName;
     }
 
+    public String getUserInfo() { return userInfo; }
+
+    public void setUserInfo(String userInfo) { this.userInfo = userInfo; }
+
     public String getLogoText() {
         return logoText;
     }
@@ -174,6 +193,14 @@ public class PKPass implements IPKValidateable {
     public void setBackgroundColorAsObject(final Color backgroundColor) {
         this.backgroundColor = backgroundColor;
     }
+
+    public List<PKBeacon> getBeacons() { return beacons; }
+
+    public void setBeacons(final List<PKBeacon> beacons) { this.beacons = beacons; }
+
+    public Long getMaxDistance() { return maxDistance; }
+
+    public void setMaxDistance(Long maxDistance) { this.maxDistance = maxDistance; }
 
     public List<PKLocation> getLocations() {
         return locations;
@@ -272,6 +299,10 @@ public class PKPass implements IPKValidateable {
         this.labelColor = labelColor;
     }
 
+    public String getGroupingIdentifier() { return groupingIdentifier; }
+
+    public void setGroupingIdentifier(String groupingIdentifier) { this.groupingIdentifier = groupingIdentifier; }
+
     public List<Long> getAssociatedStoreIdentifiers() {
         return associatedStoreIdentifiers;
     }
@@ -287,6 +318,10 @@ public class PKPass implements IPKValidateable {
     public void setRelevantDate(final Date relevantDate) {
         this.relevantDate = relevantDate;
     }
+
+    public Date getExpirationDate() { return expirationDate; }
+
+    public void setExpirationDate(Date expirationDate) { this.expirationDate = expirationDate; }
 
     public boolean isSuppressStripShine() {
         return suppressStripShine;
