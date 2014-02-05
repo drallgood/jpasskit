@@ -18,11 +18,13 @@ package de.brendamour.jpasskit;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Arrays;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import de.brendamour.jpasskit.enums.PKDataDetectorTypes;
 import de.brendamour.jpasskit.enums.PKDateStyle;
 import de.brendamour.jpasskit.enums.PKNumberStyle;
 import de.brendamour.jpasskit.enums.PKTextAlignment;
@@ -34,6 +36,7 @@ public class PKFieldTest {
     private static final String LABEL = "Label";
     private static final BigDecimal VALUE_CURRENCY = new BigDecimal(25.20).setScale(2, RoundingMode.HALF_UP);
     private static final String CURRENCYCODE = "EUR";
+    private static final String ATTRIBUTED_VALUE = "<a href='http://example.com/customers/123'>Edit my profile</a>";
     private PKField pkField;
 
     @BeforeMethod
@@ -49,6 +52,8 @@ public class PKFieldTest {
         Assert.assertEquals(pkField.getValue(), VALUE_TEXT);
         Assert.assertEquals(pkField.getChangeMessage(), CHANGEMESSAGE);
         Assert.assertEquals(pkField.getLabel(), LABEL);
+        Assert.assertEquals(pkField.getAttributedValue(), ATTRIBUTED_VALUE);
+        Assert.assertEquals(pkField.getDataDetectorTypes().size(), 1);
         Assert.assertTrue(pkField.isValid());
 
     }
@@ -156,6 +161,8 @@ public class PKFieldTest {
         pkField.setChangeMessage(CHANGEMESSAGE);
         pkField.setLabel(LABEL);
         pkField.setTextAlignment(PKTextAlignment.PKTextAlignmentCenter);
+        pkField.setAttributedValue(ATTRIBUTED_VALUE);
+        pkField.setDataDetectorTypes(Arrays.asList(PKDataDetectorTypes.PKDataDetectorTypeAddress));
     }
 
     private void fillFieldsCurrency() {

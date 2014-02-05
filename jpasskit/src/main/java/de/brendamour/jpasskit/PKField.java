@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import de.brendamour.jpasskit.enums.PKDataDetectorTypes;
 import de.brendamour.jpasskit.enums.PKDateStyle;
 import de.brendamour.jpasskit.enums.PKNumberStyle;
 import de.brendamour.jpasskit.enums.PKTextAlignment;
@@ -38,12 +39,32 @@ public class PKField implements IPKValidateable {
     private String changeMessage;
     private PKTextAlignment textAlignment;
 
+    /**
+     * @since iOS 7.0
+     */
+    private String attributedValue;
+
+    /**
+     * @since iOS 7.0
+     */
+    private List<PKDataDetectorTypes> dataDetectorTypes;
+
+    /*
+     * Number Fields
+     */
     private String currencyCode;
     private PKNumberStyle numberStyle;
 
+    /*
+     * Date Fields
+     */
     private PKDateStyle dateStyle;
     private PKDateStyle timeStyle;
     private Boolean isRelative;
+    /**
+     * @since iOS 7.0
+     */
+    private Boolean ignoresTimeZone;
 
     public String getKey() {
         return key;
@@ -123,6 +144,30 @@ public class PKField implements IPKValidateable {
 
     public void setIsRelative(final Boolean isRelative) {
         this.isRelative = isRelative;
+    }
+
+    public String getAttributedValue() {
+        return attributedValue;
+    }
+
+    public void setAttributedValue(String attributedValue) {
+        this.attributedValue = attributedValue;
+    }
+
+    public List<PKDataDetectorTypes> getDataDetectorTypes() {
+        return dataDetectorTypes;
+    }
+
+    public void setDataDetectorTypes(List<PKDataDetectorTypes> dataDetectorTypes) {
+        this.dataDetectorTypes = dataDetectorTypes;
+    }
+
+    public Boolean getIgnoresTimeZone() {
+        return ignoresTimeZone;
+    }
+
+    public void setIgnoresTimeZone(Boolean ignoresTimeZone) {
+        this.ignoresTimeZone = ignoresTimeZone;
     }
 
     public boolean isValid() {
