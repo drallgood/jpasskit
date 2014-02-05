@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012 Patrice Brend'amour <p.brendamour@bitzeche.de>
+ * Copyright (C) 2014 Patrice Brend'amour <p.brendamour@bitzeche.de>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

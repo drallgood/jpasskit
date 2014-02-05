@@ -59,7 +59,7 @@
 
 	<properties>
 		<target.dir>target</target.dir>
-		<current.year>2012</current.year>
+		<current.year>2014</current.year>
 	</properties>
 
 	<dependencies>
