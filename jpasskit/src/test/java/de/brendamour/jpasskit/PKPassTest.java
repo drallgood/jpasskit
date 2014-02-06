@@ -21,6 +21,7 @@ import static org.mockito.Mockito.when;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.testng.Assert;
@@ -32,11 +33,37 @@ import de.brendamour.jpasskit.passes.PKGenericPass;
 public class PKPassTest {
     private static final String COLOR_STRING = "rgb(1,2,3)";
     private static final Color COLOR_OBJECT = new Color(1, 2, 3);
+    private static final String APP_LAUNCH_URL = "myapplication://open";
+    private static final String GROUPING_ID = "group-1234";
+    private static final Long MAX_DISTANCE = 99999l;
+    private static final String USER_INFO = "John Doe";
+    private static final Date EXPIRATION_DATE = new Date();
     private PKPass pkPass;
 
     @BeforeMethod
     public void prepareTest() {
         pkPass = new PKPass();
+    }
+
+    private void fillPkPassFields(){
+       pkPass.setAppLaunchURL(APP_LAUNCH_URL);
+       pkPass.setGroupingIdentifier(GROUPING_ID);
+       pkPass.setMaxDistance(MAX_DISTANCE);
+       pkPass.setVoided(true);
+       pkPass.setUserInfo(USER_INFO);
+       pkPass.setExpirationDate(EXPIRATION_DATE);
+    }
+
+    @Test
+    public void test_getSet() {
+        fillPkPassFields();
+
+        Assert.assertEquals(pkPass.getAppLaunchURL(), APP_LAUNCH_URL);
+        Assert.assertEquals(pkPass.getGroupingIdentifier(), GROUPING_ID);
+        Assert.assertEquals(pkPass.getMaxDistance(), MAX_DISTANCE);
+        Assert.assertTrue(pkPass.isVoided());
+        Assert.assertEquals(pkPass.getUserInfo(), USER_INFO);
+        Assert.assertEquals(pkPass.getExpirationDate(), EXPIRATION_DATE);
     }
 
     @Test
