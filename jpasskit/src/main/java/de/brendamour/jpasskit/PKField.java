@@ -24,7 +24,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import de.brendamour.jpasskit.enums.PKDataDetectorTypes;
+import de.brendamour.jpasskit.enums.PKDataDetectorType;
 import de.brendamour.jpasskit.enums.PKDateStyle;
 import de.brendamour.jpasskit.enums.PKNumberStyle;
 import de.brendamour.jpasskit.enums.PKTextAlignment;
@@ -36,18 +36,17 @@ public class PKField implements IPKValidateable {
     private String key;
     private String label;
     private Object value;
+    /**
+     * @since iOS 7.0
+     */
+    private Object attributedValue;
     private String changeMessage;
     private PKTextAlignment textAlignment;
 
     /**
      * @since iOS 7.0
      */
-    private String attributedValue;
-
-    /**
-     * @since iOS 7.0
-     */
-    private List<PKDataDetectorTypes> dataDetectorTypes;
+    private List<PKDataDetectorType> dataDetectorTypes;
 
     /*
      * Number Fields
@@ -64,7 +63,7 @@ public class PKField implements IPKValidateable {
     /**
      * @since iOS 7.0
      */
-    private Boolean ignoresTimeZone;
+    private Boolean ignoresTimeZone = Boolean.FALSE; // The default value is false
 
     public String getKey() {
         return key;
@@ -146,19 +145,19 @@ public class PKField implements IPKValidateable {
         this.isRelative = isRelative;
     }
 
-    public String getAttributedValue() {
+    public Object getAttributedValue() {
         return attributedValue;
     }
 
-    public void setAttributedValue(String attributedValue) {
+    public void setAttributedValue(final Object attributedValue) {
         this.attributedValue = attributedValue;
     }
 
-    public List<PKDataDetectorTypes> getDataDetectorTypes() {
+    public List<PKDataDetectorType> getDataDetectorTypes() {
         return dataDetectorTypes;
     }
 
-    public void setDataDetectorTypes(List<PKDataDetectorTypes> dataDetectorTypes) {
+    public void setDataDetectorTypes(final List<PKDataDetectorType> dataDetectorTypes) {
         this.dataDetectorTypes = dataDetectorTypes;
     }
 
@@ -166,7 +165,7 @@ public class PKField implements IPKValidateable {
         return ignoresTimeZone;
     }
 
-    public void setIgnoresTimeZone(Boolean ignoresTimeZone) {
+    public void setIgnoresTimeZone(final Boolean ignoresTimeZone) {
         this.ignoresTimeZone = ignoresTimeZone;
     }
 
