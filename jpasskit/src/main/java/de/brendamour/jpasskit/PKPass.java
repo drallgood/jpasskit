@@ -379,17 +379,31 @@ public class PKPass implements IPKValidateable {
 
     protected Color convertStringToColor(final String colorString) {
         Color color = null;
-        if (colorString != null) {
-            String rgbValues = colorString.replace("rgb(", "").replace(")", "");
-            String[] rgbValuesArray = rgbValues.split(",");
-            if (rgbValuesArray.length == 3) {
-                int r = Integer.parseInt(rgbValuesArray[0].trim());
-                int g = Integer.parseInt(rgbValuesArray[1].trim());
-                int b = Integer.parseInt(rgbValuesArray[2].trim());
-                color = new Color(r, g, b);
+        if (StringUtils.isNotBlank(colorString)) {
+            String colorStringLower = colorString.trim().toLowerCase();
+            if (colorStringLower.startsWith("rgb")) {
+                String rgbValues = colorStringLower.replace("rgb(", "").replace(")", "");
+                String[] rgbValuesArray = rgbValues.split(",");
+                if (rgbValuesArray.length == 3) {
+                    int r = Integer.parseInt(rgbValuesArray[0].trim());
+                    int g = Integer.parseInt(rgbValuesArray[1].trim());
+                    int b = Integer.parseInt(rgbValuesArray[2].trim());
+                    color = new Color(r, g, b);
+                }
+            } else if (colorStringLower.startsWith("#")) {
+                if (7 == colorStringLower.length()) {
+                    int r = Integer.parseInt(colorStringLower.substring(1, 3), 16);
+                    int g = Integer.parseInt(colorStringLower.substring(3, 5), 16);
+                    int b = Integer.parseInt(colorStringLower.substring(5, 7), 16);
+                    color = new Color(r, g, b);
+                } else if (4 == colorStringLower.length()) {
+                    int r = Integer.parseInt(colorStringLower.substring(1, 2) + colorStringLower.substring(1, 2), 16);
+                    int g = Integer.parseInt(colorStringLower.substring(2, 3) + colorStringLower.substring(2, 3), 16);
+                    int b = Integer.parseInt(colorStringLower.substring(3, 4) + colorStringLower.substring(3, 4), 16);
+                    color = new Color(r, g, b);
+                }
             }
         }
         return color;
     }
-
 }
