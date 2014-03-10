@@ -82,7 +82,7 @@ public class PKPass implements IPKValidateable {
 
     // Expiration Keys
     private Date expirationDate;
-    private Boolean voided = false; // The default value is false
+    private Boolean voided = Boolean.FALSE; // The default value is false
 
     @Deprecated // In iOS 7.0, a shine effect is never applied
     private Boolean suppressStripShine;
