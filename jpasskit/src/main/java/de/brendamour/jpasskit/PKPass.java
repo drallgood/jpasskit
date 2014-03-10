@@ -287,6 +287,10 @@ public class PKPass implements IPKValidateable {
         this.passThatWasSet = generic;
     }
 
+    public PKGenericPass getPassThatWasSet() {
+        return passThatWasSet;
+    }
+
     public String getLabelColor() {
         return convertColorToString(labelColor);
     }

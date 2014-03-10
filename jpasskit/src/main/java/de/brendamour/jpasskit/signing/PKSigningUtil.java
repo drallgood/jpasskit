@@ -357,7 +357,7 @@ public final class PKSigningUtil {
         // haven't found out, how to stack filters. Copying the validation one for now.
         filters.addFilter("validateFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors"));
         filters.addFilter("pkPassFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors", "foregroundColorAsObject",
-                "backgroundColorAsObject", "labelColorAsObject"));
+                "backgroundColorAsObject", "labelColorAsObject", "passThatWasSet"));
         filters.addFilter("barcodeFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors", "messageEncodingAsString"));
         filters.addFilter("charsetFilter", SimpleBeanPropertyFilter.filterOutAllExcept("name"));
         jsonObjectMapper.setSerializationInclusion(Include.NON_NULL);
