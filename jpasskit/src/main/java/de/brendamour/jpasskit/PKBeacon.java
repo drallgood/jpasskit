@@ -19,6 +19,7 @@ package de.brendamour.jpasskit;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class PKBeacon implements IPKValidateable {
@@ -31,11 +32,11 @@ public class PKBeacon implements IPKValidateable {
     private String relevantText;
 
     public Integer getMajor() {
-    return major;
+        return major;
     }
 
     public void setMajor(final Integer major) {
-    this.major = major;
+        this.major = major;
     }
 
     public Integer getMinor() {
@@ -69,8 +70,8 @@ public class PKBeacon implements IPKValidateable {
     public List<String> getValidationErrors() {
 
         List<String> validationErrors = new ArrayList<String>();
-        if (proximityUUID == null) {
-          validationErrors.add("Not all required Fields are set: proximityUUID");
+        if (StringUtils.isEmpty(proximityUUID)) {
+            validationErrors.add("Not all required Fields are set: proximityUUID");
         }
         return validationErrors;
     }

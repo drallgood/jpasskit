@@ -45,7 +45,7 @@ public class PKPassTest {
         pkPass = new PKPass();
     }
 
-    private void fillPkPassFields(){
+    private void fillPkPassFields() {
        pkPass.setAppLaunchURL(APP_LAUNCH_URL);
        pkPass.setGroupingIdentifier(GROUPING_ID);
        pkPass.setMaxDistance(MAX_DISTANCE);

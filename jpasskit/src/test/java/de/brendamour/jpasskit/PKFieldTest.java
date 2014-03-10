@@ -24,7 +24,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import de.brendamour.jpasskit.enums.PKDataDetectorTypes;
+import de.brendamour.jpasskit.enums.PKDataDetectorType;
 import de.brendamour.jpasskit.enums.PKDateStyle;
 import de.brendamour.jpasskit.enums.PKNumberStyle;
 import de.brendamour.jpasskit.enums.PKTextAlignment;
@@ -162,7 +162,7 @@ public class PKFieldTest {
         pkField.setLabel(LABEL);
         pkField.setTextAlignment(PKTextAlignment.PKTextAlignmentCenter);
         pkField.setAttributedValue(ATTRIBUTED_VALUE);
-        pkField.setDataDetectorTypes(Arrays.asList(PKDataDetectorTypes.PKDataDetectorTypeAddress));
+        pkField.setDataDetectorTypes(Arrays.asList(PKDataDetectorType.PKDataDetectorTypeAddress));
     }
 
     private void fillFieldsCurrency() {

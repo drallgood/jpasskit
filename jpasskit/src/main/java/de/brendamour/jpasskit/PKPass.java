@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -41,7 +42,6 @@ public class PKPass implements IPKValidateable {
     private String passTypeIdentifier;
 
     private URL webServiceURL;
-    private String appLaunchURL;
     private String authenticationToken;
 
     private String description;
@@ -57,14 +57,8 @@ public class PKPass implements IPKValidateable {
 
     private String groupingIdentifier;
 
-    private boolean voided = false;
-
-    private String userInfo;
-
     private List<PKBeacon> beacons;
     private List<PKLocation> locations;
-
-    private Long maxDistance;
 
     private PKBarcode barcode;
 
@@ -75,12 +69,23 @@ public class PKPass implements IPKValidateable {
     private PKGenericPass generic;
     private PKGenericPass passThatWasSet;
 
+    // Associated App Keys
+    private String appLaunchURL; // X-Callback-URL
     private List<Long> associatedStoreIdentifiers;
 
-    private Date relevantDate;
-    private Date expirationDate;
+    // Companion App Keys
+    private String userInfo; // any JSON data
 
-    private boolean suppressStripShine;
+    // Relevance Keys
+    private Long maxDistance;
+    private Date relevantDate;
+
+    // Expiration Keys
+    private Date expirationDate;
+    private Boolean voided = false; // The default value is false
+
+    @Deprecated // In iOS 7.0, a shine effect is never applied
+    private Boolean suppressStripShine;
 
     public String getSerialNumber() {
         return serialNumber;
@@ -106,9 +111,13 @@ public class PKPass implements IPKValidateable {
         this.webServiceURL = webServiceURL;
     }
 
-    public String getAppLaunchURL() { return appLaunchURL; }
+    public String getAppLaunchURL() {
+        return appLaunchURL;
+    }
 
-    public void setAppLaunchURL(String appLaunchURL) { this.appLaunchURL = appLaunchURL; }
+    public void setAppLaunchURL(final String appLaunchURL) {
+        this.appLaunchURL = appLaunchURL;
+    }
 
     public String getAuthenticationToken() {
         return authenticationToken;
@@ -142,9 +151,13 @@ public class PKPass implements IPKValidateable {
         this.teamIdentifier = teamIdentifier;
     }
 
-    public boolean isVoided() { return voided; }
+     public Boolean isVoided() {
+        return voided;
+    }
 
-    public void setVoided(boolean voided) { this.voided = voided; }
+    public void setVoided(final Boolean voided) {
+        this.voided = voided;
+    }
 
     public String getOrganizationName() {
         return organizationName;
@@ -154,9 +167,13 @@ public class PKPass implements IPKValidateable {
         this.organizationName = organizationName;
     }
 
-    public String getUserInfo() { return userInfo; }
+   public String getUserInfo() {
+        return userInfo;
+    }
 
-    public void setUserInfo(String userInfo) { this.userInfo = userInfo; }
+    public void setUserInfo(final String userInfo) {
+        this.userInfo = userInfo;
+    }
 
     public String getLogoText() {
         return logoText;
@@ -198,13 +215,21 @@ public class PKPass implements IPKValidateable {
         this.backgroundColor = backgroundColor;
     }
 
-    public List<PKBeacon> getBeacons() { return beacons; }
+    public List<PKBeacon> getBeacons() {
+        return beacons;
+    }
 
-    public void setBeacons(final List<PKBeacon> beacons) { this.beacons = beacons; }
+    public void setBeacons(final List<PKBeacon> beacons) {
+        this.beacons = beacons;
+    }
 
-    public Long getMaxDistance() { return maxDistance; }
+    public Long getMaxDistance() {
+        return maxDistance;
+    }
 
-    public void setMaxDistance(Long maxDistance) { this.maxDistance = maxDistance; }
+    public void setMaxDistance(final Long maxDistance) {
+        this.maxDistance = maxDistance;
+    }
 
     public List<PKLocation> getLocations() {
         return locations;
@@ -307,9 +332,13 @@ public class PKPass implements IPKValidateable {
         this.labelColor = labelColor;
     }
 
-    public String getGroupingIdentifier() { return groupingIdentifier; }
+    public String getGroupingIdentifier() {
+        return groupingIdentifier;
+    }
 
-    public void setGroupingIdentifier(String groupingIdentifier) { this.groupingIdentifier = groupingIdentifier; }
+    public void setGroupingIdentifier(final String groupingIdentifier) {
+        this.groupingIdentifier = groupingIdentifier;
+    }
 
     public List<Long> getAssociatedStoreIdentifiers() {
         return associatedStoreIdentifiers;
@@ -327,15 +356,21 @@ public class PKPass implements IPKValidateable {
         this.relevantDate = relevantDate;
     }
 
-    public Date getExpirationDate() { return expirationDate; }
+    public Date getExpirationDate() {
+        return expirationDate;
+    }
 
-    public void setExpirationDate(Date expirationDate) { this.expirationDate = expirationDate; }
+    public void setExpirationDate(final Date expirationDate) {
+        this.expirationDate = expirationDate;
+    }
 
-    public boolean isSuppressStripShine() {
+    @Deprecated
+    public Boolean isSuppressStripShine() {
         return suppressStripShine;
     }
 
-    public void setSuppressStripShine(final boolean suppressStripShine) {
+    @Deprecated
+    public void setSuppressStripShine(final Boolean suppressStripShine) {
         this.suppressStripShine = suppressStripShine;
     }
 
@@ -361,7 +396,14 @@ public class PKPass implements IPKValidateable {
         if (!passThatWasSet.isValid()) {
             validationErrors.addAll(passThatWasSet.getValidationErrors());
         }
-
+        // If appLaunchURL key is present, the associatedStoreIdentifiers key must also be present
+        if (appLaunchURL != null && CollectionUtils.isEmpty(associatedStoreIdentifiers)) {
+            validationErrors.add("The appLaunchURL requires associatedStoreIdentifiers to be specified");
+        }
+        // groupingIdentifier key is optional for event tickets and boarding passes; otherwise not allowed
+        if (StringUtils.isNotEmpty(groupingIdentifier) && eventTicket == null && boardingPass == null) {
+            validationErrors.add("The groupingIdentifier is optional for event tickets and boarding passes, otherwise not allowed");
+        }
         return validationErrors;
     }
 

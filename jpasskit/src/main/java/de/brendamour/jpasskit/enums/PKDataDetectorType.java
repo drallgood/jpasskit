@@ -16,6 +16,6 @@
 
 package de.brendamour.jpasskit.enums;
 
-public enum PKDataDetectorTypes {
+public enum PKDataDetectorType {
     PKDataDetectorTypePhoneNumber, PKDataDetectorTypeLink, PKDataDetectorTypeAddress, PKDataDetectorTypeCalendarEvent;
 }
