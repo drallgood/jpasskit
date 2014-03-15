@@ -61,9 +61,9 @@ public class PKField implements IPKValidateable {
     private PKDateStyle timeStyle;
     private Boolean isRelative;
     /**
-     * @since iOS 7.0
+     * @since iOS 7.0 Has to be null by default, since if it's set, iOS will validate the field as a date even the API consumer didn't want that.
      */
-    private Boolean ignoresTimeZone = Boolean.FALSE; // The default value is false
+    private Boolean ignoresTimeZone = null;
 
     public String getKey() {
         return key;
