@@ -73,6 +73,9 @@ public class PKPass implements IPKValidateable {
     private String appLaunchURL; // X-Callback-URL
     private List<Long> associatedStoreIdentifiers;
 
+    // Attido PassWallet support
+    private List<PWAssociatedApps> associatedApps;
+
     // Companion App Keys
     private String userInfo; // any JSON data
 
@@ -346,6 +349,14 @@ public class PKPass implements IPKValidateable {
 
     public void setAssociatedStoreIdentifiers(final List<Long> associatedStoreIdentifiers) {
         this.associatedStoreIdentifiers = associatedStoreIdentifiers;
+    }
+
+    public List<PWAssociatedApps> getAssociatedApps() {
+        return associatedApps;
+    }
+
+    public void setAssociatedApps(final List<PWAssociatedApps> associatedApps) {
+        this.associatedApps = associatedApps;
     }
 
     public Date getRelevantDate() {
