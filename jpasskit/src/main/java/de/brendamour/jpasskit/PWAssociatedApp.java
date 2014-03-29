@@ -25,7 +25,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class PWAssociatedApps implements IPKValidateable {
+public class PWAssociatedApp implements IPKValidateable {
 
     private static final long serialVersionUID = -9021012408747538251L;
 
