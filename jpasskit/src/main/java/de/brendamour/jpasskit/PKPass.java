@@ -371,7 +371,11 @@ public class PKPass implements IPKValidateable {
 
     @Deprecated
     public void setSuppressStripShine(final Boolean suppressStripShine) {
-        this.suppressStripShine = suppressStripShine;
+        if (suppressStripShine) {
+            this.suppressStripShine = suppressStripShine;
+        } else {
+            this.suppressStripShine = null;
+        }
     }
 
     public boolean isValid() {
