@@ -73,6 +73,9 @@ public class PKPass implements IPKValidateable {
     private String appLaunchURL; // X-Callback-URL
     private List<Long> associatedStoreIdentifiers;
 
+    // Attido PassWallet support
+    private List<PWAssociatedApp> associatedApps;
+
     // Companion App Keys
     private String userInfo; // any JSON data
 
@@ -82,7 +85,7 @@ public class PKPass implements IPKValidateable {
 
     // Expiration Keys
     private Date expirationDate;
-    private Boolean voided = Boolean.FALSE; // The default value is false
+    private Boolean voided; // The key is optional, default value is false
 
     @Deprecated // In iOS 7.0, a shine effect is never applied
     private Boolean suppressStripShine;
@@ -348,6 +351,14 @@ public class PKPass implements IPKValidateable {
         this.associatedStoreIdentifiers = associatedStoreIdentifiers;
     }
 
+    public List<PWAssociatedApp> getAssociatedApps() {
+        return associatedApps;
+    }
+
+    public void setAssociatedApps(final List<PWAssociatedApp> associatedApps) {
+        this.associatedApps = associatedApps;
+    }
+
     public Date getRelevantDate() {
         return relevantDate;
     }
@@ -371,7 +382,11 @@ public class PKPass implements IPKValidateable {
 
     @Deprecated
     public void setSuppressStripShine(final Boolean suppressStripShine) {
-        this.suppressStripShine = suppressStripShine;
+        if (suppressStripShine) {
+            this.suppressStripShine = suppressStripShine;
+        } else {
+            this.suppressStripShine = null;
+        }
     }
 
     public boolean isValid() {
