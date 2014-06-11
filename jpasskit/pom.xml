@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.brendamour</groupId>
 	<artifactId>jpasskit</artifactId>
-	<version>0.0.4-SNAPSHOT</version>
+	<version>0.0.4</version>
 	<name>Java Library for Apples PassBook Webservice API</name>
 	<inceptionYear>2012</inceptionYear>
 	<licenses>
@@ -197,6 +197,11 @@
 					</execution>
 				</executions>
                 <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.scm</groupId>
+                        <artifactId>maven-scm-api</artifactId>
+                        <version>1.8.1</version>
+                    </dependency>
                     <dependency>
                         <groupId>org.apache.maven.scm</groupId>
                         <artifactId>maven-scm-provider-gitexe</artifactId>
