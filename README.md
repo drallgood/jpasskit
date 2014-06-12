@@ -11,6 +11,8 @@ There are two separate projects:
 
 **Development Version:** 0.0.5-SNAPSHOT
 
+**Support jPasskit by contributing to my [GitTip fund](https://www.gittip.com/drallgood/).**
+
 ## Installation
 
 ### Using Maven
