@@ -39,8 +39,8 @@ import java.util.Random;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.provider.X509CertificateObject;
-import org.bouncycastle.openssl.PEMReader;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.bouncycastle.openssl.PEMParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.restlet.data.ChallengeResponse;
 import org.restlet.data.Status;
 import org.restlet.representation.Representation;
@@ -214,7 +214,7 @@ public class PKRestletServerResourceFactory implements IPKRestletServerResourceF
 
 	private Object readKeyPair(final String file) throws IOException {
 		FileReader fileReader = new FileReader(file);
-		PEMReader r = new PEMReader(fileReader);
+		PEMParser r = new PEMParser(fileReader);
 		try {
 			return r.readObject();
 		} catch (IOException ex) {
