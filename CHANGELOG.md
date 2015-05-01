@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - 
 
 ### Fixed
+- Switched to the current version of jpasskit (and Jackson 2) in jpasskit.server
 - 
 
 ## 0.0.4 - 2014-06-11
@@ -22,6 +23,7 @@ All notable changes to this project will be documented in this file.
 - Relevance & expiration fields for passes (iOS7 and later)
 - More information when using APNS logging
 - Switched to Jackson 2
+- Attido PassWallet support for android devices to allow linking of android apps to the pass
 
 ### Deprecated
 - Shine effect on passes (deprecated in iOS7)
