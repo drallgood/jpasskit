@@ -4,7 +4,7 @@
 	<groupId>de.brendamour</groupId>
 	<artifactId>jpasskit.server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Java REST Webservice for Apples PassBook Webservice API</name>
+	<name>Java Server Example for Apple PassBook Web Service API</name>
 	<inceptionYear>2012</inceptionYear>
 	<licenses>
 		<license>
@@ -67,7 +67,7 @@
 		<dependency>
 			<groupId>de.brendamour</groupId>
 			<artifactId>jpasskit</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
+			<version>0.0.5-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
@@ -75,7 +75,6 @@
 			<artifactId>org.restlet</artifactId>
 			<version>${restlet.version}</version>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.restlet.jse</groupId>
 			<artifactId>org.restlet.ext.ssl</artifactId>
@@ -88,18 +87,17 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>13.0.1</version>
-		</dependency>
-
-		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.6.4</version>
 			<scope>provided</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>13.0.1</version>
+		</dependency>
 	</dependencies>
 
 	<repositories>

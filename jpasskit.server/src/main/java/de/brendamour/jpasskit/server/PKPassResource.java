@@ -22,8 +22,8 @@ import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.Map;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.restlet.Request;
 import org.restlet.data.Status;
 import org.restlet.representation.InputRepresentation;
@@ -46,7 +46,7 @@ public abstract class PKPassResource extends ServerResource {
 	public PKPassResource(final String pathToPassTemplate) {
 		this.pathToPassTemplate = pathToPassTemplate;
 		jsonObjectMapper = new ObjectMapper();
-		jsonObjectMapper.setSerializationInclusion(Inclusion.NON_NULL);
+		jsonObjectMapper.setSerializationInclusion(Include.NON_NULL);
 	}
 
 	/*
