@@ -4,7 +4,7 @@
 	<groupId>de.brendamour</groupId>
 	<artifactId>jpasskit.server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Java REST Webservice for Apples PassBook Webservice API</name>
+	<name>Java Server Example for Apple PassBook Web Service API</name>
 	<inceptionYear>2012</inceptionYear>
 	<licenses>
 		<license>
