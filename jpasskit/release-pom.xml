@@ -31,6 +31,7 @@
   <scm>
     <connection>scm:git:git@github.com:bitzeche/jpasskit.git</connection>
     <developerConnection>scm:git:git@github.com:bitzeche/jpasskit.git</developerConnection>
+    <tag>jpasskit-0.0.5</tag>
     <url>scm:git:git@github.com:bitzeche/jpasskit.git</url>
   </scm>
   <distributionManagement>
