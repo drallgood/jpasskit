@@ -352,6 +352,24 @@ public final class PKSigningUtil {
             JsonGenerationException, JsonMappingException {
         File passJSONFile = new File(tempPassDir.getAbsolutePath() + File.separator + PASS_JSON_FILE_NAME);
 
+        ObjectWriter objectWriter = getObjectWriterWithFilters(jsonObjectMapper);
+        objectWriter.writeValue(passJSONFile, pass);
+    }
+
+    private static File createManifestJSONFile(final File tempPassDir, final ObjectMapper jsonObjectMapper) throws IOException,
+            JsonGenerationException, JsonMappingException {
+        Map<String, String> fileWithHashMap = new HashMap<String, String>();
+
+        HashFunction hashFunction = Hashing.sha1();
+        File[] filesInTempDir = tempPassDir.listFiles();
+        hashFilesInDirectory(filesInTempDir, fileWithHashMap, hashFunction, null);
+        File manifestJSONFile = new File(tempPassDir.getAbsolutePath() + File.separator + MANIFEST_JSON_FILE_NAME);
+        ObjectWriter objectWriter = getObjectWriterWithFilters(jsonObjectMapper);
+        objectWriter.writeValue(manifestJSONFile, fileWithHashMap);
+        return manifestJSONFile;
+    }
+
+    private static ObjectWriter getObjectWriterWithFilters(final ObjectMapper jsonObjectMapper) {
         SimpleFilterProvider filters = new SimpleFilterProvider();
 
         // haven't found out, how to stack filters. Copying the validation one for now.
@@ -367,21 +385,10 @@ public final class PKSigningUtil {
         jsonObjectMapper.addMixIn(Charset.class, CharsetFilterMixIn.class);
 
         ObjectWriter objectWriter = jsonObjectMapper.writer(filters);
-        objectWriter.writeValue(passJSONFile, pass);
+        return objectWriter;
     }
 
-    private static File createManifestJSONFile(final File tempPassDir, final ObjectMapper jsonObjectMapper) throws IOException,
-            JsonGenerationException, JsonMappingException {
-        Map<String, String> fileWithHashMap = new HashMap<String, String>();
-
-        HashFunction hashFunction = Hashing.sha1();
-        File[] filesInTempDir = tempPassDir.listFiles();
-        hashFilesInDirectory(filesInTempDir, fileWithHashMap, hashFunction, null);
-        File manifestJSONFile = new File(tempPassDir.getAbsolutePath() + File.separator + MANIFEST_JSON_FILE_NAME);
-        jsonObjectMapper.writeValue(manifestJSONFile, fileWithHashMap);
-        return manifestJSONFile;
-    }
-
+    
     /* Windows OS separators did not work */
     private static void hashFilesInDirectory(final File[] files, final Map<String, String> fileWithHashMap, final HashFunction hashFunction,
             final String parentName) throws IOException {
