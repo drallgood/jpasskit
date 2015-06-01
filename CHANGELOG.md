@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.0.5 - 2015-06-02
+
+### Added
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+- Exception when writing manifest file (#38)
+
 ## 0.0.5 - 2015-06-01
 
 - Dependency updates (Jackson, ...)
