@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Patrice Brend'amour <p.brendamour@bitzeche.de>
+ * Copyright (C) 2015 Patrice Brend'amour <p.brendamour@bitzeche.de>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -361,10 +361,10 @@ public final class PKSigningUtil {
         filters.addFilter("barcodeFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors", "messageEncodingAsString"));
         filters.addFilter("charsetFilter", SimpleBeanPropertyFilter.filterOutAllExcept("name"));
         jsonObjectMapper.setSerializationInclusion(Include.NON_NULL);
-        jsonObjectMapper.addMixInAnnotations(Object.class, ValidateFilterMixIn.class);
-        jsonObjectMapper.addMixInAnnotations(PKPass.class, PkPassFilterMixIn.class);
-        jsonObjectMapper.addMixInAnnotations(PKBarcode.class, BarcodeFilterMixIn.class);
-        jsonObjectMapper.addMixInAnnotations(Charset.class, CharsetFilterMixIn.class);
+        jsonObjectMapper.addMixIn(Object.class, ValidateFilterMixIn.class);
+        jsonObjectMapper.addMixIn(PKPass.class, PkPassFilterMixIn.class);
+        jsonObjectMapper.addMixIn(PKBarcode.class, BarcodeFilterMixIn.class);
+        jsonObjectMapper.addMixIn(Charset.class, CharsetFilterMixIn.class);
 
         ObjectWriter objectWriter = jsonObjectMapper.writer(filters);
         objectWriter.writeValue(passJSONFile, pass);
