@@ -1,15 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 0.0.5 - 2014-XX-XX
-### Added
-- 
+## 0.0.5 - 2015-06-01
 
-### Deprecated
-- 
-
-### Removed
-- 
+- Dependency updates (Jackson, ...)
 
 ### Fixed
 - Switched to the current version of jpasskit (and Jackson 2) in jpasskit.server
