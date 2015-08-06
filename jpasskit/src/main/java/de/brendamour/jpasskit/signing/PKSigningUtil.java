@@ -178,7 +178,8 @@ public final class PKSigningUtil {
         if (signingCert == null || signingPrivateKey == null || appleWWDRCACert == null) {
             throw new IOException("Couldn#t load all the neccessary certificates/keys");
         }
-
+        // check the Validity of the Certificate to make sure it isn't expired
+        appleWWDRCACert.checkValidity();
         return new PKSigningInformation(signingCert, signingPrivateKey, appleWWDRCACert);
     }
 
@@ -231,6 +232,8 @@ public final class PKSigningUtil {
         if (signingCert == null || signingPrivateKey == null || appleWWDRCACert == null) {
             throw new IOException("Couldn#t load all the neccessary certificates/keys");
         }
+        // check the Validity of the Certificate to make sure it isn't expired
+        appleWWDRCACert.checkValidity();
 
         return new PKSigningInformation(signingCert, signingPrivateKey, appleWWDRCACert);
     }
