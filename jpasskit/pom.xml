@@ -1,9 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.brendamour</groupId>
 	<artifactId>jpasskit</artifactId>
 	<version>0.0.7-SNAPSHOT</version>
-	<name>Java Library for Apple PassBook Web Service API</name>
+	<name>jPasskit</name>
+	<description>Java Library for Apple PassBook Web Service API</description>
+
 	<inceptionYear>2012</inceptionYear>
 	<licenses>
 		<license>
@@ -15,8 +18,8 @@
 		<url>scm:git:git@github.com:drallgood/jpasskit.git</url>
 		<connection>scm:git:git@github.com:drallgood/jpasskit.git</connection>
 		<developerConnection>scm:git:git@github.com:drallgood/jpasskit.git</developerConnection>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 
 
 	<developers>
@@ -46,14 +49,14 @@
 		<outputDirectory>site</outputDirectory>
 	</reporting>
 	<distributionManagement>
-		<repository>
-			<id>bitzeche-release</id>
-			<url>dav:http://trac.bitzeche.de/archiva/repository/release/</url>
-		</repository>
 		<snapshotRepository>
-			<id>bitzeche-snapshots</id>
-			<url>dav:http://trac.bitzeche.de/archiva/repository/snapshots/</url>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
 	</distributionManagement>
 
 	<properties>
@@ -73,13 +76,13 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.5.3</version>
+			<version>2.6.1</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>18.0</version>
+			<version>19.0-rc1</version>
 		</dependency>
 
 		<dependency>
@@ -97,13 +100,13 @@
 		<dependency>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
-			<version>3.2.1</version>
+			<version>3.2</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.notnoop.apns</groupId>
 			<artifactId>apns</artifactId>
-			<version>0.2.3</version>
+			<version>1.0.0.Beta6</version>
 		</dependency>
 
 		<dependency>
@@ -115,14 +118,14 @@
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
-			<version>6.9.4</version>
+			<version>6.9.6</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
-			<version>1.10.19</version>
+			<version>2.0.2-beta</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -145,7 +148,17 @@
 		<outputDirectory>${basedir}/${target.dir}/classes</outputDirectory>
 		<testOutputDirectory>${basedir}/${target.dir}/test-classes</testOutputDirectory>
 		<plugins>
-
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.3</version>
+				<extensions>true</extensions>
+				<configuration>
+					<serverId>ossrh</serverId>
+					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+					<autoReleaseAfterClose>true</autoReleaseAfterClose>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -161,7 +174,7 @@
 			</plugin>
 			<plugin>
 				<groupId>com.mycila</groupId>
-    			<artifactId>license-maven-plugin</artifactId>
+				<artifactId>license-maven-plugin</artifactId>
 				<version>2.11</version>
 				<configuration>
 					<header>header.txt</header>
@@ -171,8 +184,8 @@
 						<email>patrice@brendamour.net</email>
 					</properties>
 					<excludes>
-            			<exclude>*pom.xml</exclude>
-            		</excludes>
+						<exclude>*pom.xml</exclude>
+					</excludes>
 				</configuration>
 				<executions>
 					<execution>
@@ -194,21 +207,53 @@
 						</goals>
 						<configuration>
 							<pomFileName>jpasskit/pom.xml</pomFileName>
+							<autoVersionSubmodules>true</autoVersionSubmodules>
+							<useReleaseProfile>false</useReleaseProfile>
+							<releaseProfiles>release</releaseProfiles>
+							<goals>deploy</goals>
 						</configuration>
 					</execution>
 				</executions>
-                <dependencies><!--
-                    <dependency>
-                        <groupId>org.apache.maven.scm</groupId>
-                        <artifactId>maven-scm-api</artifactId>
-                        <version>1.8.1</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.apache.maven.scm</groupId>
-                        <artifactId>maven-scm-provider-gitexe</artifactId>
-                        <version>1.8.1</version>
-                    </dependency>-->
-                </dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9.1</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 		<extensions>
