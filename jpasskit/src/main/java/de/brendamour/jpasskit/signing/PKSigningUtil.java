@@ -178,7 +178,8 @@ public final class PKSigningUtil {
         if (signingCert == null || signingPrivateKey == null || appleWWDRCACert == null) {
             throw new IOException("Couldn#t load all the neccessary certificates/keys");
         }
-
+        // check the Validity of the Certificate to make sure it isn't expired
+        appleWWDRCACert.checkValidity();
         return new PKSigningInformation(signingCert, signingPrivateKey, appleWWDRCACert);
     }
 
@@ -231,6 +232,8 @@ public final class PKSigningUtil {
         if (signingCert == null || signingPrivateKey == null || appleWWDRCACert == null) {
             throw new IOException("Couldn#t load all the neccessary certificates/keys");
         }
+        // check the Validity of the Certificate to make sure it isn't expired
+        appleWWDRCACert.checkValidity();
 
         return new PKSigningInformation(signingCert, signingPrivateKey, appleWWDRCACert);
     }
@@ -303,6 +306,7 @@ public final class PKSigningUtil {
             CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509", BouncyCastleProvider.PROVIDER_NAME);
             Certificate certificate = certificateFactory.generateCertificate(certificateFileInputStream);
             if (certificate instanceof X509Certificate) {
+                ((X509Certificate)certificate).checkValidity();
                 return (X509Certificate) certificate;
             }
             throw new IOException("The key from '" + filePath + "' could not be decrypted");
@@ -331,6 +335,7 @@ public final class PKSigningUtil {
             CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509", BouncyCastleProvider.PROVIDER_NAME);
             Certificate certificate = certificateFactory.generateCertificate(certificateInputStream);
             if (certificate instanceof X509Certificate) {
+                ((X509Certificate)certificate).checkValidity();
                 return (X509Certificate) certificate;
             }
             throw new IOException("The key from the input stream could not be decrypted");

@@ -1,0 +1,125 @@
+I spent the last two days playing with jpasskit, since I'm on a project that needs to produce passes for Apple passkit. This blog entry is really a mini tutorial for jpasskit, since the documentation for the project is kind of minimal.
+
+For those new to Apple PassKit and creating passes, this mini tutorial should help get you going. Before we use jpasskit, there's a couple of things you need.
+1. An apple developer account
+2. A Mac running OSX
+3. Java
+
+If don't have these three things, it will be difficult to follow the instructions in the tutorial. The tutorial is divided into three steps. Step 1 guides you through the certificate creation on Apple's developer website. Step 2 gives you an example of how to use jpasskit to create a pass.
+
+Step 1
+The first thing you need to do is create a passkit identifier. To do that, you need to have a apple developer license and a Mac. Assuming you have both, follow these steps.
+
+1. Open a browser and go to http://developer.apple.com
+2. Click Member Center and login
+3. If you belong to more than 1 team, select the team
+4. Click on Certificates, Identifiers & Profiles
+5. Click Identifiers in iOS Apps
+6. Click Pass Type IDs
+7. Click the + icon to add a new Pass Type ID
+8. Enter something descriptive for the description
+9. Enter an identifier. It has to start with "pass". After that, apple recommends reverse-domain name. For example, if your business is supercoolapp.com, the reverse would be com.supercoolapp. The pass identifier might be pass.com.supercoolapp.generic
+10. click "register" to create the identifier
+11. click done. this will show your pass type id
+12. click the pass type id you just created
+13. click edit
+14. click Create Certificate. It will sow you instructions for keychain
+15. Open apple Keychain app on your Mac
+16. Click Keychain Access and select Certificate Assistant -> Request a certificate from a certificate authority
+17. select the email associated with your account
+18. enter a name for common name
+19. check Save to disk
+20. click continue
+21. for Save As, edit the name of the file
+22. click Save
+23. click done
+24. Go back to the borwser and click Continue
+25. Click choose File
+26. Select the new certSigningRequest file you just created and click Choose
+27. Click Generate
+28. Click download. It will go into your downloads
+29. click Done
+30. Click your downloads to view the new certificate
+31. Click the new cert and keychain will add it
+32. Open keychain and the new cert will be listed under My Certificates
+33. Select the new cert
+34. Click the arrow to show the private key
+35. Select the private key
+36. Click File -> Export items
+37. Enter a name for the private key. It should have .p12 for the file extension
+38. Click Save
+39. Enter a password to protect the private key and verify the password
+40. Click Ok
+41. It will prompt you for your Mac login password. Enter your password and click Allow
+
+At this point you have the certificate and the private key you need for Jpasskit. You don't need to do anything special to the p12 file, just use it as is.
+
+Step 2
+Checkout Jpasskit from github with this command "git clone https://github.com/drallgood/jpasskit" or fork it on github. Either way will work. Start by making a simple java class with a main method and paste this code into the method.
+
+        String appleWWDRCA = "passbook/AppleWWDRCA.pem"; // this is apple's developer relation cert
+        String privateKeyPath = "./privateKey.p12"; // the private key you exported from keychain
+        String privateKeyPassword = "password"; // the password you used to export
+        try {
+          
+            PKSigningInformation pkSigningInformation = PKSigningUtil.
+                    loadSigningInformationFromPKCS12FileAndIntermediateCertificateFile(
+                    privateKeyPath, privateKeyPassword, appleWWDRCA);
+           
+            PKPass pass = new PKPass();
+            pass.setPassTypeIdentifier("pass.com.yourdomain.type");
+            pass.setAuthenticationToken("vxwxd7J8AlNNFPS8k0a0FfUFtq0ewzFdc");
+            pass.setSerialNumber("12345678000");
+            pass.setTeamIdentifier("abcdefg"); // replace this with your team ID
+            pass.setOrganizationName("your org");
+            pass.setDescription("some description");
+            pass.setLogoText("some logo text");
+
+            PKBarcode barcode = new PKBarcode();
+            barcode.setFormat(PKBarcodeFormat.PKBarcodeFormatPDF417);
+            barcode.setMessageEncoding(Charset.forName("iso-8859-1"));
+            barcode.setMessage("123456789");
+            pass.setBarcode(barcode);
+
+            PKGenericPass generic = new PKGenericPass();
+            List<PKField> primaryFields = new ArrayList<PKField>();
+            PKField member = new PKField();
+            member.setKey("mykey"); // some unique key for primary field
+            member.setValue("myvalue"); // some value
+            primaryFields.add(member);
+            generic.setPrimaryFields(primaryFields);
+            pass.setGeneric(generic);
+           
+            PKLocation location = new PKLocation();
+            location.setLatitude(37.33182); // replace with some lat
+            location.setLongitude(-122.03118); // replace with some long
+            List<PKLocation> locations = new ArrayList<PKLocation>();
+            locations.add(location);
+            pass.setLocations(locations);
+           
+            if (pass.isValid()) {
+                String pathToTemplateDirectory = "./mypass.raw"; // replace with your folder with the icons
+                byte[] passZipAsByteArray = PKSigningUtil.
+                        createSignedAndZippedPkPassArchive(pass, pathToTemplateDirectory, pkSigningInformation);
+               
+                String outputFile = "./mypass.pkpass"; // change the name of the pass
+                ByteArrayInputStream inputStream = new ByteArrayInputStream(passZipAsByteArray);
+                IOUtils.copy(inputStream, new FileOutputStream(outputFile));
+                System.out.println("Done!");
+            } else {
+                System.out.println("the pass is NOT Valid man!!!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("failed!");
+        }
+
+After you replace the values, run the class. At minimum you will need to change the following:
+
+    path to your private key file
+    password for the private key
+    the passTypeIdentifier
+    team identifier
+    path to the raw pass files
+
+Jpasskit includes the stock AppleWWDRCA certificate in src/test/resources folder. Either appleWWDRCA.cer or pem file will work in JPasskit. Note that if any certificate is expired, you won't be able to create a pass. One thing you don't want to do is try to sign the pass with your pass certificate. Jpasskit will sign it and create the package, but iOS device won't be able to verify the pass. You'll get an error saying it couldn't validate the intermediate certificate.
