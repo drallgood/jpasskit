@@ -58,6 +58,7 @@
 	</distributionManagement>
 
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<target.dir>target</target.dir>
 		<org.slf4j.version>1.7.12</org.slf4j.version>
 		<current.year>2015</current.year>
