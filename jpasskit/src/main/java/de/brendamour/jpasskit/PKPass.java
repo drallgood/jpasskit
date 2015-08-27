@@ -90,6 +90,9 @@ public class PKPass implements IPKValidateable {
     @Deprecated // In iOS 7.0, a shine effect is never applied
     private Boolean suppressStripShine;
 
+    // Feature added in iOS 9.0. It is not applicable to older iOS
+    private PKNFC NFC;
+    
     public String getSerialNumber() {
         return serialNumber;
     }
@@ -387,6 +390,14 @@ public class PKPass implements IPKValidateable {
         } else {
             this.suppressStripShine = null;
         }
+    }
+
+    public PKNFC getNFC() {
+        return this.NFC;
+    }
+
+    public void setNFC(PKNFC nfc) {
+        this.NFC = nfc;
     }
 
     public boolean isValid() {
