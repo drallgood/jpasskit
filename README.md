@@ -30,24 +30,8 @@ or:
 	</dependency>
 
 
-Repositories:
-
-	<repository>
-		<id>bitzeche-release</id>
-		<name>Bitzeche Release</name>
-		<url>http://trac.bitzeche.de/archiva/repository/release/</url>
-		<snapshots>
-			<enabled>false</enabled>
-		</snapshots>
-	</repository>
-	<repository>
-		<id>bitzeche-snapshots</id>
-		<name>Bitzeche Release</name>
-		<url>http://trac.bitzeche.de/archiva/repository/snapshots/</url>
-		<releases>
-			<enabled>false</enabled>
-			</releases>
-		</repository>
+**The artifact is now available at Maven Central (Snapshots only)**
+	
 	
 ## Using jPasskit
 
