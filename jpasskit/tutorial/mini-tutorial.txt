@@ -1,3 +1,19 @@
+====
+    Copyright (C) 2015 Patrice Brend'amour <p.brendamour@bitzeche.de>
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+====
+
 I spent the last two days playing with jpasskit, since I'm on a project that needs to produce passes for Apple passkit. This blog entry is really a mini tutorial for jpasskit, since the documentation for the project is kind of minimal.
 
 For those new to Apple PassKit and creating passes, this mini tutorial should help get you going. Before we use jpasskit, there's a couple of things you need.
