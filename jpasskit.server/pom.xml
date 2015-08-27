@@ -4,7 +4,8 @@
 	<groupId>de.brendamour</groupId>
 	<artifactId>jpasskit.server</artifactId>
 	<version>0.0.2-SNAPSHOT</version>
-	<name>Java Server Example for Apple PassBook Web Service API</name>
+	<name>jPasskit Server</name>
+	<description>Java Server Example for Apple PassBook Web Service API</description>
 	<inceptionYear>2012</inceptionYear>
 	<licenses>
 		<license>
@@ -13,8 +14,10 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>https://github.com/drallgood/jpasskit.git</connection>
-		<url>https://github.com/drallgood/jpasskit</url>
+		<url>scm:git:git@github.com:drallgood/jpasskit.git</url>
+		<connection>scm:git:git@github.com:drallgood/jpasskit.git</connection>
+		<developerConnection>scm:git:git@github.com:drallgood/jpasskit.git</developerConnection>
+		<tag>HEAD</tag>
 	</scm>
 
 	<developers>
@@ -44,14 +47,14 @@
 		<outputDirectory>site</outputDirectory>
 	</reporting>
 	<distributionManagement>
-		<repository>
-			<id>bitzeche-release</id>
-			<url>dav:http://svn.bitzeche.de:9080/archiva/repository/release/</url>
-		</repository>
 		<snapshotRepository>
-			<id>bitzeche-snapshots</id>
-			<url>dav:http://svn.bitzeche.de:9080/archiva/repository/snapshots/</url>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
 	</distributionManagement>
 
 	<properties>
@@ -73,11 +76,8 @@
 			<artifactId>org.restlet</artifactId>
 			<version>${restlet.version}</version>
 		</dependency>
-		<!--<dependency>
-			<groupId>org.restlet.jse</groupId>
-			<artifactId>org.restlet.ext.ssl</artifactId>
-			<version>${restlet.version}</version>
-		</dependency> -->
+		<!--<dependency> <groupId>org.restlet.jse</groupId> <artifactId>org.restlet.ext.ssl</artifactId> 
+			<version>${restlet.version}</version> </dependency> -->
 		<dependency>
 			<groupId>org.restlet.jse</groupId>
 			<artifactId>org.restlet.ext.simple</artifactId>
@@ -105,22 +105,6 @@
 			<url>http://trac.bitzeche.de/archiva/repository/mirror/</url>
 		</repository>
 		<repository>
-			<id>bitzeche-release</id>
-			<name>Bitzeche Release</name>
-			<url>http://trac.bitzeche.de/archiva/repository/release/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>bitzeche-snapshots</id>
-			<name>Bitzeche Release</name>
-			<url>http://trac.bitzeche.de/archiva/repository/snapshots/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-		</repository>
-		<repository>
 			<id>maven-restlet</id>
 			<name>Public online Restlet repository</name>
 			<url>http://maven.restlet.org</url>
@@ -132,6 +116,17 @@
 		<testOutputDirectory>${basedir}/${target.dir}/test-classes</testOutputDirectory>
 		<plugins>
 
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.3</version>
+				<extensions>true</extensions>
+				<configuration>
+					<serverId>ossrh</serverId>
+					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+					<autoReleaseAfterClose>true</autoReleaseAfterClose>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -146,9 +141,9 @@
 				<version>2.4</version>
 			</plugin>
 			<plugin>
-				<groupId>com.mycila.maven-license-plugin</groupId>
-				<artifactId>maven-license-plugin</artifactId>
-				<version>1.8.0</version>
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>2.11</version>
 				<configuration>
 					<header>header.txt</header>
 					<properties>
@@ -156,11 +151,74 @@
 						<year>${current.year}</year>
 						<email>patrice@brendamour.net</email>
 					</properties>
+					<excludes>
+						<exclude>*pom.xml</exclude>
+					</excludes>
 				</configuration>
 				<executions>
 					<execution>
 						<goals>
 							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.5.2</version>
+				<executions>
+					<execution>
+						<id>default</id>
+						<goals>
+							<goal>perform</goal>
+						</goals>
+						<configuration>
+							<pomFileName>jpasskit/pom.xml</pomFileName>
+							<autoVersionSubmodules>true</autoVersionSubmodules>
+							<useReleaseProfile>false</useReleaseProfile>
+							<releaseProfiles>release</releaseProfiles>
+							<goals>deploy</goals>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9.1</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
 						</goals>
 					</execution>
 				</executions>
