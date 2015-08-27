@@ -12,9 +12,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<url>scm:git:git@github.com:bitzeche/jpasskit.git</url>
-		<connection>scm:git:git@github.com:bitzeche/jpasskit.git</connection>
-		<developerConnection>scm:git:git@github.com:bitzeche/jpasskit.git</developerConnection>
+		<url>scm:git:git@github.com:drallgood/jpasskit.git</url>
+		<connection>scm:git:git@github.com:drallgood/jpasskit.git</connection>
+		<developerConnection>scm:git:git@github.com:drallgood/jpasskit.git</developerConnection>
 	  <tag>HEAD</tag>
   </scm>
 
@@ -23,14 +23,12 @@
 		<developer>
 			<id>patrice</id>
 			<name>Patrice Brend'amour</name>
-			<email>p.brendamour@bitzeche.de</email>
+			<email>patrice@brendamour.net</email>
 			<roles>
 				<role>Project Manager</role>
 				<role>Developer</role>
 			</roles>
-			<url>http://www.brendamour.de</url>
-			<organization>Bitzeche GmbH</organization>
-			<organizationUrl>http://www.bitzeche.de/</organizationUrl>
+			<url>http://brendamour.net</url>
 			<timezone>+1</timezone>
 		</developer>
 	</developers>
@@ -170,7 +168,7 @@
 					<properties>
 						<owner>Patrice Brend'amour</owner>
 						<year>${current.year}</year>
-						<email>p.brendamour@bitzeche.de</email>
+						<email>patrice@brendamour.net</email>
 					</properties>
 					<excludes>
             			<exclude>*pom.xml</exclude>

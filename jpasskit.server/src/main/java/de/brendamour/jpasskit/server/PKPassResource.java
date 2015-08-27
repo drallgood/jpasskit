@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012 Patrice Brend'amour <p.brendamour@bitzeche.de>
+ * Copyright (C) 2015 Patrice Brend'amour <patrice@brendamour.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,8 +72,7 @@ public abstract class PKPassResource extends ServerResource {
 
 			if (getPKPassResponse != null && getPKPassResponse.getPass().isValid()) {
 				latestPassVersion = getPKPassResponse.getPass();
-				PKSigningInformation pkSigningInformation = new PKSigningInformation(getSigningCert(), getSigningPrivateKey(),
-						getAppleWWDRCACert());
+				PKSigningInformation pkSigningInformation = getSingingInformation();
 
 				byte[] signedAndZippedPkPassArchive = PKSigningUtil.createSignedAndZippedPkPassArchive(latestPassVersion, pathToPassTemplate,
 						pkSigningInformation);
@@ -100,12 +99,15 @@ public abstract class PKPassResource extends ServerResource {
 
 	}
 
+
 	protected abstract GetPKPassResponse handleGetLatestVersionOfPass(String passTypeIdentifier, String serialNumber, String authString,
 			Date modifiedSince) throws PKAuthTokenNotValidException, PKPassNotModifiedException;
 
-	protected abstract X509Certificate getSigningCert();
+	protected abstract PKSigningInformation getSingingInformation();
 
-	protected abstract X509Certificate getAppleWWDRCACert();
-
-	protected abstract PrivateKey getSigningPrivateKey();
+//	protected abstract X509Certificate getSigningCert();
+//
+//	protected abstract X509Certificate getAppleWWDRCACert();
+//
+//	protected abstract PrivateKey getSigningPrivateKey();
 }

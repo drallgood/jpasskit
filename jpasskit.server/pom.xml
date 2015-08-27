@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.brendamour</groupId>
 	<artifactId>jpasskit.server</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<name>Java Server Example for Apple PassBook Web Service API</name>
 	<inceptionYear>2012</inceptionYear>
 	<licenses>
@@ -13,22 +13,20 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>https://github.com/bitzeche/jpasskit.git</connection>
-		<url>https://github.com/bitzeche/jpasskit</url>
+		<connection>https://github.com/drallgood/jpasskit.git</connection>
+		<url>https://github.com/drallgood/jpasskit</url>
 	</scm>
 
 	<developers>
 		<developer>
 			<id>patrice</id>
 			<name>Patrice Brend'amour</name>
-			<email>p.brendamour@bitzeche.de</email>
+			<email>patrice@brendamour.net</email>
 			<roles>
 				<role>Project Manager</role>
 				<role>Developer</role>
 			</roles>
-			<url>http://www.brendamour.de</url>
-			<organization>Bitzeche GmbH</organization>
-			<organizationUrl>http://www.bitzeche.de/</organizationUrl>
+			<url>http://brendamour.net</url>
 			<timezone>+1</timezone>
 		</developer>
 	</developers>
@@ -67,7 +65,7 @@
 		<dependency>
 			<groupId>de.brendamour</groupId>
 			<artifactId>jpasskit</artifactId>
-			<version>0.0.5-SNAPSHOT</version>
+			<version>0.0.7-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
@@ -156,7 +154,7 @@
 					<properties>
 						<owner>Patrice Brend'amour</owner>
 						<year>${current.year}</year>
-						<email>p.brendamour@bitzeche.de</email>
+						<email>patrice@brendamour.net</email>
 					</properties>
 				</configuration>
 				<executions>

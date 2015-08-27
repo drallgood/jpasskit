@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012 Patrice Brend'amour <p.brendamour@bitzeche.de>
+ * Copyright (C) 2015 Patrice Brend'amour <patrice@brendamour.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,9 @@ import java.util.Random;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.provider.X509CertificateObject;
 import org.bouncycastle.openssl.PEMParser;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.restlet.data.ChallengeResponse;
 import org.restlet.data.Status;
 import org.restlet.representation.Representation;
@@ -57,15 +59,17 @@ import de.brendamour.jpasskit.server.PKLogResource;
 import de.brendamour.jpasskit.server.PKPassNotModifiedException;
 import de.brendamour.jpasskit.server.PKPassResource;
 import de.brendamour.jpasskit.server.PKSerialNumbersOfPassesForDeviceResponse;
+import de.brendamour.jpasskit.signing.PKSigningInformation;
+import de.brendamour.jpasskit.signing.PKSigningUtil;
 
 public class PKRestletServerResourceFactory implements IPKRestletServerResourceFactory {
 
-	protected static final String APPLE_WWDRCA_CERT_PATH = "/Users/patrice/Documents/bitzeche/Projects/passkit/AppleWWDRCA.pem";
-	protected static final String PKCS12_FILE_PATH = "/Users/patrice/Documents/bitzeche/Projects/passkit/Certificates.p12";
+	protected static final String APPLE_WWDRCA_CERT_PATH = "passkit/AppleWWDRCA.pem";
+	protected static final String PKCS12_FILE_PATH = "passkit/Certificates.p12";
 	protected static final String PKCS12_FILE_PASSWORD = "cert";
-	private X509CertificateObject signingCert;
-	private PrivateKey signingPrivateKey;
-	private X509CertificateObject appleWWDRCACert;
+	// private X509CertificateObject signingCert;
+	// private PrivateKey signingPrivateKey;
+	// private X509CertificateObject appleWWDRCACert;
 	private ObjectMapper jsonObjectMapper = new ObjectMapper();
 
 	public PKDeviceResource getPKDeviceResource() {
@@ -99,21 +103,14 @@ public class PKRestletServerResourceFactory implements IPKRestletServerResourceF
 	}
 
 	public PKPassResource getPKPassResource() {
-		try {
-			loadKeysAndCerts();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return new PKPassResource("/Users/patrice/Downloads/passbook/Passes/bitzecheCoupons.raw") {
+		return new PKPassResource("passes/coupons.raw") {
 
 			@Override
 			protected GetPKPassResponse handleGetLatestVersionOfPass(final String passTypeIdentifier, final String serialNumber,
 					final String authString, final Date modifiedSince) throws PKAuthTokenNotValidException, PKPassNotModifiedException {
 				PKPass pass = new PKPass();
 				try {
-					pass = jsonObjectMapper.readValue(new File("/Users/patrice/Downloads/passbook/Passes/bitzecheCoupons.raw/pass2.json"),
-							PKPass.class);
+					pass = jsonObjectMapper.readValue(new File("passes/coupons.raw/pass2.json"), PKPass.class);
 
 					float newAmount = getNewRandomAmount();
 					PKStoreCard storeCard = pass.getStoreCard();
@@ -136,8 +133,7 @@ public class PKRestletServerResourceFactory implements IPKRestletServerResourceF
 					}
 
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					throw new RuntimeException(e);
 				}
 				GetPKPassResponse getPKPassResponse = new GetPKPassResponse(pass, new Date());
 
@@ -152,18 +148,13 @@ public class PKRestletServerResourceFactory implements IPKRestletServerResourceF
 			}
 
 			@Override
-			protected X509Certificate getSigningCert() {
-				return signingCert;
-			}
-
-			@Override
-			protected X509Certificate getAppleWWDRCACert() {
-				return appleWWDRCACert;
-			}
-
-			@Override
-			protected PrivateKey getSigningPrivateKey() {
-				return signingPrivateKey;
+			protected PKSigningInformation getSingingInformation() {
+				try {
+					return PKSigningUtil.loadSigningInformationFromPKCS12FileAndIntermediateCertificateFile(PKCS12_FILE_PATH,
+							PKCS12_FILE_PASSWORD, APPLE_WWDRCA_CERT_PATH);
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
 			}
 
 		};
@@ -180,49 +171,4 @@ public class PKRestletServerResourceFactory implements IPKRestletServerResourceF
 
 		};
 	}
-
-	private void loadKeysAndCerts() throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException,
-			NoSuchProviderException, UnrecoverableKeyException {
-		Security.addProvider(new BouncyCastleProvider());
-
-		KeyStore pkcs12KeyStore = readPKCS12File(PKCS12_FILE_PATH, PKCS12_FILE_PASSWORD);
-		Enumeration<String> aliases = pkcs12KeyStore.aliases();
-		while (aliases.hasMoreElements()) {
-			String aliasName = aliases.nextElement();
-
-			Key key = pkcs12KeyStore.getKey(aliasName, PKCS12_FILE_PASSWORD.toCharArray());
-			if (key instanceof PrivateKey) {
-				signingPrivateKey = (PrivateKey) key;
-				Object cert = pkcs12KeyStore.getCertificate(aliasName);
-				if (cert instanceof X509Certificate) {
-					signingCert = (X509CertificateObject) cert;
-					break;
-				}
-			}
-		}
-
-		appleWWDRCACert = (X509CertificateObject) readKeyPair(APPLE_WWDRCA_CERT_PATH);
-	}
-
-	private KeyStore readPKCS12File(final String file, final String password) throws IOException, NoSuchAlgorithmException,
-			CertificateException, KeyStoreException, NoSuchProviderException {
-		KeyStore keystore = KeyStore.getInstance("PKCS12", "BC");
-
-		keystore.load(new FileInputStream(file), password.toCharArray());
-		return keystore;
-	}
-
-	private Object readKeyPair(final String file) throws IOException {
-		FileReader fileReader = new FileReader(file);
-		PEMParser r = new PEMParser(fileReader);
-		try {
-			return r.readObject();
-		} catch (IOException ex) {
-			throw new IOException("The key from '" + file + "' could not be decrypted", ex);
-		} finally {
-			r.close();
-			fileReader.close();
-		}
-	}
-
 }
