@@ -24,6 +24,8 @@ import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.security.Security;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 
 import org.apache.commons.io.IOUtils;
@@ -114,7 +116,7 @@ public class PKSigningUtilTest {
         barcode.setMessageEncoding(Charset.forName("UTF-8"));
 
         PKPass pass = new PKPass();
-        pass.setBarcode(barcode);
+        pass.setBarcodes(Arrays.asList(barcode));
         pass.setPassTypeIdentifier("pti");
         pass.setTeamIdentifier("ti");
 

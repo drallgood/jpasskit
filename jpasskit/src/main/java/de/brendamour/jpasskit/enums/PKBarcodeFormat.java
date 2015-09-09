@@ -16,5 +16,5 @@
 package de.brendamour.jpasskit.enums;
 
 public enum PKBarcodeFormat {
-    PKBarcodeFormatQR, PKBarcodeFormatPDF417, PKBarcodeFormatAztec;
+    PKBarcodeFormatQR, PKBarcodeFormatPDF417, PKBarcodeFormatAztec, PKBarcodeFormatCode128;
 }

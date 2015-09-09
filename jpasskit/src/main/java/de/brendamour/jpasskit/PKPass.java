@@ -59,7 +59,10 @@ public class PKPass implements IPKValidateable {
     private List<PKBeacon> beacons;
     private List<PKLocation> locations;
 
+    @Deprecated //deprecated in iOS 9 and replaced with barcodes
     private PKBarcode barcode;
+    
+    private List<PKBarcode> barcodes;
 
     private PKEventTicket eventTicket;
     private PKCoupon coupon;
@@ -244,12 +247,22 @@ public class PKPass implements IPKValidateable {
         this.locations = locations;
     }
 
+    @Deprecated
     public PKBarcode getBarcode() {
         return barcode;
     }
 
+    @Deprecated
     public void setBarcode(final PKBarcode barcode) {
         this.barcode = barcode;
+    }
+
+    public List<PKBarcode> getBarcodes() {
+        return barcodes;
+    }
+    
+    public void setBarcodes(final List<PKBarcode> barcodes) {
+        this.barcodes = barcodes;
     }
 
     public PKEventTicket getEventTicket() {
