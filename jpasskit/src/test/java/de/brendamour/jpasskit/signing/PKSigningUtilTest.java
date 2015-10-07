@@ -53,30 +53,32 @@ public class PKSigningUtilTest {
         File temporaryPassDir = new File("target/");
         File manifestJSONFile = new File(getPathFromClasspath("pass2.json"));
 
-        PKSigningInformation pkSigningInformation = PKSigningUtil.loadSigningInformationFromPKCS12FileAndIntermediateCertificateFile(
+        PKSigningUtil pkSigningUtil = PKSigningUtil.getInstance();
+        PKSigningInformation pkSigningInformation = pkSigningUtil.loadSigningInformationFromPKCS12FileAndIntermediateCertificateFile(
                 keyStorePath, keyStorePassword, appleWWDRCA);
-        PKSigningUtil.signManifestFile(temporaryPassDir, manifestJSONFile, pkSigningInformation);
+        pkSigningUtil.signManifestFile(temporaryPassDir, manifestJSONFile, pkSigningInformation);
     }
 
     @Test
     public void testPassZipGeneration() throws IOException, Exception {
 
         Security.addProvider(new BouncyCastleProvider());
+        PKSigningUtil pkSigningUtil = PKSigningUtil.getInstance();
 
         ObjectMapper jsonObjectMapper = new ObjectMapper();
         PKPass pass = jsonObjectMapper.readValue(new File(getPathFromClasspath("pass2.json")), PKPass.class);
         pass.setRelevantDate(new Date());
         pass.getBarcode().setMessageEncoding(Charset.forName("utf-8"));
-        PKSigningInformation pkSigningInformation = PKSigningUtil.loadSigningInformationFromPKCS12FileAndIntermediateCertificateFile(
+        PKSigningInformation pkSigningInformation = pkSigningUtil.loadSigningInformationFromPKCS12FileAndIntermediateCertificateFile(
                 keyStorePath, keyStorePassword, appleWWDRCA);
-        byte[] signedAndZippedPkPassArchive = PKSigningUtil.createSignedAndZippedPkPassArchive(pass, getPassFolderPath(), pkSigningInformation);
+        byte[] signedAndZippedPkPassArchive = pkSigningUtil.createSignedAndZippedPkPassArchive(pass, getPassFolderPath(), pkSigningInformation);
         ByteArrayInputStream inputStream = new ByteArrayInputStream(signedAndZippedPkPassArchive);
         IOUtils.copy(inputStream, new FileOutputStream("target/passZIP.zip"));
     }
 
     @Test
     public void testLoadFiles() throws IOException, Exception {
-        PKSigningInformation pkSigningInformation = PKSigningUtil.loadSigningInformationFromPKCS12FileAndIntermediateCertificateFile(
+        PKSigningInformation pkSigningInformation = PKSigningUtil.getInstance().loadSigningInformationFromPKCS12FileAndIntermediateCertificateFile(
                 keyStorePath, keyStorePassword, appleWWDRCA);
         Assert.assertNotNull(pkSigningInformation);
     }
@@ -93,7 +95,7 @@ public class PKSigningUtilTest {
             appleWWDRCAFIS = this.getClass().getResourceAsStream("/" + appleWWDRCA);
             Assert.assertNotNull(appleWWDRCAFIS, "Could not find certificate file");
 
-            PKSigningInformation pkSigningInformation = PKSigningUtil.loadSigningInformationFromPKCS12AndIntermediateCertificateStreams(
+            PKSigningInformation pkSigningInformation = PKSigningUtil.getInstance().loadSigningInformationFromPKCS12AndIntermediateCertificateStreams(
                     keyStoreFIS, keyStorePassword, appleWWDRCAFIS);
             Assert.assertNotNull(pkSigningInformation);
         } finally {
@@ -120,9 +122,9 @@ public class PKSigningUtilTest {
         pass.setPassTypeIdentifier("pti");
         pass.setTeamIdentifier("ti");
 
-        PKSigningInformation pkSigningInformation = PKSigningUtil.loadSigningInformationFromPKCS12FileAndIntermediateCertificateFile(
+        PKSigningInformation pkSigningInformation = PKSigningUtil.getInstance().loadSigningInformationFromPKCS12FileAndIntermediateCertificateFile(
                 keyStorePath, keyStorePassword, appleWWDRCA);
-        byte[] signedAndZippedPkPassArchive = PKSigningUtil.createSignedAndZippedPkPassArchive(pass, getPassFolderPath(), pkSigningInformation);
+        byte[] signedAndZippedPkPassArchive = PKSigningUtil.getInstance().createSignedAndZippedPkPassArchive(pass, getPassFolderPath(), pkSigningInformation);
         ByteArrayInputStream inputStream = new ByteArrayInputStream(signedAndZippedPkPassArchive);
         IOUtils.copy(inputStream, new FileOutputStream("target/passJSON.zip"));
     }
