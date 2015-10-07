@@ -42,9 +42,9 @@ import de.brendamour.jpasskit.enums.PKBarcodeFormat;
 public class PKSigningUtilTest {
 
     private static final String PASS_TEMPLATE_FOLDER = "StoreCard.raw";
-    private static final String appleWWDRCA = "passbook/AppleWWDRCA.pem";
-    private static final String keyStorePath = "passbook/Certificates.p12";
-    private static final String keyStorePassword = "cert";
+    private static final String appleWWDRCA = "passbook/ca-chain.cert.pem";
+    private static final String keyStorePath = "passbook/jpasskittest.p12";
+    private static final String keyStorePassword = "password";
 
     @Test
     public void testManifest() throws IOException, Exception {
@@ -68,7 +68,7 @@ public class PKSigningUtilTest {
         ObjectMapper jsonObjectMapper = new ObjectMapper();
         PKPass pass = jsonObjectMapper.readValue(new File(getPathFromClasspath("pass2.json")), PKPass.class);
         pass.setRelevantDate(new Date());
-        pass.getBarcode().setMessageEncoding(Charset.forName("utf-8"));
+        pass.getBarcodes().get(0).setMessageEncoding(Charset.forName("utf-8"));
         PKSigningInformation pkSigningInformation = pkSigningUtil.loadSigningInformationFromPKCS12FileAndIntermediateCertificateFile(
                 keyStorePath, keyStorePassword, appleWWDRCA);
         byte[] signedAndZippedPkPassArchive = pkSigningUtil.createSignedAndZippedPkPassArchive(pass, getPassFolderPath(), pkSigningInformation);
