@@ -1,1 +1,1 @@
-{"formatVersion":1,"passTypeIdentifier":"pti","teamIdentifier":"ti","barcode":{"format":"PKBarcodeFormatQR","message":"abcdefg","messageEncoding":"UTF-8"}}
+{"formatVersion":1,"passTypeIdentifier":"pti","teamIdentifier":"ti","barcodes":[{"format":"PKBarcodeFormatQR","message":"abcdefg","messageEncoding":"UTF-8"}]}
