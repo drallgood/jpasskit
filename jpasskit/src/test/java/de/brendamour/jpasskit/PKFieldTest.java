@@ -128,6 +128,15 @@ public class PKFieldTest {
         Assert.assertFalse(pkField.isValid());
 
     }
+    
+    @Test
+    public void test_GetterSetter_CurrencyAndValueNotANumber() {
+        fillFieldsCurrency();
+        pkField.setValue("2.20");
+
+        Assert.assertFalse(pkField.isValid());
+
+    }
 
     @Test
     public void test_GetterSetter_NumberAndDateStyleSet() {

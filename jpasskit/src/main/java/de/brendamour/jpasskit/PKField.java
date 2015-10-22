@@ -180,7 +180,7 @@ public class PKField implements IPKValidateable {
         }
         if (!(value instanceof String || value instanceof Integer || value instanceof Float || value instanceof Long || value instanceof Double
                 || value instanceof Date || value instanceof BigDecimal)) {
-            validationErrors.add("Invalid value type: String, Integer, Float, Long, Double, java.util.Date, BigDecimal");
+            validationErrors.add("Invalid value type. Allowed: String, Integer, Float, Long, Double, java.util.Date, BigDecimal");
         }
         if (currencyCode != null && numberStyle != null) {
             validationErrors.add("CurrencyCode and numberStyle are both set");
@@ -190,6 +190,10 @@ public class PKField implements IPKValidateable {
         }
         if (changeMessage != null && !changeMessage.contains("%@")) {
             validationErrors.add("ChangeMessage needs to contain %@ placeholder");
+        }
+        if (currencyCode != null
+                && !(value instanceof Integer || value instanceof Float || value instanceof Long || value instanceof Double || value instanceof BigDecimal)) {
+            validationErrors.add("When using currencies, the values have to be numbers");
         }
         return validationErrors;
     }
