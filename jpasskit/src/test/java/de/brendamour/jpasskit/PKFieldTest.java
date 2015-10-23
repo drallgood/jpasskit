@@ -44,6 +44,14 @@ public class PKFieldTest {
     }
 
     @Test
+    public void test_constructor() {
+        pkField = new PKField(KEY, LABEL, VALUE_TEXT);
+        Assert.assertEquals(pkField.getKey(), KEY);
+        Assert.assertEquals(pkField.getValue(), VALUE_TEXT);
+        Assert.assertEquals(pkField.getLabel(), LABEL);
+    }
+
+    @Test
     public void test_GetterSetter_Text() {
         fillFieldsText();
 
@@ -128,7 +136,7 @@ public class PKFieldTest {
         Assert.assertFalse(pkField.isValid());
 
     }
-    
+
     @Test
     public void test_GetterSetter_CurrencyAndValueNotANumber() {
         fillFieldsCurrency();
