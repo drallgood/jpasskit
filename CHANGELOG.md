@@ -1,6 +1,49 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.0.8 - 2015-??
+
+### Added
+
+- Dynamic pass templates
+- Separate class to load certificates
+- More specialized utility classes for signing 
+
+### Deprecated
+
+- PKSigningUtil
+
+### Removed
+
+- Support for Java 1.6/1.7
+
+### Fixed
+
+
+## 0.0.7 - 2015-??
+
+### Added
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+
+
+## 0.0.6 - 2015-??
+
+### Added
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+
+
 ## 0.0.5 - 2015-06-02
 
 ### Added

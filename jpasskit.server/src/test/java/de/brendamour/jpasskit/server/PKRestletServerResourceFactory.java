@@ -67,9 +67,6 @@ public class PKRestletServerResourceFactory implements IPKRestletServerResourceF
 	protected static final String APPLE_WWDRCA_CERT_PATH = "passkit/AppleWWDRCA.pem";
 	protected static final String PKCS12_FILE_PATH = "passkit/Certificates.p12";
 	protected static final String PKCS12_FILE_PASSWORD = "cert";
-	// private X509CertificateObject signingCert;
-	// private PrivateKey signingPrivateKey;
-	// private X509CertificateObject appleWWDRCACert;
 	private ObjectMapper jsonObjectMapper = new ObjectMapper();
 
 	public PKDeviceResource getPKDeviceResource() {
@@ -78,14 +75,12 @@ public class PKRestletServerResourceFactory implements IPKRestletServerResourceF
 			@Override
 			protected Status handleRegisterDeviceRequest(final String deviceLibraryIdentifier, final String passTypeIdentifier,
 					final String serialNumber, final String authString, final PKPushToken pushToken) throws PKAuthTokenNotValidException {
-				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
 			protected Status handleUnregisterDeviceRequest(final String deviceLibraryIdentifier, final String passTypeIdentifier,
 					final String serialNumber, final ChallengeResponse authString) throws PKAuthTokenNotValidException {
-				// TODO Auto-generated method stub
 				return null;
 			}
 

@@ -15,268 +15,68 @@
  */
 package de.brendamour.jpasskit.signing;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.Charset;
-import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
-import java.security.Security;
 import java.security.UnrecoverableKeyException;
-import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.DERSet;
-import org.bouncycastle.asn1.DERUTCTime;
-import org.bouncycastle.asn1.cms.AttributeTable;
-import org.bouncycastle.asn1.cms.CMSAttributes;
-import org.bouncycastle.asn1.x509.Attribute;
-import org.bouncycastle.cert.jcajce.JcaCertStore;
-import org.bouncycastle.cms.CMSProcessableFile;
-import org.bouncycastle.cms.CMSSignedData;
-import org.bouncycastle.cms.CMSSignedDataGenerator;
-import org.bouncycastle.cms.DefaultSignedAttributeTableGenerator;
-import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.operator.ContentSigner;
-import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
-import org.bouncycastle.util.Store;
-
-import com.fasterxml.jackson.annotation.JsonFilter;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
-import com.google.common.hash.HashCode;
-import com.google.common.hash.HashFunction;
-import com.google.common.hash.Hashing;
-import com.google.common.io.Files;
 
-import de.brendamour.jpasskit.PKBarcode;
 import de.brendamour.jpasskit.PKPass;
 
-public final class PKSigningUtil {
+@Deprecated
+public class PKSigningUtil {
 
-    private static final int ZIP_BUFFER_SIZE = 8192;
-    private static final String FILE_SEPARATOR_UNIX = "/";
-    private static final String MANIFEST_JSON_FILE_NAME = "manifest.json";
-    private static final String PASS_JSON_FILE_NAME = "pass.json";
-    private static PKSigningUtil instance = new PKSigningUtil();
-
-    private PKSigningUtil() {
-        addBCProvider();
-    }
-    
-    public static PKSigningUtil getInstance() {
-        return instance;
-    }
-
-    public byte[] createSignedAndZippedPkPassArchive(final PKPass pass, final URL fileUrlOfTemplateDirectory,
+    @Deprecated
+    public static byte[] createSignedAndZippedPkPassArchive(final PKPass pass, final URL fileUrlOfTemplateDirectory,
             final PKSigningInformation signingInformation) throws Exception {
-        String pathToTemplateDirectory = URLDecoder.decode(fileUrlOfTemplateDirectory.getFile(), "UTF-8");
-        return createSignedAndZippedPkPassArchive(pass, pathToTemplateDirectory, signingInformation);
+        return new PKFileBasedSigningUtil(new ObjectMapper()).createSignedAndZippedPkPassArchive(pass, fileUrlOfTemplateDirectory,
+                signingInformation);
     }
 
-    public byte[] createSignedAndZippedPkPassArchive(final PKPass pass, final String pathToTemplateDirectory,
+    @Deprecated
+    public static byte[] createSignedAndZippedPkPassArchive(final PKPass pass, final String pathToTemplateDirectory,
             final PKSigningInformation signingInformation) throws Exception {
-
-        File tempPassDir = Files.createTempDir();
-        FileUtils.copyDirectory(new File(pathToTemplateDirectory), tempPassDir);
-
-        ObjectMapper jsonObjectMapper = new ObjectMapper();
-        jsonObjectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        jsonObjectMapper.setDateFormat(new ISO8601DateFormat());
-
-        createPassJSONFile(pass, tempPassDir, jsonObjectMapper);
-
-        File manifestJSONFile = createManifestJSONFile(tempPassDir, jsonObjectMapper);
-
-        signManifestFile(tempPassDir, manifestJSONFile, signingInformation);
-
-        byte[] zippedPass = createZippedPassAndReturnAsByteArray(tempPassDir);
-
-        FileUtils.deleteDirectory(tempPassDir);
-        return zippedPass;
+        return new PKFileBasedSigningUtil(new ObjectMapper()).createSignedAndZippedPkPassArchive(pass, pathToTemplateDirectory,
+                signingInformation);
     }
 
-    public void signManifestFile(final File temporaryPassDirectory, final File manifestJSONFile,
+    @Deprecated
+    public static void signManifestFile(final File temporaryPassDirectory, final File manifestJSONFile,
             final PKSigningInformation signingInformation) throws Exception {
-
-        if (temporaryPassDirectory == null || manifestJSONFile == null || signingInformation == null || !signingInformation.isValid()) {
-            throw new IllegalArgumentException("Null params are not supported");
-        }
-        
-
-        CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
-        ContentSigner sha1Signer = new JcaContentSignerBuilder("SHA1withRSA").setProvider(BouncyCastleProvider.PROVIDER_NAME).build(
-                signingInformation.getSigningPrivateKey());
-
-        final ASN1EncodableVector signedAttributes = new ASN1EncodableVector();
-        final Attribute signingAttribute = new Attribute(CMSAttributes.signingTime, new DERSet(new DERUTCTime(new Date()))); 
-        signedAttributes.add(signingAttribute);
-        // Create the signing table
-        final AttributeTable signedAttributesTable = new AttributeTable(signedAttributes);
-        // Create the table table generator that will added to the Signer builder
-        final DefaultSignedAttributeTableGenerator signedAttributeGenerator = new DefaultSignedAttributeTableGenerator(signedAttributesTable);
-
-        
-        generator.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(new JcaDigestCalculatorProviderBuilder().setProvider(
-                BouncyCastleProvider.PROVIDER_NAME).build()).setSignedAttributeGenerator(signedAttributeGenerator).build(sha1Signer, signingInformation.getSigningCert()));
-
-        List<X509Certificate> certList = new ArrayList<X509Certificate>();
-        certList.add(signingInformation.getAppleWWDRCACert());
-        certList.add(signingInformation.getSigningCert());
-
-        Store certs = new JcaCertStore(certList);
-
-        generator.addCertificates(certs);
-
-        CMSSignedData sigData = generator.generate(new CMSProcessableFile(manifestJSONFile), false);
-        byte[] signedDataBytes = sigData.getEncoded();
-
-        File signatureFile = new File(temporaryPassDirectory.getAbsolutePath() + File.separator + "signature");
-        FileOutputStream signatureOutputStream = new FileOutputStream(signatureFile);
-        signatureOutputStream.write(signedDataBytes);
-        signatureOutputStream.close();
+        new PKFileBasedSigningUtil(new ObjectMapper()).signManifestFileAndWriteToDirectory(temporaryPassDirectory, manifestJSONFile,
+                signingInformation);
     }
 
-    public PKSigningInformation loadSigningInformationFromPKCS12FileAndIntermediateCertificateFile(final String pkcs12KeyStoreFilePath,
+    @Deprecated
+    public static PKSigningInformation loadSigningInformationFromPKCS12FileAndIntermediateCertificateFile(final String pkcs12KeyStoreFilePath,
             final String keyStorePassword, final String appleWWDRCAFilePath) throws IOException, NoSuchAlgorithmException, CertificateException,
             KeyStoreException, NoSuchProviderException, UnrecoverableKeyException {
 
-        KeyStore pkcs12KeyStore = loadPKCS12File(pkcs12KeyStoreFilePath, keyStorePassword);
-        Enumeration<String> aliases = pkcs12KeyStore.aliases();
-
-        PrivateKey signingPrivateKey = null;
-        X509Certificate signingCert = null;
-
-        while (aliases.hasMoreElements()) {
-            String aliasName = aliases.nextElement();
-
-            Key key = pkcs12KeyStore.getKey(aliasName, keyStorePassword.toCharArray());
-            if (key instanceof PrivateKey) {
-                signingPrivateKey = (PrivateKey) key;
-                Object cert = pkcs12KeyStore.getCertificate(aliasName);
-                if (cert instanceof X509Certificate) {
-                    signingCert = (X509Certificate) cert;
-                    break;
-                }
-            }
-        }
-
-        X509Certificate appleWWDRCACert = loadDERCertificate(appleWWDRCAFilePath);
-        if (signingCert == null || signingPrivateKey == null || appleWWDRCACert == null) {
-            throw new IOException("Couldn#t load all the neccessary certificates/keys");
-        }
-        // check the Validity of the Certificate to make sure it isn't expired
-        appleWWDRCACert.checkValidity();
-        signingCert.checkValidity();
-        return new PKSigningInformation(signingCert, signingPrivateKey, appleWWDRCACert);
+        return new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(pkcs12KeyStoreFilePath,
+                keyStorePassword, appleWWDRCAFilePath);
     }
 
-    /**
-     * Load all signing information necessary for pass generation using two input streams for the key store and the Apple WWDRCA certificate.
-     * 
-     * The caller is responsible for closing the stream after this method returns successfully or fails.
-     * 
-     * @param pkcs12KeyStoreInputStream
-     *            <code>InputStream</code> of the key store
-     * @param keyStorePassword
-     *            Password used to access the key store
-     * @param appleWWDRCAFileInputStream
-     *            <code>InputStream</code> of the Apple WWDRCA certificate.
-     * @return Signing informatino necessary to sign a pass.
-     * @throws IOException
-     * @throws NoSuchAlgorithmException
-     * @throws CertificateException
-     * @throws KeyStoreException
-     * @throws NoSuchProviderException
-     * @throws UnrecoverableKeyException
-     */
-    public PKSigningInformation loadSigningInformationFromPKCS12AndIntermediateCertificateStreams(
+    @Deprecated
+    public static PKSigningInformation loadSigningInformationFromPKCS12AndIntermediateCertificateStreams(
             final InputStream pkcs12KeyStoreInputStream, final String keyStorePassword, final InputStream appleWWDRCAFileInputStream)
             throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, NoSuchProviderException,
             UnrecoverableKeyException {
-
-        KeyStore pkcs12KeyStore = loadPKCS12File(pkcs12KeyStoreInputStream, keyStorePassword);
-        Enumeration<String> aliases = pkcs12KeyStore.aliases();
-
-        PrivateKey signingPrivateKey = null;
-        X509Certificate signingCert = null;
-
-        while (aliases.hasMoreElements()) {
-            String aliasName = aliases.nextElement();
-
-            Key key = pkcs12KeyStore.getKey(aliasName, keyStorePassword.toCharArray());
-            if (key instanceof PrivateKey) {
-                signingPrivateKey = (PrivateKey) key;
-                Object cert = pkcs12KeyStore.getCertificate(aliasName);
-                if (cert instanceof X509Certificate) {
-                    signingCert = (X509Certificate) cert;
-                    break;
-                }
-            }
-        }
-
-        X509Certificate appleWWDRCACert = loadDERCertificate(appleWWDRCAFileInputStream);
-        if (signingCert == null || signingPrivateKey == null || appleWWDRCACert == null) {
-            throw new IOException("Couldn#t load all the neccessary certificates/keys");
-        }
-        // check the Validity of the Certificate to make sure it isn't expired
-        appleWWDRCACert.checkValidity();
-
-        return new PKSigningInformation(signingCert, signingPrivateKey, appleWWDRCACert);
+        return new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(pkcs12KeyStoreInputStream,
+                keyStorePassword, appleWWDRCAFileInputStream);
     }
 
-    public KeyStore loadPKCS12File(final String pathToP12, final String password) throws IOException, NoSuchAlgorithmException,
+    @Deprecated
+    public static KeyStore loadPKCS12File(final String pathToP12, final String password) throws IOException, NoSuchAlgorithmException,
             CertificateException, KeyStoreException, NoSuchProviderException {
-        KeyStore keystore = KeyStore.getInstance("PKCS12");
-
-        File p12File = new File(pathToP12);
-        if (!p12File.exists()) {
-            // try loading it from the classpath
-            URL localP12File = PKSigningUtil.class.getClassLoader().getResource(pathToP12);
-            if (localP12File == null) {
-                throw new FileNotFoundException("File at " + pathToP12 + " not found");
-            }
-            p12File = new File(localP12File.getFile());
-        }
-        InputStream streamOfFile = new FileInputStream(p12File);
-
-        keystore.load(streamOfFile, password.toCharArray());
-        IOUtils.closeQuietly(streamOfFile);
-        return keystore;
+        return new PKSigningInformationUtil().loadPKCS12File(pathToP12, password);
     }
 
     /**
@@ -296,46 +96,18 @@ public final class PKSigningUtil {
      * @throws NoSuchProviderException
      * @throws IllegalArgumentException
      *             If the parameter <code>inputStreamOfP12</code> is <code>null</code>.
+     * 
+     * @deprecated Since 0.8.0
      */
-    public KeyStore loadPKCS12File(final InputStream inputStreamOfP12, final String password) throws IOException,
+    @Deprecated
+    public static KeyStore loadPKCS12File(final InputStream inputStreamOfP12, final String password) throws IOException,
             NoSuchAlgorithmException, CertificateException, KeyStoreException, NoSuchProviderException {
-        if (inputStreamOfP12 == null) {
-            throw new IllegalArgumentException("InputStream of key store must not be null");
-        }
-        KeyStore keystore = KeyStore.getInstance("PKCS12");
-
-        keystore.load(inputStreamOfP12, password.toCharArray());
-        return keystore;
+        return new PKSigningInformationUtil().loadPKCS12File(inputStreamOfP12, password);
     }
 
+    @Deprecated
     public X509Certificate loadDERCertificate(final String filePath) throws IOException, CertificateException {
-        FileInputStream certificateFileInputStream = null;
-        try {
-            File certFile = new File(filePath);
-            if (!certFile.exists()) {
-                // try loading it from the classpath
-                URL localCertFile = PKSigningUtil.class.getClassLoader().getResource(filePath);
-                if (localCertFile == null) {
-                    throw new FileNotFoundException("File at " + filePath + " not found");
-                }
-                certFile = new File(localCertFile.getFile());
-            }
-            certificateFileInputStream = new FileInputStream(certFile);
-
-            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509", BouncyCastleProvider.PROVIDER_NAME);
-            Certificate certificate = certificateFactory.generateCertificate(certificateFileInputStream);
-            if (certificate instanceof X509Certificate) {
-                ((X509Certificate)certificate).checkValidity();
-                return (X509Certificate) certificate;
-            }
-            throw new IOException("The key from '" + filePath + "' could not be decrypted");
-        } catch (IOException ex) {
-            throw new IOException("The key from '" + filePath + "' could not be decrypted", ex);
-        } catch (NoSuchProviderException ex) {
-            throw new IOException("The key from '" + filePath + "' could not be decrypted", ex);
-        } finally {
-            IOUtils.closeQuietly(certificateFileInputStream);
-        }
+        return new PKSigningInformationUtil().loadDERCertificate(filePath);
     }
 
     /**
@@ -348,158 +120,11 @@ public final class PKSigningUtil {
      * @return Loaded certificate.
      * @throws IOException
      * @throws CertificateException
+     * @deprecated Since 0.8.0
      */
-    public X509Certificate loadDERCertificate(final InputStream certificateInputStream) throws IOException, CertificateException {
-        try {
-            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509", BouncyCastleProvider.PROVIDER_NAME);
-            Certificate certificate = certificateFactory.generateCertificate(certificateInputStream);
-            if (certificate instanceof X509Certificate) {
-                ((X509Certificate)certificate).checkValidity();
-                return (X509Certificate) certificate;
-            }
-            throw new IOException("The key from the input stream could not be decrypted");
-        } catch (IOException ex) {
-            throw new IOException("The key from the input stream could not be decrypted", ex);
-        } catch (NoSuchProviderException ex) {
-            throw new IOException("The key from the input stream could not be decrypted", ex);
-        }
+    @Deprecated
+    public static X509Certificate loadDERCertificate(final InputStream certificateInputStream) throws IOException, CertificateException {
+        return new PKSigningInformationUtil().loadDERCertificate(certificateInputStream);
     }
 
-    private void addBCProvider() {
-        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-            Security.addProvider(new BouncyCastleProvider());
-        }
-
-    }
-
-    private void createPassJSONFile(final PKPass pass, final File tempPassDir, final ObjectMapper jsonObjectMapper) throws IOException,
-            JsonGenerationException, JsonMappingException {
-        File passJSONFile = new File(tempPassDir.getAbsolutePath() + File.separator + PASS_JSON_FILE_NAME);
-
-        ObjectWriter objectWriter = getObjectWriterWithFilters(jsonObjectMapper);
-        objectWriter.writeValue(passJSONFile, pass);
-    }
-
-    private File createManifestJSONFile(final File tempPassDir, final ObjectMapper jsonObjectMapper) throws IOException,
-            JsonGenerationException, JsonMappingException {
-        Map<String, String> fileWithHashMap = new HashMap<String, String>();
-
-        HashFunction hashFunction = Hashing.sha1();
-        File[] filesInTempDir = tempPassDir.listFiles();
-        hashFilesInDirectory(filesInTempDir, fileWithHashMap, hashFunction, null);
-        File manifestJSONFile = new File(tempPassDir.getAbsolutePath() + File.separator + MANIFEST_JSON_FILE_NAME);
-        ObjectWriter objectWriter = getObjectWriterWithFilters(jsonObjectMapper);
-        objectWriter.writeValue(manifestJSONFile, fileWithHashMap);
-        return manifestJSONFile;
-    }
-
-    private ObjectWriter getObjectWriterWithFilters(final ObjectMapper jsonObjectMapper) {
-        SimpleFilterProvider filters = new SimpleFilterProvider();
-
-        // haven't found out, how to stack filters. Copying the validation one for now.
-        filters.addFilter("validateFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors"));
-        filters.addFilter("pkPassFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors", "foregroundColorAsObject",
-                "backgroundColorAsObject", "labelColorAsObject", "passThatWasSet"));
-        filters.addFilter("barcodeFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors", "messageEncodingAsString"));
-        filters.addFilter("charsetFilter", SimpleBeanPropertyFilter.filterOutAllExcept("name"));
-        jsonObjectMapper.setSerializationInclusion(Include.NON_NULL);
-        jsonObjectMapper.addMixIn(Object.class, ValidateFilterMixIn.class);
-        jsonObjectMapper.addMixIn(PKPass.class, PkPassFilterMixIn.class);
-        jsonObjectMapper.addMixIn(PKBarcode.class, BarcodeFilterMixIn.class);
-        jsonObjectMapper.addMixIn(Charset.class, CharsetFilterMixIn.class);
-
-        ObjectWriter objectWriter = jsonObjectMapper.writer(filters);
-        return objectWriter;
-    }
-
-    
-    /* Windows OS separators did not work */
-    private void hashFilesInDirectory(final File[] files, final Map<String, String> fileWithHashMap, final HashFunction hashFunction,
-            final String parentName) throws IOException {
-        StringBuilder name;
-        HashCode hash;
-        for (File passResourceFile : files) {
-            name = new StringBuilder();
-            if (passResourceFile.isFile()) {
-                hash = Files.hash(passResourceFile, hashFunction);
-                if (StringUtils.isEmpty(parentName)) {
-                    // direct call
-                    name.append(passResourceFile.getName());
-                } else {
-                    // recursive call (apeending parent directory)
-                    name.append(parentName);
-                    name.append(FILE_SEPARATOR_UNIX);
-                    name.append(passResourceFile.getName());
-                }
-                fileWithHashMap.put(name.toString(), Hex.encodeHexString(hash.asBytes()));
-            } else if (passResourceFile.isDirectory()) {
-                if (StringUtils.isEmpty(parentName)) {
-                    // direct call
-                    name.append(passResourceFile.getName());
-                } else {
-                    // recursive call (apeending parent directory)
-                    name.append(parentName);
-                    name.append(FILE_SEPARATOR_UNIX);
-                    name.append(passResourceFile.getName());
-                }
-                hashFilesInDirectory(passResourceFile.listFiles(), fileWithHashMap, hashFunction, name.toString());
-            }
-        }
-    }
-
-    private byte[] createZippedPassAndReturnAsByteArray(final File tempPassDir) throws IOException {
-        ByteArrayOutputStream byteArrayOutputStreamForZippedPass = new ByteArrayOutputStream();
-        ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStreamForZippedPass);
-        zip(tempPassDir, tempPassDir, zipOutputStream);
-        zipOutputStream.close();
-        return byteArrayOutputStreamForZippedPass.toByteArray();
-    }
-
-    private final void zip(final File directory, final File base, final ZipOutputStream zipOutputStream) throws IOException {
-        File[] files = directory.listFiles();
-        byte[] buffer = new byte[ZIP_BUFFER_SIZE];
-        int read = 0;
-        for (int i = 0, n = files.length; i < n; i++) {
-            if (files[i].isDirectory()) {
-                zip(files[i], base, zipOutputStream);
-            } else {
-                FileInputStream fileInputStream = new FileInputStream(files[i]);
-                ZipEntry entry = new ZipEntry(getRelativePathOfZipEntry(files[i], base));
-                zipOutputStream.putNextEntry(entry);
-                while (-1 != (read = fileInputStream.read(buffer))) {
-                    zipOutputStream.write(buffer, 0, read);
-                }
-                fileInputStream.close();
-            }
-        }
-    }
-
-    private String getRelativePathOfZipEntry(final File fileToZip, final File base) {
-        String relativePathOfFile = fileToZip.getPath().substring(base.getPath().length() + 1);
-        if (File.separatorChar != '/') {
-            relativePathOfFile = relativePathOfFile.replace(File.separatorChar, '/');
-        }
-
-        return relativePathOfFile;
-    }
-
-    @JsonFilter("pkPassFilter")
-    private class PkPassFilterMixIn {
-        // just a dummy
-    }
-
-    @JsonFilter("validateFilter")
-    private class ValidateFilterMixIn {
-        // just a dummy
-    }
-
-    @JsonFilter("barcodeFilter")
-    private class BarcodeFilterMixIn {
-        // just a dummy
-    }
-
-    @JsonFilter("charsetFilter")
-    private class CharsetFilterMixIn {
-        // just a dummy
-    }
 }

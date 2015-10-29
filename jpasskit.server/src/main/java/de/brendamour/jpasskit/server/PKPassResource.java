@@ -17,13 +17,9 @@
 package de.brendamour.jpasskit.server;
 
 import java.io.ByteArrayInputStream;
-import java.security.PrivateKey;
-import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.restlet.Request;
 import org.restlet.data.Status;
 import org.restlet.representation.InputRepresentation;
@@ -33,20 +29,27 @@ import org.restlet.resource.ServerResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import de.brendamour.jpasskit.PKPass;
+import de.brendamour.jpasskit.signing.IPKSigningUtil;
+import de.brendamour.jpasskit.signing.PKFileBasedSigningUtil;
+import de.brendamour.jpasskit.signing.PKPassTemplateFolder;
 import de.brendamour.jpasskit.signing.PKSigningInformation;
-import de.brendamour.jpasskit.signing.PKSigningUtil;
 
 public abstract class PKPassResource extends ServerResource {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PKPassResource.class);
 	private ObjectMapper jsonObjectMapper;
 	private String pathToPassTemplate;
+	private IPKSigningUtil signingUtil;
 
 	public PKPassResource(final String pathToPassTemplate) {
 		this.pathToPassTemplate = pathToPassTemplate;
 		jsonObjectMapper = new ObjectMapper();
 		jsonObjectMapper.setSerializationInclusion(Include.NON_NULL);
+		signingUtil = new PKFileBasedSigningUtil(jsonObjectMapper);
 	}
 
 	/*
@@ -74,8 +77,8 @@ public abstract class PKPassResource extends ServerResource {
 				latestPassVersion = getPKPassResponse.getPass();
 				PKSigningInformation pkSigningInformation = getSingingInformation();
 
-				byte[] signedAndZippedPkPassArchive = PKSigningUtil.createSignedAndZippedPkPassArchive(latestPassVersion, pathToPassTemplate,
-						pkSigningInformation);
+				byte[] signedAndZippedPkPassArchive = signingUtil.createSignedAndZippedPkPassArchive(latestPassVersion,
+						new PKPassTemplateFolder(pathToPassTemplate), pkSigningInformation);
 				String responseJSONString = jsonObjectMapper.writeValueAsString(latestPassVersion);
 				LOGGER.debug(responseJSONString);
 
@@ -99,15 +102,8 @@ public abstract class PKPassResource extends ServerResource {
 
 	}
 
-
 	protected abstract GetPKPassResponse handleGetLatestVersionOfPass(String passTypeIdentifier, String serialNumber, String authString,
 			Date modifiedSince) throws PKAuthTokenNotValidException, PKPassNotModifiedException;
 
 	protected abstract PKSigningInformation getSingingInformation();
-
-//	protected abstract X509Certificate getSigningCert();
-//
-//	protected abstract X509Certificate getAppleWWDRCACert();
-//
-//	protected abstract PrivateKey getSigningPrivateKey();
 }

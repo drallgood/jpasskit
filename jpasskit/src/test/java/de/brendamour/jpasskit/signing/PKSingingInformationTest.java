@@ -15,7 +15,7 @@
  */
 package de.brendamour.jpasskit.signing;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;

@@ -30,7 +30,7 @@ or:
 	</dependency>
 
 
-**The artifact is now available at Maven Central (Snapshots only)**
+**The artifact is now available at Maven Central**
 	
 	
 ## Using jPasskit
@@ -80,6 +80,53 @@ In Addition to the pass, there needs to be a template directory that contains th
 
 <img src="https://github.com/bitzeche/jpasskit/raw/master/passFolder.png">
 
+### Providing pass templates
+
+Usually, passes contain additional information that need to be included in the final, signed pass, e.g.
+
+- Images (icons, logos, background images)
+- Translations
+
+jPasskit provides a flexible mechanism to provide such templates:
+
+- as a folder (using ```PKPassTemplateFolder```)
+- as a set of streams (using ```PKPassTemplateInMemory```)
+- using your own implementation (implementing ```IPKPassTemplate```)
+
+#### Folder-based templates (standard approach)
+
+In order to use an existing folder on the file system as you pass's template, you create an instance of ```PKPassTemplateFolder``` using the path to your folder as argument:
+
+```
+IPKPassTemplate pkPassTemplateFolder = new PKPassTemplateFolder(PASS_TEMPLATE_FOLDER);
+```
+
+That's it. When signing the pass, the contents of this folder will be copied into the pass.
+
+#### Dynamic templates (in memory) 
+
+This approach requires more code, but is also more flexible. The template is stored as a list of input streams, whose content gets copied into the pass when it is signed and packaged.
+
+It does not matter, where the stream comes from, but the data needs to be available when the template is used.
+For convenience, we provide methods to add several additional data types to the template:
+
+```
+pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_BACKGROUND, stream);
+pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_BACKGROUND_RETINA, stringBuffer);
+pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON, file);
+pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, url);
+``` 
+
+As you can see, we're also providing static variables for the most common file names.
+
+You can also add an optional locale parameter to the call, in which case the file will automatically be added only for the given language:
+```
+pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, Locale.ENGLISH, url); 
+//content from URL will be placed in "en.lproj/icon@2x.png"
+```
+
+**Note:** There are no checks, that the content of a provided file is valid. So if you'd provide a PDF file but store it as icon.png, it will not work. 
+
 ### Signing and Zipping a Pass
 
 The PKSigningUtil contains all necessary methods to:
@@ -93,11 +140,12 @@ The PKSigningUtil contains all necessary methods to:
 
 
 Example to do it all in one step: 
-
-	PKSigningInformation pkSigningInformation = PKSigningUtil.loadSigningInformationFromPKCS12FileAndIntermediateCertificateFile(
-               keyStorePath, keyStorePassword, appleWWDRCA);
-	byte[] passZipAsByteArray = PKSigningUtil.createSignedAndZippedPkPassArchive(pass, pathToTemplateDirectory, pkSigningInformation);
-	...
+```
+PKSigningInformation pkSigningInformation = new  PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(keyStorePath,  keyStorePassword, appleWWDRCA);
+PKPassTemplateFolder passTemplate = new PKPassTemplateFolder(template_path);
+PKFileBasedSigningUtil pkSigningUtil = new PKFileBasedSigningUtil(new ObjectMapper());
+byte[] signedAndZippedPkPassArchive = pkSigningUtil.createSignedAndZippedPkPassArchive(pass, passTemplate, pkSigningInformation);
+```
 	
 ## Using the jPasskit Server
 
@@ -141,4 +189,4 @@ Then you create the server instance:
 		e.printStackTrace();
 	}
 	
-That's it. You webservice is running. Just point your passes to the URL where the server is running.
+That's it. Your web service is running. Just point your passes to the URL where the server is running.
