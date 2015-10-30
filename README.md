@@ -30,7 +30,9 @@ or:
 	</dependency>
 
 
-**The artifact is now available at Maven Central**
+**The released artifacts are now available at Maven Central**
+
+Snapshot versions can be found here: https://oss.sonatype.org/content/repositories/snapshots/
 	
 	
 ## Using jPasskit
