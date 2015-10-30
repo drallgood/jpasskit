@@ -77,11 +77,6 @@ Example:
 	pass.setForegroundColor( "rgb(255,255,255 )" );
 	...
 
-
-In Addition to the pass, there needs to be a template directory that contains the other resources (like images and translations). The content of this directory is defined in the PassKit Developer Documentation.
-
-<img src="https://github.com/bitzeche/jpasskit/raw/master/passFolder.png">
-
 ### Providing pass templates
 
 Usually, passes contain additional information that need to be included in the final, signed pass, e.g.
@@ -102,6 +97,10 @@ In order to use an existing folder on the file system as you pass's template, yo
 ```
 IPKPassTemplate pkPassTemplateFolder = new PKPassTemplateFolder(PASS_TEMPLATE_FOLDER);
 ```
+
+The content of this directory is defined in the PassKit Developer Documentation.
+
+<img src="https://github.com/bitzeche/jpasskit/raw/master/passFolder.png">
 
 That's it. When signing the pass, the contents of this folder will be copied into the pass.
 
