@@ -15,32 +15,26 @@
  */
 package de.brendamour.jpasskit.signing;
 
-import java.io.IOException;
-import java.security.cert.CertificateEncodingException;
-
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.operator.OperatorCreationException;
-
 import de.brendamour.jpasskit.PKPass;
 
 public interface IPKSigningUtil {
 
     /**
      * Creates a signed and zipped pass using a template
+     * 
      * @param pass
-     *   The pass to sign
+     *            The pass to sign
      * @param passTemplate
-     *   A {@link IPKPassTemplate} object
+     *            A {@link IPKPassTemplate} object
      * @param signingInformation
-     *   A {@link PKSigningInformation} object containing the signing info
-     * @return
-     *   a signed and zipped .pkpass file
-     * @throws Exception
+     *            A {@link PKSigningInformation} object containing the signing info
+     * @return a signed and zipped .pkpass file
+     * @throws PKSigningException
+     *             will throw any underlying exception in case something goes wrong (i.e. template not found)
      */
-    public byte[] createSignedAndZippedPkPassArchive(PKPass pass, IPKPassTemplate passTemplate,
-            PKSigningInformation signingInformation) throws Exception;
+    public byte[] createSignedAndZippedPkPassArchive(PKPass pass, IPKPassTemplate passTemplate, PKSigningInformation signingInformation)
+            throws PKSigningException;
 
-    public byte[] signManifestFile(byte[] manifestJSON, PKSigningInformation signingInformation) throws CertificateEncodingException,
-    OperatorCreationException, CMSException, IOException;
+    public byte[] signManifestFile(byte[] manifestJSON, PKSigningInformation signingInformation) throws PKSigningException;
 
 }

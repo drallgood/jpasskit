@@ -56,6 +56,7 @@ public class PKSigningInformationUtil {
      * @param appleWWDRCAFilePath
      *            path to apple's WWDRCA certificate file (classpath or filesystem)
      * @return
+     *        a {@link PKSigningInformation} object filled with all certificates from the provided files
      * @throws IOException
      * @throws NoSuchAlgorithmException
      * @throws CertificateException

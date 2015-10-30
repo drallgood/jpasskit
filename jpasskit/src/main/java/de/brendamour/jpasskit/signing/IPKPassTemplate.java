@@ -26,6 +26,7 @@ public interface IPKPassTemplate {
      * @param tempPassDir
      *   path to directory where temporary pass will be created
      * @throws IOException
+     *  if anything goes wrong while copying the files
      */
     void provisionPassAtDirectory(File tempPassDir) throws IOException;
 

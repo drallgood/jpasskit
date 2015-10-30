@@ -63,6 +63,7 @@
 		<target.dir>target</target.dir>
 		<current.year>2015</current.year>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<additionalparam>-Xdoclint:none</additionalparam>
 	</properties>
 
 	<dependencies>

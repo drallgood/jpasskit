@@ -32,14 +32,13 @@ import javax.inject.Inject;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.cms.CMSProcessableFile;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -80,9 +79,13 @@ public final class PKFileBasedSigningUtil extends PKAbstractSIgningUtil {
 
     @Override
     public byte[] createSignedAndZippedPkPassArchive(PKPass pass, IPKPassTemplate passTemplate, PKSigningInformation signingInformation)
-            throws Exception {
+            throws PKSigningException {
         File tempPassDir = Files.createTempDir();
-        passTemplate.provisionPassAtDirectory(tempPassDir);
+        try {
+            passTemplate.provisionPassAtDirectory(tempPassDir);
+        } catch (IOException e) {
+            throw new PKSigningException("Error when provisioning template", e);
+        }
 
         createPassJSONFile(pass, tempPassDir, jsonObjectMapper);
 
@@ -92,7 +95,11 @@ public final class PKFileBasedSigningUtil extends PKAbstractSIgningUtil {
 
         byte[] zippedPass = createZippedPassAndReturnAsByteArray(tempPassDir);
 
-        FileUtils.deleteDirectory(tempPassDir);
+        try {
+            FileUtils.deleteDirectory(tempPassDir);
+        } catch (IOException e) {
+            // ignore
+        }
         return zippedPass;
     }
 
@@ -106,33 +113,40 @@ public final class PKFileBasedSigningUtil extends PKAbstractSIgningUtil {
         return createSignedAndZippedPkPassArchive(pass, new PKPassTemplateFolder(pathToTemplateDirectory), signingInformation);
     }
 
-   
-    public void signManifestFileAndWriteToDirectory(final File temporaryPassDirectory, final File manifestJSONFile, final PKSigningInformation signingInformation)
-            throws Exception {
+    public void signManifestFileAndWriteToDirectory(final File temporaryPassDirectory, final File manifestJSONFile,
+            final PKSigningInformation signingInformation) throws PKSigningException {
 
         if (temporaryPassDirectory == null || manifestJSONFile == null) {
             throw new IllegalArgumentException("Temporary directory or manifest file not provided");
         }
 
-       CMSProcessableFile content = new CMSProcessableFile(manifestJSONFile);
+        CMSProcessableFile content = new CMSProcessableFile(manifestJSONFile);
         byte[] signedDataBytes = signManifestUsingContent(signingInformation, content);
 
         File signatureFile = new File(temporaryPassDirectory.getAbsolutePath() + File.separator + "signature");
-        FileOutputStream signatureOutputStream = new FileOutputStream(signatureFile);
-        signatureOutputStream.write(signedDataBytes);
-        signatureOutputStream.close();
+        FileOutputStream signatureOutputStream = null;
+        try {
+            signatureOutputStream = new FileOutputStream(signatureFile);
+            signatureOutputStream.write(signedDataBytes);
+        } catch (IOException e) {
+            throw new PKSigningException("Error when writing signature to folder", e);
+        } finally {
+            IOUtils.closeQuietly(signatureOutputStream);
+        }
     }
 
-    private void createPassJSONFile(final PKPass pass, final File tempPassDir, final ObjectMapper jsonObjectMapper) throws IOException,
-            JsonGenerationException, JsonMappingException {
+    private void createPassJSONFile(final PKPass pass, final File tempPassDir, final ObjectMapper jsonObjectMapper) throws PKSigningException {
         File passJSONFile = new File(tempPassDir.getAbsolutePath() + File.separator + PASS_JSON_FILE_NAME);
 
         ObjectWriter objectWriter = getObjectWriterWithFilters(jsonObjectMapper);
-        objectWriter.writeValue(passJSONFile, pass);
+        try {
+            objectWriter.writeValue(passJSONFile, pass);
+        } catch (IOException e) {
+            throw new PKSigningException("Error when writing pass.json", e);
+        }
     }
 
-    private File createManifestJSONFile(final File tempPassDir, final ObjectMapper jsonObjectMapper) throws IOException,
-            JsonGenerationException, JsonMappingException {
+    private File createManifestJSONFile(final File tempPassDir, final ObjectMapper jsonObjectMapper) throws PKSigningException {
         Map<String, String> fileWithHashMap = new HashMap<String, String>();
 
         HashFunction hashFunction = Hashing.sha1();
@@ -140,7 +154,11 @@ public final class PKFileBasedSigningUtil extends PKAbstractSIgningUtil {
         hashFilesInDirectory(filesInTempDir, fileWithHashMap, hashFunction, null);
         File manifestJSONFile = new File(tempPassDir.getAbsolutePath() + File.separator + MANIFEST_JSON_FILE_NAME);
         ObjectWriter objectWriter = getObjectWriterWithFilters(jsonObjectMapper);
-        objectWriter.writeValue(manifestJSONFile, fileWithHashMap);
+        try {
+            objectWriter.writeValue(manifestJSONFile, fileWithHashMap);
+        } catch (IOException e) {
+            throw new PKSigningException("Error when writing manifest.json", e);
+        }
         return manifestJSONFile;
     }
 
@@ -165,13 +183,17 @@ public final class PKFileBasedSigningUtil extends PKAbstractSIgningUtil {
 
     /* Windows OS separators did not work */
     private void hashFilesInDirectory(final File[] files, final Map<String, String> fileWithHashMap, final HashFunction hashFunction,
-            final String parentName) throws IOException {
+            final String parentName) throws PKSigningException {
         StringBuilder name;
         HashCode hash;
         for (File passResourceFile : files) {
             name = new StringBuilder();
             if (passResourceFile.isFile()) {
-                hash = Files.hash(passResourceFile, hashFunction);
+                try {
+                    hash = Files.hash(passResourceFile, hashFunction);
+                } catch (IOException e) {
+                    throw new PKSigningException("Error when hashing files", e);
+                }
                 if (StringUtils.isEmpty(parentName)) {
                     // direct call
                     name.append(passResourceFile.getName());
@@ -197,15 +219,15 @@ public final class PKFileBasedSigningUtil extends PKAbstractSIgningUtil {
         }
     }
 
-    private byte[] createZippedPassAndReturnAsByteArray(final File tempPassDir) throws IOException {
+    private byte[] createZippedPassAndReturnAsByteArray(final File tempPassDir) throws PKSigningException {
         ByteArrayOutputStream byteArrayOutputStreamForZippedPass = new ByteArrayOutputStream();
         ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStreamForZippedPass);
         zip(tempPassDir, tempPassDir, zipOutputStream);
-        zipOutputStream.close();
+        IOUtils.closeQuietly(zipOutputStream);
         return byteArrayOutputStreamForZippedPass.toByteArray();
     }
 
-    private final void zip(final File directory, final File base, final ZipOutputStream zipOutputStream) throws IOException {
+    private final void zip(final File directory, final File base, final ZipOutputStream zipOutputStream) throws PKSigningException {
         File[] files = directory.listFiles();
         byte[] buffer = new byte[ZIP_BUFFER_SIZE];
         int read = 0;
@@ -213,13 +235,19 @@ public final class PKFileBasedSigningUtil extends PKAbstractSIgningUtil {
             if (files[i].isDirectory()) {
                 zip(files[i], base, zipOutputStream);
             } else {
-                FileInputStream fileInputStream = new FileInputStream(files[i]);
-                ZipEntry entry = new ZipEntry(getRelativePathOfZipEntry(files[i], base));
-                zipOutputStream.putNextEntry(entry);
-                while (-1 != (read = fileInputStream.read(buffer))) {
-                    zipOutputStream.write(buffer, 0, read);
+                FileInputStream fileInputStream = null;
+                try {
+                    fileInputStream = new FileInputStream(files[i]);
+                    ZipEntry entry = new ZipEntry(getRelativePathOfZipEntry(files[i], base));
+                    zipOutputStream.putNextEntry(entry);
+                    while (-1 != (read = fileInputStream.read(buffer))) {
+                        zipOutputStream.write(buffer, 0, read);
+                    }
+                } catch (IOException e) {
+                    throw new PKSigningException("Error when zipping file", e);
+                } finally {
+                    IOUtils.closeQuietly(fileInputStream);
                 }
-                fileInputStream.close();
             }
         }
     }

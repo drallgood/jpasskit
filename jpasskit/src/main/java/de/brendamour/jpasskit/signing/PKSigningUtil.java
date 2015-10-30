@@ -79,26 +79,6 @@ public class PKSigningUtil {
         return new PKSigningInformationUtil().loadPKCS12File(pathToP12, password);
     }
 
-    /**
-     * Load the keystore from an already opened input stream.
-     * 
-     * The caller is responsible for closing the stream after this method returns successfully or fails.
-     * 
-     * @param inputStreamOfP12
-     *            <code>InputStream</code> containing the signing key store.
-     * @param password
-     *            Password to access the key store
-     * @return Key store loaded from <code>inputStreamOfP12</code>
-     * @throws IOException
-     * @throws NoSuchAlgorithmException
-     * @throws CertificateException
-     * @throws KeyStoreException
-     * @throws NoSuchProviderException
-     * @throws IllegalArgumentException
-     *             If the parameter <code>inputStreamOfP12</code> is <code>null</code>.
-     * 
-     * @deprecated Since 0.8.0
-     */
     @Deprecated
     public static KeyStore loadPKCS12File(final InputStream inputStreamOfP12, final String password) throws IOException,
             NoSuchAlgorithmException, CertificateException, KeyStoreException, NoSuchProviderException {
@@ -110,18 +90,6 @@ public class PKSigningUtil {
         return new PKSigningInformationUtil().loadDERCertificate(filePath);
     }
 
-    /**
-     * Load a DEAR Certificate from an <code>InputStream</code>.
-     * 
-     * The caller is responsible for closing the stream after this method returns successfully or fails.
-     * 
-     * @param certificateInputStream
-     *            <code>InputStream</code> containing the certificate.
-     * @return Loaded certificate.
-     * @throws IOException
-     * @throws CertificateException
-     * @deprecated Since 0.8.0
-     */
     @Deprecated
     public static X509Certificate loadDERCertificate(final InputStream certificateInputStream) throws IOException, CertificateException {
         return new PKSigningInformationUtil().loadDERCertificate(certificateInputStream);
