@@ -16,12 +16,17 @@
 package de.brendamour.jpasskit.signing;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 public class PKPassTemplateFolder implements IPKPassTemplate {
 
@@ -38,6 +43,17 @@ public class PKPassTemplateFolder implements IPKPassTemplate {
     @Override
     public void provisionPassAtDirectory(File tempPassDir) throws IOException {
         FileUtils.copyDirectory(new File(pathToTemplateDirectory), tempPassDir);
+    }
+
+    @Override
+    public Map<String, ByteBuffer> getAllFiles() throws IOException {
+        Map<String, ByteBuffer> allFiles = new HashMap<>();
+        for (File file : new File(pathToTemplateDirectory).listFiles()) {
+            byte[] byteArray = IOUtils.toByteArray(new FileInputStream(file));
+            String filePath = file.getAbsolutePath().replace(pathToTemplateDirectory, "");
+            allFiles.put(filePath, ByteBuffer.wrap(byteArray));
+        }
+        return allFiles;
     }
 
 }

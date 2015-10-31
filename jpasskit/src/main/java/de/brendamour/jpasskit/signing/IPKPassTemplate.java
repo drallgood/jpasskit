@@ -17,6 +17,8 @@ package de.brendamour.jpasskit.signing;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.Map;
 
 public interface IPKPassTemplate {
 
@@ -24,10 +26,11 @@ public interface IPKPassTemplate {
      * Prepare pass at directory with files included in this template
      * 
      * @param tempPassDir
-     *   path to directory where temporary pass will be created
+     *            path to directory where temporary pass will be created
      * @throws IOException
-     *  if anything goes wrong while copying the files
+     *             if anything goes wrong while copying the files
      */
     void provisionPassAtDirectory(File tempPassDir) throws IOException;
 
+    Map<String, ByteBuffer> getAllFiles() throws IOException;
 }

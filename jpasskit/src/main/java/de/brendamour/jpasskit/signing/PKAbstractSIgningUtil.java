@@ -15,6 +15,8 @@
  */
 package de.brendamour.jpasskit.signing;
 
+import java.io.File;
+import java.nio.charset.Charset;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,6 +39,18 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
+
+import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
+
+import de.brendamour.jpasskit.PKBarcode;
+import de.brendamour.jpasskit.PKPass;
 
 public abstract class PKAbstractSIgningUtil implements IPKSigningUtil {
 
@@ -92,4 +106,50 @@ public abstract class PKAbstractSIgningUtil implements IPKSigningUtil {
             throw new PKSigningException("Error when signing manifest", e);
         }
     }
+
+    protected ObjectWriter configureObjectMapper(final ObjectMapper jsonObjectMapper) {
+        jsonObjectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        jsonObjectMapper.setDateFormat(new ISO8601DateFormat());
+
+        SimpleFilterProvider filters = new SimpleFilterProvider();
+
+        // haven't found out, how to stack filters. Copying the validation one for now.
+        filters.addFilter("validateFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors"));
+        filters.addFilter("pkPassFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors", "foregroundColorAsObject",
+                "backgroundColorAsObject", "labelColorAsObject", "passThatWasSet"));
+        filters.addFilter("barcodeFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors", "messageEncodingAsString"));
+        filters.addFilter("charsetFilter", SimpleBeanPropertyFilter.filterOutAllExcept("name"));
+        jsonObjectMapper.setSerializationInclusion(Include.NON_NULL);
+        jsonObjectMapper.addMixIn(Object.class, ValidateFilterMixIn.class);
+        jsonObjectMapper.addMixIn(PKPass.class, PkPassFilterMixIn.class);
+        jsonObjectMapper.addMixIn(PKBarcode.class, BarcodeFilterMixIn.class);
+        jsonObjectMapper.addMixIn(Charset.class, CharsetFilterMixIn.class);
+        return jsonObjectMapper.writer(filters);
+    }
+
+    protected String getRelativePathOfZipEntry(final String fileToZip, final String base) {
+        String relativePathOfFile = fileToZip.substring(base.length()).replaceAll("^/+", "");
+        if (File.separatorChar != '/') {
+            relativePathOfFile = relativePathOfFile.replace(File.separatorChar, '/');
+        }
+
+        return relativePathOfFile;
+    }
+
+    protected @JsonFilter("pkPassFilter") class PkPassFilterMixIn {
+        // just a dummy
+    }
+
+    protected @JsonFilter("validateFilter") class ValidateFilterMixIn {
+        // just a dummy
+    }
+
+    protected @JsonFilter("barcodeFilter") class BarcodeFilterMixIn {
+        // just a dummy
+    }
+
+    protected @JsonFilter("charsetFilter") class CharsetFilterMixIn {
+        // just a dummy
+    }
+
 }

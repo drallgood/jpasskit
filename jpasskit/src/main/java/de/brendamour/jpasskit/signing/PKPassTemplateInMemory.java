@@ -21,6 +21,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -53,6 +55,17 @@ public class PKPassTemplateInMemory implements IPKPassTemplate {
             FileUtils.copyInputStreamToFile(stream, pathToFile);
             IOUtils.closeQuietly(stream);
         }
+    }
+
+    @Override
+    public Map<String, ByteBuffer> getAllFiles() throws IOException {
+        Map<String, ByteBuffer> allFiles = new HashMap<>();
+        for (Entry<String, InputStream> entry : files.entrySet()) {
+            byte[] byteArray = IOUtils.toByteArray(entry.getValue());
+            String filePath = entry.getKey();
+            allFiles.put(filePath, ByteBuffer.wrap(byteArray));
+        }
+        return allFiles;
     }
 
     public void addFile(String pathInTemplate, File file) throws IOException {
@@ -98,4 +111,5 @@ public class PKPassTemplateInMemory implements IPKPassTemplate {
 
         return locale.getLanguage() + ".lproj" + File.separator + pathInTemplate;
     }
+
 }

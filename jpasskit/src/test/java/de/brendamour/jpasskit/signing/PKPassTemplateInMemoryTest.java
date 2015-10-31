@@ -20,10 +20,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -123,13 +126,7 @@ public class PKPassTemplateInMemoryTest {
     @Test
     public void provisionPass() throws IOException {
 
-        // icon
-        URL iconFileURL = PKPassTemplateInMemoryTest.class.getClassLoader().getResource("StoreCard.raw/icon@2x.png");
-        File iconFile = new File(iconFileURL.getFile());
-        pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, iconFile);
-
-        // icon for language
-        pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, Locale.ENGLISH, iconFile);
+        prepareTemplate();
 
         File tempPassDir = Files.createTempDir();
         pkPassTemplateInMemory.provisionPassAtDirectory(tempPassDir);
@@ -137,4 +134,29 @@ public class PKPassTemplateInMemoryTest {
         Collection<File> createdFiles = FileUtils.listFiles(tempPassDir, new RegexFileFilter("^(.*?)"), DirectoryFileFilter.DIRECTORY);
         Assert.assertEquals(createdFiles.size(), 2);
     }
+
+   
+    @Test
+    public void test_getAllFiles() throws IOException, URISyntaxException {
+        prepareTemplate();
+        
+        Map<String, ByteBuffer> allFiles = pkPassTemplateInMemory.getAllFiles();
+        Assert.assertNotNull(allFiles);
+        Assert.assertEquals(allFiles.size(), 2);
+
+        for (Entry<String, ByteBuffer> entry : allFiles.entrySet()) {
+            Assert.assertTrue(entry.getValue().remaining() > 0);
+        }
+    }
+    
+    private void prepareTemplate() throws IOException {
+        // icon
+        URL iconFileURL = PKPassTemplateInMemoryTest.class.getClassLoader().getResource("StoreCard.raw/icon@2x.png");
+        File iconFile = new File(iconFileURL.getFile());
+        pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, iconFile);
+
+        // icon for language
+        pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, Locale.ENGLISH, iconFile);
+    }
+    
 }

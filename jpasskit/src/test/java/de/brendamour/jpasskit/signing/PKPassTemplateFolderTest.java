@@ -18,7 +18,10 @@ package de.brendamour.jpasskit.signing;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
 import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
@@ -44,10 +47,23 @@ public class PKPassTemplateFolderTest {
         pkPassTemplateFolder.provisionPassAtDirectory(tempPassDir);
 
         RegexFileFilter regexFileFilter = new RegexFileFilter("^(.*?)");
-        Collection<File> templateFiles = FileUtils.listFiles(new File(PASS_TEMPLATE_FOLDER), regexFileFilter,
-                DirectoryFileFilter.DIRECTORY);
+        Collection<File> templateFiles = FileUtils.listFiles(new File(PASS_TEMPLATE_FOLDER), regexFileFilter, DirectoryFileFilter.DIRECTORY);
         Collection<File> createdFiles = FileUtils.listFiles(tempPassDir, regexFileFilter, DirectoryFileFilter.DIRECTORY);
         Assert.assertEquals(createdFiles.size(), templateFiles.size());
+    }
+
+    @Test
+    public void test_getAllFiles() throws IOException, URISyntaxException {
+        Map<String, ByteBuffer> allFiles = pkPassTemplateFolder.getAllFiles();
+        Assert.assertNotNull(allFiles);
+        Assert.assertEquals(allFiles.size(), 6);
+
+        File templateFolder = new File(PASS_TEMPLATE_FOLDER);
+        for (Entry<String, ByteBuffer> entry : allFiles.entrySet()) {
+            File file = new File(templateFolder, entry.getKey());
+            Assert.assertTrue(file.exists());
+            Assert.assertTrue(entry.getValue().remaining() > 0);
+        }
     }
 
 }
