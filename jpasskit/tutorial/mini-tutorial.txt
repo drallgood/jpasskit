@@ -14,8 +14,6 @@
     limitations under the License.
 ====
 
-I spent the last two days playing with jpasskit, since I'm on a project that needs to produce passes for Apple passkit. This blog entry is really a mini tutorial for jpasskit, since the documentation for the project is kind of minimal.
-
 For those new to Apple PassKit and creating passes, this mini tutorial should help get you going. Before we use jpasskit, there's a couple of things you need.
 1. An apple developer account
 2. A Mac running OSX
