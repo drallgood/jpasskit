@@ -9,7 +9,7 @@ There are two separate projects:
 
 **Current stable release:** 0.0.8
 
-**Development Version:** 0.0.9-SNAPSHOT [![Build Status](https://ci.brendamour.net/buildStatus/icon?job=jPasskit)](https://ci.brendamour.net/job/jPasskit)
+**Development Version:** 0.0.9-SNAPSHOT [![Build Status](http://ci.brendamour.net/buildStatus/icon?job=jPasskit)](http://ci.brendamour.net/job/jPasskit)
 
 
 **Support jPasskit by contributing to my [Gratipay fund][1].**
