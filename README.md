@@ -1,4 +1,4 @@
-#jpasskit
+# jpasskit
 
 jPasskit is an Java&trade; implementation of the Apple&trade; PassKit Web Service.
 
@@ -7,34 +7,34 @@ There are two separate projects:
 1. jPasskit - Which contains the Pass objects and useful utilities. It is designed to be included in existing Webservices, thus not including any request handling.
 2. jPasskit Server -  Which contains an additional REST Webservice, that can be included in existing Applications that do not use their own Webservice already. Note: This is still no standalone implementation. Things like storing passes and handling device (un)registrations are left open for the Application to implement.
 
-**Current stable release:** 0.0.7
+**Current stable release:** 0.0.8
 
-**Development Version:** 0.0.8-SNAPSHOT
+**Development Version:** 0.0.9-SNAPSHOT
 
-**Support jPasskit by contributing to my [GitTip fund](https://www.gittip.com/drallgood/).**
+**Support jPasskit by contributing to my [Gratipay fund][1].**
 
 ## Installation
 
 ### Using Maven
 
 	<dependency>
-		<groupId>de.brendamour</groupId>
-		<artifactId>jpasskit</artifactId>
+	    <groupId>de.brendamour</groupId>
+	    <artifactId>jpasskit</artifactId>
 	</dependency>
 
 or:
-	
+ 
 	<dependency>
-		<groupId>de.brendamour</groupId>
-		<artifactId>jpasskit.server</artifactId>
+	    <groupId>de.brendamour</groupId>
+	    <artifactId>jpasskit.server</artifactId>
 	</dependency>
 
 
 **The released artifacts are now available at Maven Central**
 
 Snapshot versions can be found here: https://oss.sonatype.org/content/repositories/snapshots/
-	
-	
+ 
+ 
 ## Using jPasskit
 
 Using jPasskit is pretty straight forward:
@@ -55,13 +55,13 @@ Example:
 	balanceField.setLabel( "balance" );
 	balanceField.setValue( 20.0 );
 	balanceField.setCurrencyCode( "EUR" );
-
+	
 	primaryFields.add( balanceField );
-
+	
 	barcode.setFormat( PKBarcodeFormat.PKBarcodeFormatQR );
 	barcode.setMessage( "ABCDEFG" );
 	barcode.setMessageEncoding( Charset.forName( "utf-8" ) );
-
+	
 	storeCard.setPrimaryFields( primaryFields );
 	
 	pass.setFormatVersion( 1 );
@@ -157,14 +157,13 @@ The jPasskit Server doesn't provide a full fledged PassKit Web Service but merel
 The set up and start the Server you need two things:
 
 1. Create a Java Property object containing at least the three keys 'rest.bindIP', 'rest.bindPort' and 'rest.ssl.enabled'.
-    
 	**Note:**
 	For the Production mode, you'll have to enable SSL and provide the following 4 keys:
 	- rest.ssl.keystore.path : The path to the keystore where the SSL certificate for this server is stored
 	- rest.ssl.keystore.type : The type of this keystore (e.g. PKCS12 or JKS)
 	- rest.ssl.keystore.password : The password to access the keystore
 	- rest.ssl.key.password : The password to access the private key
-	
+		 
 	Apple requires all production passes to use SSL.
 2. An implementation of IPKRestletServerResourceFactory.
 
@@ -181,13 +180,15 @@ Then you create the server instance:
 	Properties serverConfigurationProperties = new Properties();
 	serverConfigurationProperties.put("rest.bindIP", "::");
 	serverConfigurationProperties.put("rest.bindPort", "8082");
-
+	
 	IPKRestletServerResourceFactory pkRestletServerResourceFactory = new MyOwnPKRestletServerResourceFactory();
 	PKRestServer pkRestServer = new PKRestServer(serverConfigurationProperties, pkRestletServerResourceFactory);
 	try {
-		pkRestServer.start();
+	    pkRestServer.start();
 	} catch (Exception e) {
-		e.printStackTrace();
+	    e.printStackTrace();
 	}
-	
+ 
 That's it. Your web service is running. Just point your passes to the URL where the server is running.
+
+[1]:	https://www.gittip.com/drallgood/
