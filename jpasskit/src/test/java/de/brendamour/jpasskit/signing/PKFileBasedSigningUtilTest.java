@@ -32,6 +32,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
 
 import de.brendamour.jpasskit.PKBarcode;
 import de.brendamour.jpasskit.PKPass;
@@ -67,6 +68,8 @@ public class PKFileBasedSigningUtilTest {
         PKPass pass = jsonObjectMapper.readValue(new File(getPathFromClasspath("pass2.json")), PKPass.class);
         pass.setRelevantDate(new Date());
         pass.getBarcodes().get(0).setMessageEncoding(Charset.forName("utf-8"));
+        pass.setUserInfo(ImmutableMap.<String, Object>of("name", "John Doe"));
+        
         PKSigningInformation pkSigningInformation = new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
                 keyStorePath, keyStorePassword, appleWWDRCA);
         PKPassTemplateFolder passTemplate = new PKPassTemplateFolder(getPassFolderPath());

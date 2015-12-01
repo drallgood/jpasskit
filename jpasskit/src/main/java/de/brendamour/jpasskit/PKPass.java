@@ -20,6 +20,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -79,7 +80,7 @@ public class PKPass implements IPKValidateable {
     private List<PWAssociatedApp> associatedApps;
 
     // Companion App Keys
-    private String userInfo; // any JSON data
+    private Map<String, Object> userInfo; // any JSON data
 
     // Relevance Keys
     private Long maxDistance;
@@ -175,11 +176,11 @@ public class PKPass implements IPKValidateable {
         this.organizationName = organizationName;
     }
 
-   public String getUserInfo() {
+   public Map<String, Object> getUserInfo() {
         return userInfo;
     }
 
-    public void setUserInfo(final String userInfo) {
+    public void setUserInfo(final Map<String, Object> userInfo) {
         this.userInfo = userInfo;
     }
 

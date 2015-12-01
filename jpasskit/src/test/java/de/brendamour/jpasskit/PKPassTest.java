@@ -22,10 +22,13 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableMap;
 
 import de.brendamour.jpasskit.passes.PKGenericPass;
 
@@ -35,7 +38,7 @@ public class PKPassTest {
     private static final String APP_LAUNCH_URL = "myapplication://open";
     private static final String GROUPING_ID = "group-1234";
     private static final Long MAX_DISTANCE = 99999l;
-    private static final String USER_INFO = "John Doe";
+    private static final Map<String, Object> USER_INFO = ImmutableMap.<String, Object>of("name", "John Doe");
     private static final Date EXPIRATION_DATE = new Date();
     private PKPass pkPass;
 
