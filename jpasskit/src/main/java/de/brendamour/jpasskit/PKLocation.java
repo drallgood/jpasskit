@@ -26,7 +26,7 @@ public class PKLocation implements IPKValidateable {
 
     private double latitude;
     private double longitude;
-    private double altitude;
+    private Double altitude;
     private String relevantText;
 
     public double getLatitude() {
@@ -45,11 +45,11 @@ public class PKLocation implements IPKValidateable {
         this.longitude = longitude;
     }
 
-    public double getAltitude() {
+    public Double getAltitude() {
         return altitude;
     }
 
-    public void setAltitude(final double altitude) {
+    public void setAltitude(final Double altitude) {
         this.altitude = altitude;
     }
 
