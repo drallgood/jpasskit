@@ -43,6 +43,8 @@ public class PKPassTemplateInMemory implements IPKPassTemplate {
     public static final String PK_STRIP = "strip.png";
     public static final String PK_BACKGROUND_RETINA = "background@2x.png";
     public static final String PK_BACKGROUND = "background.png";
+    public static final String PK_FOOTER_RETINA = "footer@2x.png";
+    public static final String PK_FOOTER = "footer.png";
 
     private Map<String, InputStream> files = new ConcurrentHashMap<>();
 

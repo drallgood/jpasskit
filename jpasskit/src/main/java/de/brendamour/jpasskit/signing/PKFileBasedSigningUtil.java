@@ -46,7 +46,7 @@ import com.google.common.io.Files;
 
 import de.brendamour.jpasskit.PKPass;
 
-public final class PKFileBasedSigningUtil extends PKAbstractSIgningUtil {
+public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
 
     private static final String FILE_SEPARATOR_UNIX = "/";
     private static final String MANIFEST_JSON_FILE_NAME = "manifest.json";

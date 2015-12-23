@@ -40,7 +40,7 @@ import com.google.common.hash.Hashing;
 
 import de.brendamour.jpasskit.PKPass;
 
-public final class PKInMemorySigningUtil extends PKAbstractSIgningUtil {
+public final class PKInMemorySigningUtil extends PKAbstractSigningUtil {
 
     private static final String MANIFEST_JSON_FILE_NAME = "manifest.json";
     private static final String PASS_JSON_FILE_NAME = "pass.json";

@@ -52,7 +52,7 @@ import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 import de.brendamour.jpasskit.PKBarcode;
 import de.brendamour.jpasskit.PKPass;
 
-public abstract class PKAbstractSIgningUtil implements IPKSigningUtil {
+public abstract class PKAbstractSigningUtil implements IPKSigningUtil {
 
     /*
      * (non-Javadoc)
