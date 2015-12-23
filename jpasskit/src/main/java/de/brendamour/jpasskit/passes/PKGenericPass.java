@@ -17,6 +17,7 @@ package de.brendamour.jpasskit.passes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -35,12 +36,26 @@ public class PKGenericPass implements IPKValidateable {
     protected List<PKField> auxiliaryFields;
     protected List<PKField> backFields;
 
+    public void addPrimaryField(PKField field) {
+        if (primaryFields == null) {
+            primaryFields = new CopyOnWriteArrayList<PKField>();
+        }
+        primaryFields.add(field);
+    }
+
     public List<PKField> getPrimaryFields() {
         return primaryFields;
     }
 
     public void setPrimaryFields(final List<PKField> primaryFields) {
         this.primaryFields = primaryFields;
+    }
+
+    public void addSecondaryField(PKField field) {
+        if (secondaryFields == null) {
+            secondaryFields = new CopyOnWriteArrayList<PKField>();
+        }
+        secondaryFields.add(field);
     }
 
     public List<PKField> getSecondaryFields() {
@@ -51,6 +66,13 @@ public class PKGenericPass implements IPKValidateable {
         this.secondaryFields = secondaryFields;
     }
 
+    public void addAuxiliaryField(PKField field) {
+        if (auxiliaryFields == null) {
+            auxiliaryFields = new CopyOnWriteArrayList<PKField>();
+        }
+        auxiliaryFields.add(field);
+    }
+
     public List<PKField> getAuxiliaryFields() {
         return auxiliaryFields;
     }
@@ -59,12 +81,26 @@ public class PKGenericPass implements IPKValidateable {
         this.auxiliaryFields = auxiliaryFields;
     }
 
+    public void addBackField(PKField field) {
+        if (backFields == null) {
+            backFields = new CopyOnWriteArrayList<PKField>();
+        }
+        backFields.add(field);
+    }
+
     public List<PKField> getBackFields() {
         return backFields;
     }
 
     public void setBackFields(final List<PKField> backFields) {
         this.backFields = backFields;
+    }
+
+    public void addHeaderField(PKField field) {
+        if (headerFields == null) {
+            headerFields = new CopyOnWriteArrayList<PKField>();
+        }
+        headerFields.add(field);
     }
 
     public List<PKField> getHeaderFields() {
@@ -106,4 +142,5 @@ public class PKGenericPass implements IPKValidateable {
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
+
 }
