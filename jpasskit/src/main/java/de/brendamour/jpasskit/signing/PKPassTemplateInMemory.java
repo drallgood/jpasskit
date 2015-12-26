@@ -22,6 +22,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.ByteBuffer;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -100,6 +103,20 @@ public class PKPassTemplateInMemory implements IPKPassTemplate {
 
     public void addFile(String pathInTemplate, Locale locale, URL contentURL) throws IOException {
         addFile(pathForLocale(pathInTemplate, locale), contentURL.openStream());
+    }
+
+    public void addAllFiles(String directoryWithFilesToAdd) throws IOException {
+        File directoryWithFilesToAddAsFile = new File(directoryWithFilesToAdd);
+        if (!directoryWithFilesToAddAsFile.isDirectory()) {
+            throw new IllegalArgumentException("Provided file is not a directory");
+        }
+
+        Path pathToSourceFolder = Paths.get(directoryWithFilesToAddAsFile.getAbsolutePath());
+        Collection<File> filesInDir = FileUtils.listFiles(directoryWithFilesToAddAsFile, null, true); 
+        for (File file : filesInDir) {
+                Path relativePathOfFile = pathToSourceFolder.relativize(Paths.get(file.getAbsolutePath()));
+                addFile(relativePathOfFile.toString(), file);
+        }
     }
 
     public Map<String, InputStream> getFiles() {

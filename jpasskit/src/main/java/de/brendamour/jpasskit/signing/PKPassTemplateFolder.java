@@ -48,7 +48,7 @@ public class PKPassTemplateFolder implements IPKPassTemplate {
     @Override
     public Map<String, ByteBuffer> getAllFiles() throws IOException {
         Map<String, ByteBuffer> allFiles = new HashMap<>();
-        for (File file : new File(pathToTemplateDirectory).listFiles()) {
+        for (File file : FileUtils.listFiles(new File(pathToTemplateDirectory), null, true)) {
             byte[] byteArray = IOUtils.toByteArray(new FileInputStream(file));
             String filePath = file.getAbsolutePath().replace(pathToTemplateDirectory, "");
             allFiles.put(filePath, ByteBuffer.wrap(byteArray));

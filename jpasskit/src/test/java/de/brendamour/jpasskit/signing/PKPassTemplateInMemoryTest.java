@@ -40,6 +40,8 @@ import com.google.common.io.Files;
 
 public class PKPassTemplateInMemoryTest {
 
+    private static final String PASS_TEMPLATE_FOLDER = PKPassTemplateFolderTest.class.getClassLoader().getResource("StoreCard.raw").getPath();
+
     private PKPassTemplateInMemory pkPassTemplateInMemory;
 
     @BeforeMethod
@@ -124,6 +126,14 @@ public class PKPassTemplateInMemoryTest {
     }
 
     @Test
+    public void addAllFiles() throws IOException {
+
+        pkPassTemplateInMemory.addAllFiles(PASS_TEMPLATE_FOLDER);
+        Map<String, InputStream> files = pkPassTemplateInMemory.getFiles();
+        Assert.assertEquals(files.size(), 8);
+    }
+
+    @Test
     public void provisionPass() throws IOException {
 
         prepareTemplate();
@@ -135,11 +145,10 @@ public class PKPassTemplateInMemoryTest {
         Assert.assertEquals(createdFiles.size(), 2);
     }
 
-   
     @Test
     public void test_getAllFiles() throws IOException, URISyntaxException {
         prepareTemplate();
-        
+
         Map<String, ByteBuffer> allFiles = pkPassTemplateInMemory.getAllFiles();
         Assert.assertNotNull(allFiles);
         Assert.assertEquals(allFiles.size(), 2);
@@ -148,7 +157,7 @@ public class PKPassTemplateInMemoryTest {
             Assert.assertTrue(entry.getValue().remaining() > 0);
         }
     }
-    
+
     private void prepareTemplate() throws IOException {
         // icon
         URL iconFileURL = PKPassTemplateInMemoryTest.class.getClassLoader().getResource("StoreCard.raw/icon@2x.png");
@@ -158,5 +167,5 @@ public class PKPassTemplateInMemoryTest {
         // icon for language
         pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, Locale.ENGLISH, iconFile);
     }
-    
+
 }

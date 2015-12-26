@@ -56,7 +56,7 @@ public class PKPassTemplateFolderTest {
     public void test_getAllFiles() throws IOException, URISyntaxException {
         Map<String, ByteBuffer> allFiles = pkPassTemplateFolder.getAllFiles();
         Assert.assertNotNull(allFiles);
-        Assert.assertEquals(allFiles.size(), 6);
+        Assert.assertEquals(allFiles.size(), 8);
 
         File templateFolder = new File(PASS_TEMPLATE_FOLDER);
         for (Entry<String, ByteBuffer> entry : allFiles.entrySet()) {
