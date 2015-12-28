@@ -19,7 +19,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.security.Security;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -30,7 +29,6 @@ import javax.inject.Inject;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.IOUtils;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -46,12 +44,19 @@ public final class PKInMemorySigningUtil extends PKAbstractSigningUtil {
     private static final String PASS_JSON_FILE_NAME = "pass.json";
     private static final String SIGNATURE_FILE_NAME = "signature";
 
-    private ObjectWriter objectWriter;
+    public PKInMemorySigningUtil() {
+        super(new ObjectMapper());
+    }
 
     @Inject
+    public PKInMemorySigningUtil(ObjectWriter objectWriter) {
+        super(objectWriter);
+    }
+
+    @Deprecated
+    @Inject
     public PKInMemorySigningUtil(ObjectMapper objectMapper) {
-        addBCProvider();
-        objectWriter = configureObjectMapper(objectMapper);
+        super(objectMapper);
     }
 
     /*
@@ -137,12 +142,5 @@ public final class PKInMemorySigningUtil extends PKAbstractSigningUtil {
         }
         IOUtils.closeQuietly(zipOutputStream);
         return byteArrayOutputStreamForZippedPass.toByteArray();
-    }
-
-    private void addBCProvider() {
-        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-            Security.addProvider(new BouncyCastleProvider());
-        }
-
     }
 }
