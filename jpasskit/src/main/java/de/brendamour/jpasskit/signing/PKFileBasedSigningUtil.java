@@ -21,7 +21,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.security.Security;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -34,9 +33,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.cms.CMSProcessableFile;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.google.common.hash.HashCode;
@@ -52,12 +49,19 @@ public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
     private static final String MANIFEST_JSON_FILE_NAME = "manifest.json";
     private static final String PASS_JSON_FILE_NAME = "pass.json";
 
-    private ObjectWriter objectWriter;
+    public PKFileBasedSigningUtil() {
+        super(new ObjectMapper());
+    }
 
     @Inject
+    public PKFileBasedSigningUtil(ObjectWriter objectWriter) {
+        super(objectWriter);
+    }
+
+    @Deprecated
+    @Inject
     public PKFileBasedSigningUtil(ObjectMapper objectMapper) {
-        addBCProvider();
-        objectWriter = configureObjectMapper(objectMapper);
+        super(objectMapper);
     }
 
     /*
@@ -217,32 +221,5 @@ public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
                 }
             }
         }
-    }
-
-    @JsonFilter("pkPassFilter")
-    private class PkPassFilterMixIn {
-        // just a dummy
-    }
-
-    @JsonFilter("validateFilter")
-    private class ValidateFilterMixIn {
-        // just a dummy
-    }
-
-    @JsonFilter("barcodeFilter")
-    private class BarcodeFilterMixIn {
-        // just a dummy
-    }
-
-    @JsonFilter("charsetFilter")
-    private class CharsetFilterMixIn {
-        // just a dummy
-    }
-
-    private void addBCProvider() {
-        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-            Security.addProvider(new BouncyCastleProvider());
-        }
-
     }
 }

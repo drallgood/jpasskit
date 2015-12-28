@@ -17,6 +17,7 @@ package de.brendamour.jpasskit.signing;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -52,7 +53,21 @@ import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 import de.brendamour.jpasskit.PKBarcode;
 import de.brendamour.jpasskit.PKPass;
 
+import javax.inject.Inject;
+
 public abstract class PKAbstractSigningUtil implements IPKSigningUtil {
+
+    protected ObjectWriter objectWriter;
+
+    protected PKAbstractSigningUtil(ObjectMapper objectMapper) {
+        addBCProvider();
+        this.objectWriter = configureObjectMapper(objectMapper);
+    }
+
+    protected PKAbstractSigningUtil(ObjectWriter objectWriter) {
+        addBCProvider();
+        this.objectWriter = objectWriter;
+    }
 
     /*
      * (non-Javadoc)
@@ -152,4 +167,10 @@ public abstract class PKAbstractSigningUtil implements IPKSigningUtil {
         // just a dummy
     }
 
+    private void addBCProvider() {
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
+
+    }
 }
