@@ -264,8 +264,6 @@ public class PKPass implements IPKValidateable {
         // avoid conflicts with 'setBarcodes' method:
         if (barcodes == null || barcodes.size() < 2) {
             if (barcode != null) {
-                setBarcodes(null);
-            } else {
                 setBarcodes(Collections.singletonList(barcode));
             }
         }
