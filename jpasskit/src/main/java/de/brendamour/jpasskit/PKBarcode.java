@@ -17,6 +17,7 @@ package de.brendamour.jpasskit;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -27,6 +28,14 @@ import de.brendamour.jpasskit.enums.PKBarcodeFormat;
 public class PKBarcode implements IPKValidateable {
 
     private static final long serialVersionUID = -7661537217765974179L;
+    private static final List<PKBarcodeFormat> BARCODE_TYPES_BEFORE_IOS_9;
+    static {
+        List<PKBarcodeFormat> barcodeTypes = new ArrayList<>(3);
+        barcodeTypes.add(PKBarcodeFormat.PKBarcodeFormatQR);
+        barcodeTypes.add(PKBarcodeFormat.PKBarcodeFormatPDF417);
+        barcodeTypes.add(PKBarcodeFormat.PKBarcodeFormatAztec);
+        BARCODE_TYPES_BEFORE_IOS_9 = Collections.unmodifiableList(barcodeTypes);
+    }
 
     private PKBarcodeFormat format;
     private String altText;
@@ -85,6 +94,10 @@ public class PKBarcode implements IPKValidateable {
 
     public boolean isValid() {
         return getValidationErrors().isEmpty();
+    }
+
+    protected boolean isValidInIosVersionsBefore9() {
+        return BARCODE_TYPES_BEFORE_IOS_9.contains(getFormat());
     }
 
     public List<String> getValidationErrors() {
