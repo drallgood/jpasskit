@@ -251,9 +251,12 @@ public class PKPass implements IPKValidateable {
 
     @Deprecated
     public PKBarcode getBarcode() {
-        for (PKBarcode barcode : getBarcodes()) {
-            if (barcode.isValidInIosVersionsBefore9()) {
-                return barcode;
+        List<PKBarcode> barcodes = getBarcodes();
+        if (CollectionUtils.isNotEmpty(barcodes)) {
+            for (PKBarcode barcode : barcodes) {
+                if (barcode.isValidInIosVersionsBefore9()) {
+                    return barcode;
+                }
             }
         }
         return null;
