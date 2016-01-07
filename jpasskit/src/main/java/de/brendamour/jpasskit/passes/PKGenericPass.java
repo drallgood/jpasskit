@@ -124,6 +124,7 @@ public class PKGenericPass implements IPKValidateable {
         lists.add(secondaryFields);
         lists.add(headerFields);
         lists.add(backFields);
+        lists.add(auxiliaryFields);
 
         for (List<PKField> list : lists) {
             if (list != null) {
