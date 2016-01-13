@@ -249,7 +249,6 @@ public class PKPass implements IPKValidateable {
         this.locations = locations;
     }
 
-    @Deprecated
     public PKBarcode getBarcode() {
         List<PKBarcode> barcodes = getBarcodes();
         if (CollectionUtils.isNotEmpty(barcodes)) {
