@@ -83,6 +83,7 @@ public class PKFileBasedSigningUtilTest {
         IOUtils.copy(inputStream, new FileOutputStream(passZipFile));
         Assert.assertTrue(passZipFile.exists());
         Assert.assertTrue(passZipFile.length() > 0);
+        AssertZip.assertValid(passZipFile);
     }
 
     @Test
@@ -105,13 +106,14 @@ public class PKFileBasedSigningUtilTest {
                 new PKPassTemplateFolder(getPassFolderPath()), pkSigningInformation);
         ByteArrayInputStream inputStream = new ByteArrayInputStream(signedAndZippedPkPassArchive);
         
-        File passJsonFile = new File("target/passJson.zip");
-        if (passJsonFile.exists()) {
-            passJsonFile.delete();
+        File passZipFile = new File("target/passJson.zip");
+        if (passZipFile.exists()) {
+            passZipFile.delete();
         }
-        IOUtils.copy(inputStream, new FileOutputStream(passJsonFile));
-        Assert.assertTrue(passJsonFile.exists());
-        Assert.assertTrue(passJsonFile.length() > 0);
+        IOUtils.copy(inputStream, new FileOutputStream(passZipFile));
+        Assert.assertTrue(passZipFile.exists());
+        Assert.assertTrue(passZipFile.length() > 0);
+        AssertZip.assertValid(passZipFile);
     }
 
     private String getPassFolderPath() throws URISyntaxException {

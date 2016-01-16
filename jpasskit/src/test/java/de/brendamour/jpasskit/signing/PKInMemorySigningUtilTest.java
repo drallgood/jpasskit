@@ -85,6 +85,7 @@ public class PKInMemorySigningUtilTest {
         IOUtils.copy(inputStream, new FileOutputStream(passZipFile));
         Assert.assertTrue(passZipFile.exists());
         Assert.assertTrue(passZipFile.length() > 0);
+        AssertZip.assertValid(passZipFile);
     }
 
     @Test
@@ -118,6 +119,7 @@ public class PKInMemorySigningUtilTest {
         IOUtils.copy(inputStream, new FileOutputStream(passZipFile));
         Assert.assertTrue(passZipFile.exists());
         Assert.assertTrue(passZipFile.length() > 0);
+        AssertZip.assertValid(passZipFile);
     }
 
     private String getPathFromClasspath(String path) throws URISyntaxException {
