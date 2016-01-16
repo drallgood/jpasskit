@@ -169,6 +169,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
 				<configuration>
 					<source>1.7</source>
 					<target>1.7</target>
@@ -192,6 +193,10 @@
 					</properties>
 					<excludes>
 						<exclude>*pom.xml</exclude>
+						<exclude>*.checkstyle</exclude>
+						<exclude>**/*.cer</exclude>
+						<exclude>**/*.pem</exclude>
+						<exclude>**/*.p12</exclude>
 					</excludes>
 				</configuration>
 				<executions>
@@ -214,7 +219,6 @@
 						</goals>
 						<configuration>
 							<pomFileName>jpasskit/pom.xml</pomFileName>
-							<autoVersionSubmodules>true</autoVersionSubmodules>
 							<useReleaseProfile>false</useReleaseProfile>
 							<releaseProfiles>release</releaseProfiles>
 							<goals>deploy</goals>
