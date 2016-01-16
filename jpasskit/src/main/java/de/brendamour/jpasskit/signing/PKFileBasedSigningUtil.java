@@ -187,10 +187,10 @@ public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
         ByteArrayOutputStream byteArrayOutputStreamForZippedPass = new ByteArrayOutputStream(); // closed with the parent ZipOutputStream
         try (ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStreamForZippedPass)) {
             zip(tempPassDir, tempPassDir, zipOutputStream);
-            return byteArrayOutputStreamForZippedPass.toByteArray();
         } catch (IOException e) {
             throw new PKSigningException("Error while creating a zip package", e);
         }
+        return byteArrayOutputStreamForZippedPass.toByteArray();
     }
 
     private final void zip(final File directory, final File base, final ZipOutputStream zipOutputStream) throws IOException {

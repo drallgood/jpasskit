@@ -127,9 +127,9 @@ public final class PKInMemorySigningUtil extends PKAbstractSigningUtil {
                 zipOutputStream.putNextEntry(entry);
                 IOUtils.copy(new ByteArrayInputStream(passResourceFile.getValue().array()), zipOutputStream);
             }
-            return byteArrayOutputStreamForZippedPass.toByteArray();
         } catch (IOException e) {
             throw new PKSigningException("Error while creating a zip package", e);
         }
+        return byteArrayOutputStreamForZippedPass.toByteArray();
     }
 }
