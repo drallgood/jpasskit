@@ -25,7 +25,6 @@ import de.brendamour.jpasskit.PKPass;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.cms.CMSProcessableFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,9 +40,6 @@ import java.util.zip.ZipOutputStream;
 public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PKFileBasedSigningUtil.class);
-    private static final String FILE_SEPARATOR_UNIX = "/";
-    private static final String MANIFEST_JSON_FILE_NAME = "manifest.json";
-    private static final String PASS_JSON_FILE_NAME = "pass.json";
 
     public PKFileBasedSigningUtil() {
         super(new ObjectMapper());
@@ -55,7 +51,6 @@ public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
     }
 
     @Deprecated
-    @Inject
     public PKFileBasedSigningUtil(ObjectMapper objectMapper) {
         super(objectMapper);
     }
@@ -94,12 +89,16 @@ public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
     }
 
     public byte[] createSignedAndZippedPkPassArchive(final PKPass pass, final URL fileUrlOfTemplateDirectory,
-            final PKSigningInformation signingInformation) throws Exception {
-        return createSignedAndZippedPkPassArchive(pass, new PKPassTemplateFolder(fileUrlOfTemplateDirectory), signingInformation);
+            final PKSigningInformation signingInformation) throws PKSigningException {
+        try {
+            return createSignedAndZippedPkPassArchive(pass, new PKPassTemplateFolder(fileUrlOfTemplateDirectory), signingInformation);
+        } catch (UnsupportedEncodingException e) {
+            throw new PKSigningException(e);
+        }
     }
 
     public byte[] createSignedAndZippedPkPassArchive(final PKPass pass, final String pathToTemplateDirectory,
-            final PKSigningInformation signingInformation) throws Exception {
+            final PKSigningInformation signingInformation) throws PKSigningException {
         return createSignedAndZippedPkPassArchive(pass, new PKPassTemplateFolder(pathToTemplateDirectory), signingInformation);
     }
 
@@ -110,7 +109,7 @@ public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
             throw new IllegalArgumentException("Temporary directory or manifest file not provided");
         }
 
-        File signatureFile = new File(temporaryPassDirectory.getAbsolutePath() + File.separator + "signature");
+        File signatureFile = new File(temporaryPassDirectory.getAbsolutePath() + File.separator + SIGNATURE_FILE_NAME);
         try (FileOutputStream signatureOutputStream = new FileOutputStream(signatureFile)) {
             CMSProcessableFile content = new CMSProcessableFile(manifestJSONFile);
             signatureOutputStream.write(signManifestUsingContent(signingInformation, content));
@@ -120,9 +119,8 @@ public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
     }
 
     private void createPassJSONFile(final PKPass pass, final File tempPassDir) throws PKSigningException {
-        File passJSONFile = new File(tempPassDir.getAbsolutePath() + File.separator + PASS_JSON_FILE_NAME);
-
         try {
+            File passJSONFile = new File(tempPassDir.getAbsolutePath() + File.separator + PASS_JSON_FILE_NAME);
             objectWriter.writeValue(passJSONFile, pass);
         } catch (IOException e) {
             throw new PKSigningException("Error when writing pass.json", e);
@@ -130,81 +128,47 @@ public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
     }
 
     private File createManifestJSONFile(final File tempPassDir) throws PKSigningException {
-        Map<String, String> fileWithHashMap = new HashMap<String, String>();
-
-        HashFunction hashFunction = Hashing.sha1();
-        File[] filesInTempDir = tempPassDir.listFiles();
-        hashFilesInDirectory(filesInTempDir, fileWithHashMap, hashFunction, null);
-        File manifestJSONFile = new File(tempPassDir.getAbsolutePath() + File.separator + MANIFEST_JSON_FILE_NAME);
-
         try {
+            File manifestJSONFile = new File(tempPassDir.getCanonicalPath() + File.separator + MANIFEST_JSON_FILE_NAME);
+            Map<String, String> fileWithHashMap = hashFiles(tempPassDir, Hashing.sha1());
             objectWriter.writeValue(manifestJSONFile, fileWithHashMap);
+            return manifestJSONFile;
         } catch (IOException e) {
             throw new PKSigningException("Error when writing manifest.json", e);
         }
-        return manifestJSONFile;
     }
 
-    /* Windows OS separators did not work */
-    private void hashFilesInDirectory(final File[] files, final Map<String, String> fileWithHashMap, final HashFunction hashFunction,
-            final String parentName) throws PKSigningException {
-        StringBuilder name;
-        HashCode hash;
-        for (File passResourceFile : files) {
-            name = new StringBuilder();
-            if (passResourceFile.isFile()) {
-                try {
-                    hash = Files.hash(passResourceFile, hashFunction);
-                } catch (IOException e) {
-                    throw new PKSigningException("Error when hashing files", e);
-                }
-                if (StringUtils.isEmpty(parentName)) {
-                    // direct call
-                    name.append(passResourceFile.getName());
-                } else {
-                    // recursive call (appending parent directory)
-                    name.append(parentName);
-                    name.append(FILE_SEPARATOR_UNIX);
-                    name.append(passResourceFile.getName());
-                }
-                fileWithHashMap.put(name.toString(), Hex.encodeHexString(hash.asBytes()));
-            } else if (passResourceFile.isDirectory()) {
-                if (StringUtils.isEmpty(parentName)) {
-                    // direct call
-                    name.append(passResourceFile.getName());
-                } else {
-                    // recursive call (appending parent directory)
-                    name.append(parentName);
-                    name.append(FILE_SEPARATOR_UNIX);
-                    name.append(passResourceFile.getName());
-                }
-                hashFilesInDirectory(passResourceFile.listFiles(), fileWithHashMap, hashFunction, name.toString());
+    private Map<String, String> hashFiles(final File tempPassDir, final HashFunction hashFunction)
+            throws PKSigningException {
+        Map<String, String> fileWithHashMap = new HashMap<>();
+        try {
+            String base = tempPassDir.getCanonicalPath() + File.separator;
+            HashCode hash;
+            for (File file : FileUtils.listFiles(tempPassDir, null, true)) {
+                hash = Files.hash(file, hashFunction);
+                fileWithHashMap.put(getRelativePathOfZipEntry(file.getCanonicalPath(), base), Hex.encodeHexString(hash.asBytes()));
             }
+        } catch (IOException e) {
+            throw new PKSigningException("Error when hashing files", e);
         }
+        return fileWithHashMap;
     }
 
     private byte[] createZippedPassAndReturnAsByteArray(final File tempPassDir) throws PKSigningException {
         ByteArrayOutputStream byteArrayOutputStreamForZippedPass = new ByteArrayOutputStream(); // closed with the parent ZipOutputStream
         try (ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStreamForZippedPass)) {
-            zip(tempPassDir, tempPassDir, zipOutputStream);
-        } catch (IOException e) {
-            throw new PKSigningException("Error while creating a zip package", e);
-        }
-        return byteArrayOutputStreamForZippedPass.toByteArray();
-    }
-
-    private final void zip(final File directory, final File base, final ZipOutputStream zipOutputStream) throws IOException {
-        File[] files = directory.listFiles();
-        for (int i = 0, n = files.length; i < n; i++) {
-            if (files[i].isDirectory()) {
-                zip(files[i], base, zipOutputStream);
-            } else {
-                try (FileInputStream fileInputStream = new FileInputStream(files[i])) {
-                    ZipEntry entry = new ZipEntry(getRelativePathOfZipEntry(files[i].getPath(), base.getPath()));
+            String base = tempPassDir.getCanonicalPath() + File.separator;
+            ZipEntry entry;
+            for (File file : FileUtils.listFiles(tempPassDir, null, true)) {
+                try (FileInputStream fileInputStream = new FileInputStream(file)) {
+                    entry = new ZipEntry(getRelativePathOfZipEntry(file.getCanonicalPath(), base));
                     zipOutputStream.putNextEntry(entry);
                     IOUtils.copy(fileInputStream, zipOutputStream);
                 }
             }
+        } catch (IOException e) {
+            throw new PKSigningException("Error when creating a zip package", e);
         }
+        return byteArrayOutputStreamForZippedPass.toByteArray();
     }
 }
