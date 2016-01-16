@@ -15,36 +15,32 @@
  */
 package de.brendamour.jpasskit.signing;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import javax.inject.Inject;
-
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.bouncycastle.cms.CMSProcessableFile;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
-
 import de.brendamour.jpasskit.PKPass;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.bouncycastle.cms.CMSProcessableFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import java.io.*;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PKFileBasedSigningUtil.class);
     private static final String FILE_SEPARATOR_UNIX = "/";
     private static final String MANIFEST_JSON_FILE_NAME = "manifest.json";
     private static final String PASS_JSON_FILE_NAME = "pass.json";
@@ -92,7 +88,7 @@ public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
         try {
             FileUtils.deleteDirectory(tempPassDir);
         } catch (IOException e) {
-            // ignore
+            LOGGER.warn("Removing the temporary directory failed", e);
         }
         return zippedPass;
     }
@@ -114,18 +110,12 @@ public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
             throw new IllegalArgumentException("Temporary directory or manifest file not provided");
         }
 
-        CMSProcessableFile content = new CMSProcessableFile(manifestJSONFile);
-        byte[] signedDataBytes = signManifestUsingContent(signingInformation, content);
-
         File signatureFile = new File(temporaryPassDirectory.getAbsolutePath() + File.separator + "signature");
-        FileOutputStream signatureOutputStream = null;
-        try {
-            signatureOutputStream = new FileOutputStream(signatureFile);
-            signatureOutputStream.write(signedDataBytes);
+        try (FileOutputStream signatureOutputStream = new FileOutputStream(signatureFile)) {
+            CMSProcessableFile content = new CMSProcessableFile(manifestJSONFile);
+            signatureOutputStream.write(signManifestUsingContent(signingInformation, content));
         } catch (IOException e) {
             throw new PKSigningException("Error when writing signature to folder", e);
-        } finally {
-            IOUtils.closeQuietly(signatureOutputStream);
         }
     }
 
@@ -172,7 +162,7 @@ public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
                     // direct call
                     name.append(passResourceFile.getName());
                 } else {
-                    // recursive call (apeending parent directory)
+                    // recursive call (appending parent directory)
                     name.append(parentName);
                     name.append(FILE_SEPARATOR_UNIX);
                     name.append(passResourceFile.getName());
@@ -183,7 +173,7 @@ public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
                     // direct call
                     name.append(passResourceFile.getName());
                 } else {
-                    // recursive call (apeending parent directory)
+                    // recursive call (appending parent directory)
                     name.append(parentName);
                     name.append(FILE_SEPARATOR_UNIX);
                     name.append(passResourceFile.getName());
@@ -194,30 +184,25 @@ public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
     }
 
     private byte[] createZippedPassAndReturnAsByteArray(final File tempPassDir) throws PKSigningException {
-        ByteArrayOutputStream byteArrayOutputStreamForZippedPass = new ByteArrayOutputStream();
-        ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStreamForZippedPass);
-        zip(tempPassDir, tempPassDir, zipOutputStream);
-        IOUtils.closeQuietly(zipOutputStream);
-        return byteArrayOutputStreamForZippedPass.toByteArray();
+        ByteArrayOutputStream byteArrayOutputStreamForZippedPass = new ByteArrayOutputStream(); // closed with the parent ZipOutputStream
+        try (ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStreamForZippedPass)) {
+            zip(tempPassDir, tempPassDir, zipOutputStream);
+            return byteArrayOutputStreamForZippedPass.toByteArray();
+        } catch (IOException e) {
+            throw new PKSigningException("Error while creating a zip package", e);
+        }
     }
 
-    private final void zip(final File directory, final File base, final ZipOutputStream zipOutputStream) throws PKSigningException {
+    private final void zip(final File directory, final File base, final ZipOutputStream zipOutputStream) throws IOException {
         File[] files = directory.listFiles();
         for (int i = 0, n = files.length; i < n; i++) {
             if (files[i].isDirectory()) {
                 zip(files[i], base, zipOutputStream);
             } else {
-                FileInputStream fileInputStream = null;
-                try {
-                    fileInputStream = new FileInputStream(files[i]);
+                try (FileInputStream fileInputStream = new FileInputStream(files[i])) {
                     ZipEntry entry = new ZipEntry(getRelativePathOfZipEntry(files[i].getPath(), base.getPath()));
                     zipOutputStream.putNextEntry(entry);
                     IOUtils.copy(fileInputStream, zipOutputStream);
-                } catch (IOException e) {
-                    IOUtils.closeQuietly(zipOutputStream);
-                    throw new PKSigningException("Error when zipping file", e);
-                } finally {
-                    IOUtils.closeQuietly(fileInputStream);
                 }
             }
         }

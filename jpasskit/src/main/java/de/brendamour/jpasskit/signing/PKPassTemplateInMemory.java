@@ -54,11 +54,11 @@ public class PKPassTemplateInMemory implements IPKPassTemplate {
     @Override
     public void provisionPassAtDirectory(File tempPassDir) throws IOException {
         for (Entry<String, InputStream> entry : files.entrySet()) {
-            InputStream stream = entry.getValue();
-            File pathToFile = new File(tempPassDir, entry.getKey());
-            pathToFile.getParentFile().mkdir();
-            FileUtils.copyInputStreamToFile(stream, pathToFile);
-            IOUtils.closeQuietly(stream);
+            try (InputStream stream = entry.getValue()) {
+                File pathToFile = new File(tempPassDir, entry.getKey());
+                pathToFile.getParentFile().mkdir();
+                FileUtils.copyInputStreamToFile(stream, pathToFile);
+            }
         }
     }
 

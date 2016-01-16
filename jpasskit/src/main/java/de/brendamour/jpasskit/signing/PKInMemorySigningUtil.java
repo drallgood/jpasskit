@@ -90,14 +90,11 @@ public final class PKInMemorySigningUtil extends PKAbstractSigningUtil {
     }
 
     private ByteBuffer createPassJSONFile(final PKPass pass) throws PKSigningException {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        try {
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
             objectWriter.writeValue(byteArrayOutputStream, pass);
             return ByteBuffer.wrap(byteArrayOutputStream.toByteArray());
         } catch (IOException e) {
             throw new PKSigningException("Error when writing pass.json", e);
-        } finally {
-            IOUtils.closeQuietly(byteArrayOutputStream);
         }
     }
 
@@ -106,14 +103,11 @@ public final class PKInMemorySigningUtil extends PKAbstractSigningUtil {
 
         HashFunction hashFunction = Hashing.sha1();
         hashFiles(allFiles, fileWithHashMap, hashFunction);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        try {
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
             objectWriter.writeValue(byteArrayOutputStream, fileWithHashMap);
             return ByteBuffer.wrap(byteArrayOutputStream.toByteArray());
         } catch (IOException e) {
             throw new PKSigningException("Error when writing pass.json", e);
-        } finally {
-            IOUtils.closeQuietly(byteArrayOutputStream);
         }
     }
 
@@ -126,21 +120,16 @@ public final class PKInMemorySigningUtil extends PKAbstractSigningUtil {
     }
 
     private byte[] createZippedPassAndReturnAsByteArray(final Map<String, ByteBuffer> files) throws PKSigningException {
-        ByteArrayOutputStream byteArrayOutputStreamForZippedPass = null;
-        ZipOutputStream zipOutputStream = null;
-        byteArrayOutputStreamForZippedPass = new ByteArrayOutputStream();
-        zipOutputStream = new ZipOutputStream(byteArrayOutputStreamForZippedPass);
-        for (Entry<String, ByteBuffer> passResourceFile : files.entrySet()) {
-            ZipEntry entry = new ZipEntry(getRelativePathOfZipEntry(passResourceFile.getKey(), ""));
-            try {
+        ByteArrayOutputStream byteArrayOutputStreamForZippedPass = new ByteArrayOutputStream();
+        try (ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStreamForZippedPass)) {
+            for (Entry<String, ByteBuffer> passResourceFile : files.entrySet()) {
+                ZipEntry entry = new ZipEntry(getRelativePathOfZipEntry(passResourceFile.getKey(), ""));
                 zipOutputStream.putNextEntry(entry);
                 IOUtils.copy(new ByteArrayInputStream(passResourceFile.getValue().array()), zipOutputStream);
-            } catch (IOException e) {
-                IOUtils.closeQuietly(zipOutputStream);
-                throw new PKSigningException("Error when zipping file", e);
             }
+            return byteArrayOutputStreamForZippedPass.toByteArray();
+        } catch (IOException e) {
+            throw new PKSigningException("Error while creating a zip package", e);
         }
-        IOUtils.closeQuietly(zipOutputStream);
-        return byteArrayOutputStreamForZippedPass.toByteArray();
     }
 }

@@ -37,21 +37,21 @@ public class PKSigningUtil {
     @Deprecated
     public static byte[] createSignedAndZippedPkPassArchive(final PKPass pass, final URL fileUrlOfTemplateDirectory,
             final PKSigningInformation signingInformation) throws Exception {
-        return new PKFileBasedSigningUtil(new ObjectMapper()).createSignedAndZippedPkPassArchive(pass, fileUrlOfTemplateDirectory,
+        return new PKFileBasedSigningUtil().createSignedAndZippedPkPassArchive(pass, fileUrlOfTemplateDirectory,
                 signingInformation);
     }
 
     @Deprecated
     public static byte[] createSignedAndZippedPkPassArchive(final PKPass pass, final String pathToTemplateDirectory,
             final PKSigningInformation signingInformation) throws Exception {
-        return new PKFileBasedSigningUtil(new ObjectMapper()).createSignedAndZippedPkPassArchive(pass, pathToTemplateDirectory,
+        return new PKFileBasedSigningUtil().createSignedAndZippedPkPassArchive(pass, pathToTemplateDirectory,
                 signingInformation);
     }
 
     @Deprecated
     public static void signManifestFile(final File temporaryPassDirectory, final File manifestJSONFile,
             final PKSigningInformation signingInformation) throws Exception {
-        new PKFileBasedSigningUtil(new ObjectMapper()).signManifestFileAndWriteToDirectory(temporaryPassDirectory, manifestJSONFile,
+        new PKFileBasedSigningUtil().signManifestFileAndWriteToDirectory(temporaryPassDirectory, manifestJSONFile,
                 signingInformation);
     }
 

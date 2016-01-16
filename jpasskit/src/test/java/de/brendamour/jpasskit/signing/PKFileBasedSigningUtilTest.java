@@ -54,7 +54,7 @@ public class PKFileBasedSigningUtilTest {
 
         PKSigningInformation pkSigningInformation = new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
                 keyStorePath, keyStorePassword, appleWWDRCA);
-        PKFileBasedSigningUtil pkSigningUtil = new PKFileBasedSigningUtil(new ObjectMapper());
+        PKFileBasedSigningUtil pkSigningUtil = new PKFileBasedSigningUtil();
         pkSigningUtil.signManifestFileAndWriteToDirectory(temporaryPassDir, manifestJSONFile, pkSigningInformation);
     }
 
@@ -62,7 +62,7 @@ public class PKFileBasedSigningUtilTest {
     public void testPassZipGeneration() throws IOException, Exception {
 
         Security.addProvider(new BouncyCastleProvider());
-        IPKSigningUtil pkSigningUtil = new PKFileBasedSigningUtil(new ObjectMapper());
+        IPKSigningUtil pkSigningUtil = new PKFileBasedSigningUtil();
 
         ObjectMapper jsonObjectMapper = new ObjectMapper();
         PKPass pass = jsonObjectMapper.readValue(new File(getPathFromClasspath("pass2.json")), PKPass.class);
@@ -101,7 +101,7 @@ public class PKFileBasedSigningUtilTest {
 
         PKSigningInformation pkSigningInformation = new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
                 keyStorePath, keyStorePassword, appleWWDRCA);
-        byte[] signedAndZippedPkPassArchive = new PKFileBasedSigningUtil(new ObjectMapper()).createSignedAndZippedPkPassArchive(pass,
+        byte[] signedAndZippedPkPassArchive = new PKFileBasedSigningUtil().createSignedAndZippedPkPassArchive(pass,
                 new PKPassTemplateFolder(getPassFolderPath()), pkSigningInformation);
         ByteArrayInputStream inputStream = new ByteArrayInputStream(signedAndZippedPkPassArchive);
         
