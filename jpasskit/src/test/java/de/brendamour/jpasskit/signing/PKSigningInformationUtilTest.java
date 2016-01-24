@@ -15,13 +15,11 @@
  */
 package de.brendamour.jpasskit.signing;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.cert.CertificateExpiredException;
-
-import org.apache.commons.io.IOUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.io.InputStream;
+import java.security.cert.CertificateExpiredException;
 
 public class PKSigningInformationUtilTest {
 
@@ -32,36 +30,29 @@ public class PKSigningInformationUtilTest {
     private static final String INVALID_KEYSTORE_PASSWORD = "cert";
 
     @Test
-    public void testLoadFiles() throws IOException, Exception {
+    public void testLoadFiles() throws Exception {
         PKSigningInformation pkSigningInformation = new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
                 KEYSTORE_PATH, KEYSTORE_PASSWORD, appleWWDRCA);
         checkSigningInfoContent(pkSigningInformation);
     }
 
     @Test(expectedExceptions = CertificateExpiredException.class)
-    public void testLoadFiles_invalidCert() throws IOException, Exception {
+    public void testLoadFiles_invalidCert() throws Exception {
         new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(INVALID_KEYSTORE_PATH,
                 INVALID_KEYSTORE_PASSWORD, appleWWDRCA);
     }
 
     @Test
-    public void testLoadStreams() throws IOException, Exception {
-        InputStream keyStoreFIS = null;
-        InputStream appleWWDRCAFIS = null;
+    public void testLoadStreams() throws Exception {
 
-        try {
-            keyStoreFIS = this.getClass().getResourceAsStream("/" + KEYSTORE_PATH);
+        try (InputStream keyStoreFIS = this.getClass().getResourceAsStream("/" + KEYSTORE_PATH);
+             InputStream appleWWDRCAFIS = this.getClass().getResourceAsStream("/" + appleWWDRCA)) {
             Assert.assertNotNull(keyStoreFIS, "Could not find key store file");
-
-            appleWWDRCAFIS = this.getClass().getResourceAsStream("/" + appleWWDRCA);
             Assert.assertNotNull(appleWWDRCAFIS, "Could not find certificate file");
 
             PKSigningInformation pkSigningInformation = new PKSigningInformationUtil()
                     .loadSigningInformationFromPKCS12AndIntermediateCertificate(keyStoreFIS, KEYSTORE_PASSWORD, appleWWDRCAFIS);
             checkSigningInfoContent(pkSigningInformation);
-        } finally {
-            IOUtils.closeQuietly(appleWWDRCAFIS);
-            IOUtils.closeQuietly(keyStoreFIS);
         }
     }
 

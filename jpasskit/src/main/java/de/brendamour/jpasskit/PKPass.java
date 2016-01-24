@@ -18,6 +18,7 @@ package de.brendamour.jpasskit;
 import java.awt.Color;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -248,22 +249,35 @@ public class PKPass implements IPKValidateable {
         this.locations = locations;
     }
 
-    @Deprecated
     public PKBarcode getBarcode() {
-        return barcode;
+        List<PKBarcode> barcodes = getBarcodes();
+        if (CollectionUtils.isNotEmpty(barcodes)) {
+            for (PKBarcode barcode : barcodes) {
+                if (barcode.isValidInIosVersionsBefore9()) {
+                    return barcode;
+                }
+            }
+        }
+        return null;
     }
 
     @Deprecated
     public void setBarcode(final PKBarcode barcode) {
-        this.barcode = barcode;
+        // avoid conflicts with 'setBarcodes' method:
+        if (barcodes == null || barcodes.size() < 2) {
+            if (barcode != null) {
+                setBarcodes(Collections.singletonList(barcode));
+            }
+        }
     }
 
     public List<PKBarcode> getBarcodes() {
         return barcodes;
     }
-    
+
     public void setBarcodes(final List<PKBarcode> barcodes) {
         this.barcodes = barcodes;
+        this.barcode = null;
     }
 
     public PKEventTicket getEventTicket() {

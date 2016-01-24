@@ -53,10 +53,11 @@ import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 import de.brendamour.jpasskit.PKBarcode;
 import de.brendamour.jpasskit.PKPass;
 
-import javax.inject.Inject;
-
 public abstract class PKAbstractSigningUtil implements IPKSigningUtil {
 
+    protected static final String MANIFEST_JSON_FILE_NAME = "manifest.json";
+    protected static final String PASS_JSON_FILE_NAME = "pass.json";
+    protected static final String SIGNATURE_FILE_NAME = "signature";
     protected ObjectWriter objectWriter;
 
     protected PKAbstractSigningUtil(ObjectMapper objectMapper) {
@@ -132,7 +133,8 @@ public abstract class PKAbstractSigningUtil implements IPKSigningUtil {
         filters.addFilter("validateFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors"));
         filters.addFilter("pkPassFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors", "foregroundColorAsObject",
                 "backgroundColorAsObject", "labelColorAsObject", "passThatWasSet"));
-        filters.addFilter("barcodeFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors", "messageEncodingAsString"));
+        filters.addFilter("barcodeFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors", "messageEncodingAsString",
+                "validInIosVersionsBefore9"));
         filters.addFilter("charsetFilter", SimpleBeanPropertyFilter.filterOutAllExcept("name"));
         jsonObjectMapper.setSerializationInclusion(Include.NON_NULL);
         jsonObjectMapper.addMixIn(Object.class, ValidateFilterMixIn.class);
@@ -142,8 +144,8 @@ public abstract class PKAbstractSigningUtil implements IPKSigningUtil {
         return jsonObjectMapper.writer(filters);
     }
 
-    protected String getRelativePathOfZipEntry(final String fileToZip, final String base) {
-        String relativePathOfFile = fileToZip.substring(base.length()).replaceAll("^/+", "");
+    protected String getRelativePathOfZipEntry(final String fileCanonicalPath, final String baseCanonicalPath) {
+        String relativePathOfFile = fileCanonicalPath.substring(baseCanonicalPath.length());
         if (File.separatorChar != '/') {
             relativePathOfFile = relativePathOfFile.replace(File.separatorChar, '/');
         }
@@ -171,6 +173,5 @@ public abstract class PKAbstractSigningUtil implements IPKSigningUtil {
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
             Security.addProvider(new BouncyCastleProvider());
         }
-
     }
 }

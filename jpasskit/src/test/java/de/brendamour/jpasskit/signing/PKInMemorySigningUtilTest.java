@@ -18,27 +18,15 @@ package de.brendamour.jpasskit.signing;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.Security;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 import java.util.Locale;
 
 import org.apache.commons.io.IOUtils;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.brendamour.jpasskit.PKPass;
@@ -51,76 +39,54 @@ public class PKInMemorySigningUtilTest {
     private static final String keyStorePassword = "password";
     private PKInMemorySigningUtil pkInMemorySigningUtil;
 
-    @BeforeClass
-    public void beforeClass() {
-        Security.addProvider(new BouncyCastleProvider());
-
-    }
-
     @BeforeMethod
     public void prepare() {
-        pkInMemorySigningUtil = new PKInMemorySigningUtil(new ObjectMapper());
+        pkInMemorySigningUtil = new PKInMemorySigningUtil();
     }
 
     @Test
-    public void testWithFolderBasedTemplate() throws JsonParseException, JsonMappingException, IOException, URISyntaxException,
-            UnrecoverableKeyException, NoSuchAlgorithmException, CertificateException, KeyStoreException, NoSuchProviderException,
-            PKSigningException {
+    public void testWithFolderBasedTemplate() throws Exception {
         PKPassTemplateFolder pkPassTemplateFolder = new PKPassTemplateFolder(PASS_TEMPLATE_FOLDER);
 
-        ObjectMapper jsonObjectMapper = new ObjectMapper();
-        PKPass pass = jsonObjectMapper.readValue(new File(getPathFromClasspath("pass2.json")), PKPass.class);
+        PKPass pass = new ObjectMapper().readValue(new File(getPathFromClasspath("pass2.json")), PKPass.class);
 
-        PKSigningInformation pkSigningInformation = new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
-                keyStorePath, keyStorePassword, appleWWDRCA);
-
-        byte[] signedAndZippedPkPassArchive = pkInMemorySigningUtil.createSignedAndZippedPkPassArchive(pass, pkPassTemplateFolder,
-                pkSigningInformation);
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(signedAndZippedPkPassArchive);
-
-        File passZipFile = new File("target/passZIPFolder.zip");
-        if (passZipFile.exists()) {
-            passZipFile.delete();
-        }
-        IOUtils.copy(inputStream, new FileOutputStream(passZipFile));
-        Assert.assertTrue(passZipFile.exists());
-        Assert.assertTrue(passZipFile.length() > 0);
+        createZipAndAssert(pkPassTemplateFolder, pass, "target/passInMemoryFolder.zip");
     }
 
     @Test
-    public void testWithInMemoryTemplate() throws JsonParseException, JsonMappingException, IOException, URISyntaxException,
-            UnrecoverableKeyException, NoSuchAlgorithmException, CertificateException, KeyStoreException, NoSuchProviderException,
-            PKSigningException {
+    public void testWithInMemoryTemplate() throws Exception {
         PKPassTemplateInMemory pkPassTemplateInMemory = new PKPassTemplateInMemory();
 
         // icon
         URL iconFileURL = PKInMemorySigningUtilTest.class.getClassLoader().getResource("StoreCard.raw/icon@2x.png");
         File iconFile = new File(iconFileURL.getFile());
         pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, iconFile);
-
         // icon for language
         pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, Locale.ENGLISH, iconFile);
 
-        ObjectMapper jsonObjectMapper = new ObjectMapper();
-        PKPass pass = jsonObjectMapper.readValue(new File(getPathFromClasspath("pass2.json")), PKPass.class);
+        PKPass pass = new ObjectMapper().readValue(new File(getPathFromClasspath("pass2.json")), PKPass.class);
 
-        PKSigningInformation pkSigningInformation = new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
-                keyStorePath, keyStorePassword, appleWWDRCA);
+        createZipAndAssert(pkPassTemplateInMemory, pass, "target/passInMemoryStream.zip");
+    }
 
-        byte[] signedAndZippedPkPassArchive = pkInMemorySigningUtil.createSignedAndZippedPkPassArchive(pass, pkPassTemplateInMemory,
-                pkSigningInformation);
+    private void createZipAndAssert(IPKPassTemplate pkPassTemplate, PKPass pkPass, String fileName) throws Exception {
+        PKSigningInformation pkSigningInformation = new PKSigningInformationUtil()
+                .loadSigningInformationFromPKCS12AndIntermediateCertificate(keyStorePath, keyStorePassword, appleWWDRCA);
+        IPKSigningUtil pkSigningUtil = new PKFileBasedSigningUtil();
+        byte[] signedAndZippedPkPassArchive = pkSigningUtil.createSignedAndZippedPkPassArchive(pkPass, pkPassTemplate, pkSigningInformation);
         ByteArrayInputStream inputStream = new ByteArrayInputStream(signedAndZippedPkPassArchive);
 
-        File passZipFile = new File("target/passZIPInMemory.zip");
+        File passZipFile = new File(fileName);
         if (passZipFile.exists()) {
             passZipFile.delete();
         }
         IOUtils.copy(inputStream, new FileOutputStream(passZipFile));
         Assert.assertTrue(passZipFile.exists());
         Assert.assertTrue(passZipFile.length() > 0);
+        AssertZip.assertValid(passZipFile);
     }
 
-    private String getPathFromClasspath(String path) throws URISyntaxException {
+    private String getPathFromClasspath(String path) throws Exception {
         return Paths.get(ClassLoader.getSystemResource(path).toURI()).toString();
     }
 }

@@ -27,33 +27,38 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PKPassTemplateFolder implements IPKPassTemplate {
 
-    private String pathToTemplateDirectory;
+    private static final Logger LOGGER = LoggerFactory.getLogger(PKPassTemplateFolder.class);
+    private File templateDir;
 
     public PKPassTemplateFolder(URL fileUrlOfTemplateDirectory) throws UnsupportedEncodingException {
-        pathToTemplateDirectory = URLDecoder.decode(fileUrlOfTemplateDirectory.getFile(), "UTF-8");
+        this(URLDecoder.decode(fileUrlOfTemplateDirectory.getFile(), "UTF-8"));
     }
 
     public PKPassTemplateFolder(String pathToTemplateDirectory) {
-        this.pathToTemplateDirectory = pathToTemplateDirectory;
+        LOGGER.info("Specified template directory: {}", pathToTemplateDirectory);
+        templateDir = new File(pathToTemplateDirectory);
     }
 
     @Override
     public void provisionPassAtDirectory(File tempPassDir) throws IOException {
-        FileUtils.copyDirectory(new File(pathToTemplateDirectory), tempPassDir);
+        FileUtils.copyDirectory(templateDir, tempPassDir);
     }
 
     @Override
     public Map<String, ByteBuffer> getAllFiles() throws IOException {
         Map<String, ByteBuffer> allFiles = new HashMap<>();
-        for (File file : FileUtils.listFiles(new File(pathToTemplateDirectory), null, true)) {
+        String base = templateDir.getCanonicalPath();
+        for (File file : FileUtils.listFiles(templateDir, null, true)) {
             byte[] byteArray = IOUtils.toByteArray(new FileInputStream(file));
-            String filePath = file.getAbsolutePath().replace(pathToTemplateDirectory, "");
+            String filePath = file.getCanonicalPath().substring(base.length() + 1);
+            LOGGER.debug("File's own path: {}", filePath);
             allFiles.put(filePath, ByteBuffer.wrap(byteArray));
         }
         return allFiles;
     }
-
 }

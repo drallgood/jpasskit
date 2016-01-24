@@ -15,34 +15,32 @@
  */
 package de.brendamour.jpasskit.signing;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hashing;
+import de.brendamour.jpasskit.PKPass;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.inject.Inject;
-
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.io.IOUtils;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.google.common.hash.HashCode;
-import com.google.common.hash.HashFunction;
-import com.google.common.hash.Hashing;
-
-import de.brendamour.jpasskit.PKPass;
-
 public final class PKInMemorySigningUtil extends PKAbstractSigningUtil {
 
-    private static final String MANIFEST_JSON_FILE_NAME = "manifest.json";
-    private static final String PASS_JSON_FILE_NAME = "pass.json";
-    private static final String SIGNATURE_FILE_NAME = "signature";
+    private static final Logger LOGGER = LoggerFactory.getLogger(PKInMemorySigningUtil.class);
 
     public PKInMemorySigningUtil() {
         super(new ObjectMapper());
@@ -54,7 +52,6 @@ public final class PKInMemorySigningUtil extends PKAbstractSigningUtil {
     }
 
     @Deprecated
-    @Inject
     public PKInMemorySigningUtil(ObjectMapper objectMapper) {
         super(objectMapper);
     }
@@ -70,18 +67,23 @@ public final class PKInMemorySigningUtil extends PKAbstractSigningUtil {
     public byte[] createSignedAndZippedPkPassArchive(PKPass pass, IPKPassTemplate passTemplate, PKSigningInformation signingInformation)
             throws PKSigningException {
         Map<String, ByteBuffer> allFiles;
-         try {
-         allFiles = passTemplate.getAllFiles();
-         } catch (IOException e) {
-         throw new PKSigningException("Error when getting files from template", e);
-         }
+        try {
+            allFiles = passTemplate.getAllFiles();
+        } catch (IOException e) {
+            throw new PKSigningException("Error when getting files from template", e);
+        }
 
         ByteBuffer passJSONFile = createPassJSONFile(pass);
-
         allFiles.put(PASS_JSON_FILE_NAME, passJSONFile);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("passJSONFile: {}", new String(passJSONFile.array(), Charset.forName("UTF-8")));
+        }
 
         ByteBuffer manifestJSONFile = createManifestJSONFile(allFiles);
         allFiles.put(MANIFEST_JSON_FILE_NAME, manifestJSONFile);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("manifestJSONFile: {}", new String(manifestJSONFile.array(), Charset.forName("UTF-8")));
+        }
 
         ByteBuffer signature = ByteBuffer.wrap(signManifestFile(manifestJSONFile.array(), signingInformation));
         allFiles.put(SIGNATURE_FILE_NAME, signature);
@@ -90,57 +92,45 @@ public final class PKInMemorySigningUtil extends PKAbstractSigningUtil {
     }
 
     private ByteBuffer createPassJSONFile(final PKPass pass) throws PKSigningException {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        try {
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
             objectWriter.writeValue(byteArrayOutputStream, pass);
             return ByteBuffer.wrap(byteArrayOutputStream.toByteArray());
         } catch (IOException e) {
-            throw new PKSigningException("Error when writing pass.json", e);
-        } finally {
-            IOUtils.closeQuietly(byteArrayOutputStream);
+            throw new PKSigningException("Error when writing " + PASS_JSON_FILE_NAME, e);
         }
     }
 
     private ByteBuffer createManifestJSONFile(Map<String, ByteBuffer> allFiles) throws PKSigningException {
-        Map<String, String> fileWithHashMap = new HashMap<String, String>();
-
-        HashFunction hashFunction = Hashing.sha1();
-        hashFiles(allFiles, fileWithHashMap, hashFunction);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        try {
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+            Map<String, String> fileWithHashMap = hashFiles(allFiles, Hashing.sha1());
             objectWriter.writeValue(byteArrayOutputStream, fileWithHashMap);
             return ByteBuffer.wrap(byteArrayOutputStream.toByteArray());
         } catch (IOException e) {
-            throw new PKSigningException("Error when writing pass.json", e);
-        } finally {
-            IOUtils.closeQuietly(byteArrayOutputStream);
+            throw new PKSigningException("Error when writing " + MANIFEST_JSON_FILE_NAME, e);
         }
     }
 
-    private void hashFiles(Map<String, ByteBuffer> files, final Map<String, String> fileWithHashMap, final HashFunction hashFunction)
+    private Map<String, String> hashFiles(Map<String, ByteBuffer> files, final HashFunction hashFunction)
             throws PKSigningException {
+        Map<String, String> fileWithHashMap = new HashMap<>();
         for (Entry<String, ByteBuffer> passResourceFile : files.entrySet()) {
             HashCode hash = hashFunction.hashBytes(passResourceFile.getValue().array());
-            fileWithHashMap.put(passResourceFile.getKey(), Hex.encodeHexString(hash.asBytes()));
+            fileWithHashMap.put(getRelativePathOfZipEntry(passResourceFile.getKey(), ""), Hex.encodeHexString(hash.asBytes()));
         }
+        return fileWithHashMap;
     }
 
     private byte[] createZippedPassAndReturnAsByteArray(final Map<String, ByteBuffer> files) throws PKSigningException {
-        ByteArrayOutputStream byteArrayOutputStreamForZippedPass = null;
-        ZipOutputStream zipOutputStream = null;
-        byteArrayOutputStreamForZippedPass = new ByteArrayOutputStream();
-        zipOutputStream = new ZipOutputStream(byteArrayOutputStreamForZippedPass);
-        for (Entry<String, ByteBuffer> passResourceFile : files.entrySet()) {
-            ZipEntry entry = new ZipEntry(getRelativePathOfZipEntry(passResourceFile.getKey(), ""));
-            try {
+        ByteArrayOutputStream byteArrayOutputStreamForZippedPass = new ByteArrayOutputStream();
+        try (ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStreamForZippedPass)) {
+            for (Entry<String, ByteBuffer> passResourceFile : files.entrySet()) {
+                ZipEntry entry = new ZipEntry(getRelativePathOfZipEntry(passResourceFile.getKey(), ""));
                 zipOutputStream.putNextEntry(entry);
                 IOUtils.copy(new ByteArrayInputStream(passResourceFile.getValue().array()), zipOutputStream);
-            } catch (IOException e) {
-                IOUtils.closeQuietly(zipOutputStream);
-                throw new PKSigningException("Error when zipping file", e);
             }
+        } catch (IOException e) {
+            throw new PKSigningException("Error while creating a zip package", e);
         }
-        IOUtils.closeQuietly(zipOutputStream);
         return byteArrayOutputStreamForZippedPass.toByteArray();
     }
 }

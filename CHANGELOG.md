@@ -1,6 +1,25 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.0.9 - 2015-??
+
+### Added
+
+- Implement "barcode" & "barcodes" synchronization
+- Support relative path for template resources
+- Support non-unix file separators in manifest files
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+- Added validation for "auxiliaryFields"
+- Fix warnings in pom.xml
+
+
+
 ## 0.0.8 - 2015-??
 
 ### Added
@@ -18,6 +37,7 @@ All notable changes to this project will be documented in this file.
 - Support for Java 1.6/1.7
 
 ### Fixed
+
 
 
 ## 0.0.7 - 2015-??
