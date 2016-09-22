@@ -57,6 +57,7 @@ public abstract class PKAbstractSigningUtil implements IPKSigningUtil {
 
     protected static final String MANIFEST_JSON_FILE_NAME = "manifest.json";
     protected static final String PASS_JSON_FILE_NAME = "pass.json";
+    protected static final String PERSONALIZATION_JSON_FILE_NAME = "personalization.json";
     protected static final String SIGNATURE_FILE_NAME = "signature";
     protected ObjectWriter objectWriter;
 
@@ -133,8 +134,8 @@ public abstract class PKAbstractSigningUtil implements IPKSigningUtil {
         filters.addFilter("validateFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors"));
         filters.addFilter("pkPassFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors", "foregroundColorAsObject",
                 "backgroundColorAsObject", "labelColorAsObject", "passThatWasSet"));
-        filters.addFilter("barcodeFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors", "messageEncodingAsString",
-                "validInIosVersionsBefore9"));
+        filters.addFilter("barcodeFilter",
+                SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors", "messageEncodingAsString", "validInIosVersionsBefore9"));
         filters.addFilter("charsetFilter", SimpleBeanPropertyFilter.filterOutAllExcept("name"));
         jsonObjectMapper.setSerializationInclusion(Include.NON_NULL);
         jsonObjectMapper.addMixIn(Object.class, ValidateFilterMixIn.class);

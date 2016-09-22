@@ -21,7 +21,10 @@ import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
+
 import de.brendamour.jpasskit.PKPass;
+import de.brendamour.jpasskit.personalization.PKPersonalization;
+
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -30,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+
 import java.io.*;
 import java.net.URL;
 import java.util.HashMap;
@@ -55,6 +59,8 @@ public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
         super(objectMapper);
     }
 
+    
+    
     /*
      * (non-Javadoc)
      * 
@@ -65,6 +71,13 @@ public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
     @Override
     public byte[] createSignedAndZippedPkPassArchive(PKPass pass, IPKPassTemplate passTemplate, PKSigningInformation signingInformation)
             throws PKSigningException {
+        return this.createSignedAndZippedPersonalizedPkPassArchive(pass, null, passTemplate, signingInformation);
+    }
+    
+    @Override
+    public byte[] createSignedAndZippedPersonalizedPkPassArchive(PKPass pass, PKPersonalization personalization, IPKPassTemplate passTemplate,
+            PKSigningInformation signingInformation) throws PKSigningException {
+     
         File tempPassDir = Files.createTempDir();
         try {
             passTemplate.provisionPassAtDirectory(tempPassDir);
@@ -74,10 +87,13 @@ public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
 
         createPassJSONFile(pass, tempPassDir);
 
+        if(personalization != null) {
+            createPersonalizationJSONFile(personalization, tempPassDir);
+        }
+
         File manifestJSONFile = createManifestJSONFile(tempPassDir);
-
         signManifestFileAndWriteToDirectory(tempPassDir, manifestJSONFile, signingInformation);
-
+        
         byte[] zippedPass = createZippedPassAndReturnAsByteArray(tempPassDir);
 
         try {
@@ -125,6 +141,15 @@ public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
         } catch (IOException e) {
             throw new PKSigningException("Error when writing pass.json", e);
         }
+    }
+    
+    private void createPersonalizationJSONFile(PKPersonalization personalization, File tempPassDir) throws PKSigningException {
+        try {
+            File personalizationJSONFile = new File(tempPassDir.getAbsolutePath() + File.separator + PERSONALIZATION_JSON_FILE_NAME);
+            objectWriter.writeValue(personalizationJSONFile, personalization);
+        } catch (IOException e) {
+            throw new PKSigningException("Error when writing personalization.json", e);
+        }        
     }
 
     private File createManifestJSONFile(final File tempPassDir) throws PKSigningException {

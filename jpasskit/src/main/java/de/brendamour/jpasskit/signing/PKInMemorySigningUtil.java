@@ -20,13 +20,17 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
+
 import de.brendamour.jpasskit.PKPass;
+import de.brendamour.jpasskit.personalization.PKPersonalization;
+
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -66,6 +70,12 @@ public final class PKInMemorySigningUtil extends PKAbstractSigningUtil {
     @Override
     public byte[] createSignedAndZippedPkPassArchive(PKPass pass, IPKPassTemplate passTemplate, PKSigningInformation signingInformation)
             throws PKSigningException {
+        return createSignedAndZippedPersonalizedPkPassArchive(pass, null, passTemplate, signingInformation);
+    }
+
+    @Override
+    public byte[] createSignedAndZippedPersonalizedPkPassArchive(PKPass pass, PKPersonalization personalization, IPKPassTemplate passTemplate,
+            PKSigningInformation signingInformation) throws PKSigningException {
         Map<String, ByteBuffer> allFiles;
         try {
             allFiles = passTemplate.getAllFiles();
@@ -77,6 +87,14 @@ public final class PKInMemorySigningUtil extends PKAbstractSigningUtil {
         allFiles.put(PASS_JSON_FILE_NAME, passJSONFile);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("passJSONFile: {}", new String(passJSONFile.array(), Charset.forName("UTF-8")));
+        }
+
+        if (personalization != null) {
+            ByteBuffer personalizationJSONFile = createPersonalizationJSONFile(personalization);
+            allFiles.put(PERSONALIZATION_JSON_FILE_NAME, personalizationJSONFile);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("personalizationJSONFile: {}", new String(personalizationJSONFile.array(), Charset.forName("UTF-8")));
+            }
         }
 
         ByteBuffer manifestJSONFile = createManifestJSONFile(allFiles);
@@ -100,6 +118,15 @@ public final class PKInMemorySigningUtil extends PKAbstractSigningUtil {
         }
     }
 
+    private ByteBuffer createPersonalizationJSONFile(final PKPersonalization personalization) throws PKSigningException {
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+            objectWriter.writeValue(byteArrayOutputStream, personalization);
+            return ByteBuffer.wrap(byteArrayOutputStream.toByteArray());
+        } catch (IOException e) {
+            throw new PKSigningException("Error when writing " + PERSONALIZATION_JSON_FILE_NAME, e);
+        }
+    }
+
     private ByteBuffer createManifestJSONFile(Map<String, ByteBuffer> allFiles) throws PKSigningException {
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
             Map<String, String> fileWithHashMap = hashFiles(allFiles, Hashing.sha1());
@@ -110,8 +137,7 @@ public final class PKInMemorySigningUtil extends PKAbstractSigningUtil {
         }
     }
 
-    private Map<String, String> hashFiles(Map<String, ByteBuffer> files, final HashFunction hashFunction)
-            throws PKSigningException {
+    private Map<String, String> hashFiles(Map<String, ByteBuffer> files, final HashFunction hashFunction) throws PKSigningException {
         Map<String, String> fileWithHashMap = new HashMap<>();
         for (Entry<String, ByteBuffer> passResourceFile : files.entrySet()) {
             HashCode hash = hashFunction.hashBytes(passResourceFile.getValue().array());
