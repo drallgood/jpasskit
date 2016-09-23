@@ -1,13 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 0.0.9 - 2015-??
+## 0.0.9 - 2016-??
 
 ### Added
 
 - Implement "barcode" & "barcodes" synchronization
 - Support relative path for template resources
 - Support non-unix file separators in manifest files
+- Personalizable passes and the personalization web service endpoints (for Reward programs)
 
 ### Deprecated
 
