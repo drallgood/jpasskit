@@ -36,18 +36,33 @@ import org.apache.commons.io.IOUtils;
 
 public class PKPassTemplateInMemory implements IPKPassTemplate {
 
+    public static final String PK_ICON_RETINAHD = "icon@3x.png";
     public static final String PK_ICON_RETINA = "icon@2x.png";
     public static final String PK_ICON = "icon.png";
+    
+    public static final String PK_LOGO_RETINAHD = "logo@3x.png";
     public static final String PK_LOGO_RETINA = "logo@2x.png";
     public static final String PK_LOGO = "logo.png";
+    
+    public static final String PK_THUMBNAIL_RETINAHD = "thumbnail@3x.png";
     public static final String PK_THUMBNAIL_RETINA = "thumbnail@2x.png";
     public static final String PK_THUMBNAIL = "thumbnail.png";
+    
+    public static final String PK_STRIP_RETINAHD = "strip@3x.png";
     public static final String PK_STRIP_RETINA = "strip@2x.png";
     public static final String PK_STRIP = "strip.png";
+    
+    public static final String PK_BACKGROUND_RETINAHD = "background@3x.png";
     public static final String PK_BACKGROUND_RETINA = "background@2x.png";
     public static final String PK_BACKGROUND = "background.png";
+    
+    public static final String PK_FOOTER_RETINAHD = "footer@3x.png";
     public static final String PK_FOOTER_RETINA = "footer@2x.png";
     public static final String PK_FOOTER = "footer.png";
+    
+    public static final String PK_PERSONALIZATION_LOGO_RETINAHD = "personalizationLogo@3x.png";
+    public static final String PK_PERSONALIZATION_LOGO_RETINA = "personalizationLogo@2x.png";
+    public static final String PK_PERSONALIZATION_LOGO = "personalizationLogo.png";
 
     private Map<String, InputStream> files = new ConcurrentHashMap<>();
 
@@ -112,10 +127,10 @@ public class PKPassTemplateInMemory implements IPKPassTemplate {
         }
 
         Path pathToSourceFolder = Paths.get(directoryWithFilesToAddAsFile.getAbsolutePath());
-        Collection<File> filesInDir = FileUtils.listFiles(directoryWithFilesToAddAsFile, null, true); 
+        Collection<File> filesInDir = FileUtils.listFiles(directoryWithFilesToAddAsFile, null, true);
         for (File file : filesInDir) {
-                Path relativePathOfFile = pathToSourceFolder.relativize(Paths.get(file.getAbsolutePath()));
-                addFile(relativePathOfFile.toString(), file);
+            Path relativePathOfFile = pathToSourceFolder.relativize(Paths.get(file.getAbsolutePath()));
+            addFile(relativePathOfFile.toString(), file);
         }
     }
 
