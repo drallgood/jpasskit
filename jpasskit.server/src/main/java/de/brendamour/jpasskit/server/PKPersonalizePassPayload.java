@@ -13,17 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package de.brendamour.jpasskit.server;
 
+import java.util.Map;
 
-public interface IPKRestletServerResourceFactory {
+public class PKPersonalizePassPayload {
 
-    public PKDeviceResource getPKDeviceResource();
+	private String personalizationToken;
+	
+	private Map<String, String> requiredPersonalizationInfo;
 
-    public PKPassResource getPKPassResource();
+	public String getPersonalizationToken() {
+		return personalizationToken;
+	}
 
-    public PKLogResource getPKLogResource();
+	public void setPersonalizationToken(String personalizationToken) {
+		this.personalizationToken = personalizationToken;
+	}
 
-	public PKPersonalizePassResource getPKPersonalizePassResource();
+	public Map<String, String> getRequiredPersonalizationInfo() {
+		return requiredPersonalizationInfo;
+	}
+
+	public void setRequiredPersonalizationInfo(Map<String, String> requiredPersonalizationInfo) {
+		this.requiredPersonalizationInfo = requiredPersonalizationInfo;
+	}
 }

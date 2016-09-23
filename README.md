@@ -174,6 +174,8 @@ The IPKRestletServerResourceFactory is used to create instances of three classes
 
 *PKPassResource* is used to fetch the latest version of a pass.
 
+_PKPersonalizePassResource_ is used to store the signup information for a rewards program (see https://developer.apple.com/library/prerelease/content/documentation/UserExperience/Conceptual/PassKit_PG/PassPersonalization.html)
+
 *PKLogResource* is used for the log messages, that the devices send in case of an error.
 
 Then you create the server instance:
@@ -191,5 +193,17 @@ Then you create the server instance:
 	}
  
 That's it. Your web service is running. Just point your passes to the URL where the server is running.
+
+### About Personalized Passes and Rewards Programs
+
+Apple provides a handy, albeit short, guide about how this works: https://developer.apple.com/library/prerelease/content/documentation/UserExperience/Conceptual/PassKit_PG/PassPersonalization.html
+
+The process in broad strokes works as follows:
+
+1. You create a personalizable pass (e.g. using jPasskit) for a user using a unique `serialNumber`
+2. The user adds the pass, and completes the signup form
+3. Your server gets a request to the personalization endpoint at `webServiceURL/version/passes/passTypeIdentifier/serialNumber/personalize` which ends up in the `PKPersonalizePassResource`.
+4. You store the provided information and link it to the `serialNumber`
+5. Next time the user's device downloads a new version of the pass, you provide a custom pass with his information (Make sure you DON'T provide a personalizable pass this time!)
 
 [1]:	https://www.gittip.com/drallgood/

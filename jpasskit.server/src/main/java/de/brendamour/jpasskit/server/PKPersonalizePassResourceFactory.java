@@ -16,14 +16,22 @@
 
 package de.brendamour.jpasskit.server;
 
+import org.restlet.Request;
+import org.restlet.Response;
+import org.restlet.resource.Finder;
+import org.restlet.resource.ServerResource;
 
-public interface IPKRestletServerResourceFactory {
+public final class PKPersonalizePassResourceFactory extends Finder {
 
-    public PKDeviceResource getPKDeviceResource();
+    private IPKRestletServerResourceFactory pkRestletServerResourceFactory;
 
-    public PKPassResource getPKPassResource();
+    public PKPersonalizePassResourceFactory(final IPKRestletServerResourceFactory pkRestletServerResourceFactory) {
+        this.pkRestletServerResourceFactory = pkRestletServerResourceFactory;
+    }
 
-    public PKLogResource getPKLogResource();
+    @Override
+    public ServerResource create(final Request request, final Response response) {
+        return pkRestletServerResourceFactory.getPKPersonalizePassResource();
+    }
 
-	public PKPersonalizePassResource getPKPersonalizePassResource();
 }

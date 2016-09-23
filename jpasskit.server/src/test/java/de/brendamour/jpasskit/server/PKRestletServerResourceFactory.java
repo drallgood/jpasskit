@@ -17,50 +17,24 @@
 package de.brendamour.jpasskit.server;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.security.Key;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
-import java.security.Security;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Random;
-
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.jce.provider.X509CertificateObject;
-import org.bouncycastle.openssl.PEMParser;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.restlet.data.ChallengeResponse;
 import org.restlet.data.Status;
 import org.restlet.representation.Representation;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import de.brendamour.jpasskit.PKField;
 import de.brendamour.jpasskit.PKPass;
 import de.brendamour.jpasskit.PKPushToken;
 import de.brendamour.jpasskit.passes.PKStoreCard;
-import de.brendamour.jpasskit.server.GetPKPassResponse;
-import de.brendamour.jpasskit.server.IPKRestletServerResourceFactory;
-import de.brendamour.jpasskit.server.PKAuthTokenNotValidException;
-import de.brendamour.jpasskit.server.PKDeviceResource;
-import de.brendamour.jpasskit.server.PKLogResource;
-import de.brendamour.jpasskit.server.PKPassNotModifiedException;
-import de.brendamour.jpasskit.server.PKPassResource;
-import de.brendamour.jpasskit.server.PKSerialNumbersOfPassesForDeviceResponse;
 import de.brendamour.jpasskit.signing.PKSigningInformation;
-import de.brendamour.jpasskit.signing.PKSigningUtil;
+import de.brendamour.jpasskit.signing.PKSigningInformationUtil;
 
 public class PKRestletServerResourceFactory implements IPKRestletServerResourceFactory {
 
@@ -145,7 +119,7 @@ public class PKRestletServerResourceFactory implements IPKRestletServerResourceF
 			@Override
 			protected PKSigningInformation getSingingInformation() {
 				try {
-					return PKSigningUtil.loadSigningInformationFromPKCS12FileAndIntermediateCertificateFile(PKCS12_FILE_PATH,
+					return new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(PKCS12_FILE_PATH,
 							PKCS12_FILE_PASSWORD, APPLE_WWDRCA_CERT_PATH);
 				} catch (Exception e) {
 					throw new RuntimeException(e);
@@ -164,6 +138,28 @@ public class PKRestletServerResourceFactory implements IPKRestletServerResourceF
 				return null;
 			}
 
+		};
+	}
+
+	@Override
+	public PKPersonalizePassResource getPKPersonalizePassResource() {
+		return new PKPersonalizePassResource() {
+
+			@Override
+			protected Status handleSignUpUserRequest(String passTypeIdentifier, String serialNumber, String authString,
+					PKPersonalizePassPayload personalizePayload) throws PKAuthTokenNotValidException {
+				return Status.SUCCESS_CREATED;
+			}
+
+			@Override
+			protected PKSigningInformation getSingingInformation() {
+				try {
+					return new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(PKCS12_FILE_PATH,
+							PKCS12_FILE_PASSWORD, APPLE_WWDRCA_CERT_PATH);
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
 		};
 	}
 }

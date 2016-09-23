@@ -50,6 +50,10 @@ public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
         super(objectWriter);
     }
 
+    /**
+     * @deprecated Please use PKFileBasedSigningUtil(ObjectWriter objectWriter) instead
+     * @param objectMapper
+     */
     @Deprecated
     public PKFileBasedSigningUtil(ObjectMapper objectMapper) {
         super(objectMapper);

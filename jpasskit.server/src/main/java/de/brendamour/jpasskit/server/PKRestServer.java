@@ -95,12 +95,14 @@ public class PKRestServer {
 
 		PKDeviceResourceFactory pkDeviceResourceFactory = new PKDeviceResourceFactory(pkRestletServerResourceFactory);
 		PKPassResourceFactory pkPassResourceFactory = new PKPassResourceFactory(pkRestletServerResourceFactory);
+		PKPersonalizePassResourceFactory pkPersonalizePassResourceFactory = new PKPersonalizePassResourceFactory(pkRestletServerResourceFactory);
 		PKLogResourceFactory pkLogResourceFactory = new PKLogResourceFactory(pkRestletServerResourceFactory);
 
 		router.attach("/" + version + "/devices/{deviceLibraryIdentifier}/registrations/{passTypeIdentifier}/{serialNumber}",
 				pkDeviceResourceFactory);
 		router.attach("/" + version + "/devices/{deviceLibraryIdentifier}/registrations/{passTypeIdentifier}", pkDeviceResourceFactory);
 		router.attach("/" + version + "/passes/{passTypeIdentifier}/{serialNumber}", pkPassResourceFactory);
+		router.attach("/" + version + "/passes/{passTypeIdentifier}/{serialNumber}/personalize", pkPersonalizePassResourceFactory);
 		router.attach("/" + version + "/log", pkLogResourceFactory);
 		LOGGER.debug("Created Restlet components");
 	}

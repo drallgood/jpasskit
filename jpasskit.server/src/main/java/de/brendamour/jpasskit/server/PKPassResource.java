@@ -49,7 +49,7 @@ public abstract class PKPassResource extends ServerResource {
 		this.pathToPassTemplate = pathToPassTemplate;
 		jsonObjectMapper = new ObjectMapper();
 		jsonObjectMapper.setSerializationInclusion(Include.NON_NULL);
-		signingUtil = new PKFileBasedSigningUtil(jsonObjectMapper);
+		signingUtil = new PKFileBasedSigningUtil(jsonObjectMapper.writer());
 	}
 
 	/*
