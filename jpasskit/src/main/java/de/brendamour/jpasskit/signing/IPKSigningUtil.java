@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Patrice Brend'amour <patrice@brendamour.net>
+ * Copyright (C) 2016 Patrice Brend'amour <patrice@brendamour.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package de.brendamour.jpasskit.signing;
 
 import de.brendamour.jpasskit.PKPass;
+import de.brendamour.jpasskit.personalization.PKPersonalization;
 
 public interface IPKSigningUtil {
 
@@ -35,6 +36,35 @@ public interface IPKSigningUtil {
     public byte[] createSignedAndZippedPkPassArchive(PKPass pass, IPKPassTemplate passTemplate, PKSigningInformation signingInformation)
             throws PKSigningException;
 
+    /**
+     * Creates a signed and zipped personalized pass using a template
+     * 
+     * @param pass
+     *            The pass to sign
+     * @param personalization
+     *            Personalization info
+     * @param passTemplate
+     *            A {@link IPKPassTemplate} object
+     * @param signingInformation
+     *            A {@link PKSigningInformation} object containing the signing info
+     * @return a signed and zipped .pkpass file
+     * @throws PKSigningException
+     *             will throw any underlying exception in case something goes wrong (i.e. template not found)
+     */
+    public byte[] createSignedAndZippedPersonalizedPkPassArchive(PKPass pass, PKPersonalization personalization, IPKPassTemplate passTemplate,
+            PKSigningInformation signingInformation) throws PKSigningException;
+
+    /**
+     * Sign the manifest file
+     * 
+     * @param manifestJSON
+     *            JSON file as byte array
+     * @param signingInformation
+     *            A {@link PKSigningInformation} object containing the signing info
+     * @return The signature for the manifest file
+     * @throws PKSigningException
+     *             will throw any underlying exception in case something goes wrong (i.e. template not found)
+     */
     public byte[] signManifestFile(byte[] manifestJSON, PKSigningInformation signingInformation) throws PKSigningException;
 
 }
