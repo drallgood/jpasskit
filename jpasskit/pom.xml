@@ -62,7 +62,7 @@
 	</distributionManagement>
 
 	<properties>
-		<current.year>2015</current.year>
+		<current.year>2016</current.year>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<javadoc.version>2.9.1</javadoc.version>
 	</properties>

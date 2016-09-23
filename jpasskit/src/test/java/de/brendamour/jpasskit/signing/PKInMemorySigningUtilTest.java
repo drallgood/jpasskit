@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Patrice Brend'amour <patrice@brendamour.net>
+ * Copyright (C) 2016 Patrice Brend'amour <patrice@brendamour.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,8 @@ import org.testng.annotations.Test;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.brendamour.jpasskit.PKPass;
+import de.brendamour.jpasskit.enums.PKPassPersonalizationField;
+import de.brendamour.jpasskit.personalization.PKPersonalization;
 
 public class PKInMemorySigningUtilTest {
 
@@ -69,11 +71,44 @@ public class PKInMemorySigningUtilTest {
         createZipAndAssert(pkPassTemplateInMemory, pass, "target/passInMemoryStream.zip");
     }
 
+    @Test
+    public void testWithInMemoryTemplateAndPersonalization() throws Exception {
+        PKPassTemplateInMemory pkPassTemplateInMemory = new PKPassTemplateInMemory();
+
+        // icon
+        URL iconFileURL = PKInMemorySigningUtilTest.class.getClassLoader().getResource("StoreCard.raw/icon@2x.png");
+        File iconFile = new File(iconFileURL.getFile());
+        pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, iconFile);
+        // icon for language
+        pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, Locale.ENGLISH, iconFile);
+
+        PKPass pass = new ObjectMapper().readValue(new File(getPathFromClasspath("pass2.json")), PKPass.class);
+
+        PKPersonalization personalization = new PKPersonalization();
+        personalization.setDescription("desc");
+        personalization.setTermsAndConditions("T&C");
+        personalization.addRequiredPersonalizationField(PKPassPersonalizationField.PKPassPersonalizationFieldName);
+
+        createZipAndAssert(pkPassTemplateInMemory, pass, personalization, "target/passInMemoryStream.zip");
+    }
+
     private void createZipAndAssert(IPKPassTemplate pkPassTemplate, PKPass pkPass, String fileName) throws Exception {
-        PKSigningInformation pkSigningInformation = new PKSigningInformationUtil()
-                .loadSigningInformationFromPKCS12AndIntermediateCertificate(keyStorePath, keyStorePassword, appleWWDRCA);
-        IPKSigningUtil pkSigningUtil = new PKFileBasedSigningUtil();
-        byte[] signedAndZippedPkPassArchive = pkSigningUtil.createSignedAndZippedPkPassArchive(pkPass, pkPassTemplate, pkSigningInformation);
+        createZipAndAssert(pkPassTemplate, pkPass, null, fileName);
+    }
+
+    private void createZipAndAssert(IPKPassTemplate pkPassTemplate, PKPass pkPass, PKPersonalization personalization, String fileName)
+            throws Exception {
+        PKSigningInformation pkSigningInformation = new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
+                keyStorePath, keyStorePassword, appleWWDRCA);
+        byte[] signedAndZippedPkPassArchive;
+
+        if (personalization != null) {
+            signedAndZippedPkPassArchive = pkInMemorySigningUtil.createSignedAndZippedPersonalizedPkPassArchive(pkPass, personalization,
+                    pkPassTemplate, pkSigningInformation);
+        } else {
+            signedAndZippedPkPassArchive = pkInMemorySigningUtil
+                    .createSignedAndZippedPkPassArchive(pkPass, pkPassTemplate, pkSigningInformation);
+        }
         ByteArrayInputStream inputStream = new ByteArrayInputStream(signedAndZippedPkPassArchive);
 
         File passZipFile = new File(fileName);

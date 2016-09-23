@@ -15,6 +15,14 @@
  */
 package de.brendamour.jpasskit.enums;
 
-public enum PKDateStyle {
-    PKDateStyleNone, PKDateStyleShort, PKDateStyleMedium, PKDateStyleLong, PKDateStyleFull;
+/**
+ * See https://developer.apple.com/library/prerelease/content/documentation/UserExperience/Conceptual/PassKit_PG/PassPersonalization.html
+ * @author patrice
+ *
+ */
+public enum PKPassPersonalizationField {
+    PKPassPersonalizationFieldName,
+    PKPassPersonalizationFieldPostalCode,
+    PKPassPersonalizationFieldEmailAddress,
+    PKPassPersonalizationFieldPhoneNumber
 }
