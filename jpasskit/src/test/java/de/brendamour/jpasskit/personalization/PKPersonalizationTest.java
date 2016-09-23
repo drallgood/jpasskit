@@ -50,7 +50,7 @@ public class PKPersonalizationTest {
         Assert.assertEquals(pkPersonalization.getDescription(), DESCRIPTION);
         Assert.assertEquals(pkPersonalization.getTermsAndConditions(), TERMS);
         Assert.assertNotNull(pkPersonalization.getRequiredPersonalizationFields());
-        Assert.assertEquals(pkPersonalization.getRequiredPersonalizationFields().size(), 1);
+        Assert.assertEquals(pkPersonalization.getRequiredPersonalizationFields().size(), 2);
         Assert.assertEquals(pkPersonalization.getRequiredPersonalizationFields().get(0), PKPASSPERSONALIZATIONFIELD);
     }
 
