@@ -25,6 +25,7 @@ import de.brendamour.jpasskit.enums.PKPassPersonalizationField;
 
 public class PKPersonalizationTest {
     private static final PKPassPersonalizationField PKPASSPERSONALIZATIONFIELD = PKPassPersonalizationField.PKPassPersonalizationFieldName;
+    private static final PKPassPersonalizationField PKPASSPERSONALIZATIONFIELD2 = PKPassPersonalizationField.PKPassPersonalizationFieldEmailAddress;
     private static final String DESCRIPTION = "Fancy description";
     private static final String TERMS = "This is bullshit";
     private PKPersonalization pkPersonalization;
@@ -38,6 +39,7 @@ public class PKPersonalizationTest {
         pkPersonalization.setDescription(DESCRIPTION);
         pkPersonalization.setTermsAndConditions(TERMS);
         pkPersonalization.setRequiredPersonalizationFields(Lists.newArrayList(PKPASSPERSONALIZATIONFIELD));
+        pkPersonalization.addRequiredPersonalizationField(PKPASSPERSONALIZATIONFIELD2);
 
     }
 

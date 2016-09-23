@@ -30,6 +30,13 @@ public class PKPersonalization implements IPKValidateable {
     public void setRequiredPersonalizationFields(List<PKPassPersonalizationField> requiredPersonalizationFields) {
         this.requiredPersonalizationFields = requiredPersonalizationFields;
     }
+    
+    public void addRequiredPersonalizationField(PKPassPersonalizationField requiredPersonalizationField) {
+        if(this.requiredPersonalizationFields == null) {
+            this.requiredPersonalizationFields = new ArrayList<PKPassPersonalizationField>();
+        }
+        this.requiredPersonalizationFields.add(requiredPersonalizationField);
+    }
 
     public String getDescription() {
         return description;
