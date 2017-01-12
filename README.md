@@ -7,9 +7,9 @@ There are two separate projects:
 1. jPasskit - Which contains the Pass objects and useful utilities. It is designed to be included in existing Webservices, thus not including any request handling.
 2. jPasskit Server -  Which contains an additional REST Webservice, that can be included in existing Applications that do not use their own Webservice already. Note: This is still no standalone implementation. Things like storing passes and handling device (un)registrations are left open for the Application to implement.
 
-**Current stable release:** 0.0.8
+**Current stable release:** 0.0.9
 
-**Development Version:** 0.0.9-SNAPSHOT [![Build Status](https://ci.brendamour.net/buildStatus/icon?job=jPasskit)](http://ci.brendamour.net/job/jPasskit)
+**Development Version:** 0.1.0-SNAPSHOT [![Build Status](https://ci.brendamour.net/buildStatus/icon?job=jPasskit)](http://ci.brendamour.net/job/jPasskit)
 
 
 **Support jPasskit by contributing to my [Gratipay fund][1].**
