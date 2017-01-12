@@ -62,7 +62,7 @@
 	</distributionManagement>
 
 	<properties>
-		<current.year>2016</current.year>
+		<current.year>2017</current.year>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<javadoc.version>2.9.1</javadoc.version>
 	</properties>
@@ -221,7 +221,7 @@
 							<pomFileName>jpasskit/pom.xml</pomFileName>
 							<useReleaseProfile>false</useReleaseProfile>
 							<releaseProfiles>release</releaseProfiles>
-							<goals>deploy</goals>
+							<goals>signgpg deploy</goals>
 						</configuration>
 					</execution>
 				</executions>
