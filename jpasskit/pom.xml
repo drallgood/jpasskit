@@ -220,8 +220,8 @@
 						<configuration>
 							<pomFileName>jpasskit/pom.xml</pomFileName>
 							<useReleaseProfile>false</useReleaseProfile>
-							<releaseProfiles>release</releaseProfiles>
-							<goals>signgpg deploy</goals>
+							<releaseProfiles>signgpg release</releaseProfiles>
+							<goals>deploy</goals>
 						</configuration>
 					</execution>
 				</executions>
