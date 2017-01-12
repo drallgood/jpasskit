@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 0.0.9 - 2016-??
+## 0.0.9 - 2017-01-12
 
 ### Added
 
