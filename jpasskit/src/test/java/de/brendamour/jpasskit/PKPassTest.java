@@ -20,6 +20,7 @@ import static org.mockito.Mockito.when;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
 
+import de.brendamour.jpasskit.enums.PKBarcodeFormat;
 import de.brendamour.jpasskit.passes.PKGenericPass;
 
 public class PKPassTest {
@@ -38,7 +40,7 @@ public class PKPassTest {
     private static final String APP_LAUNCH_URL = "myapplication://open";
     private static final String GROUPING_ID = "group-1234";
     private static final Long MAX_DISTANCE = 99999l;
-    private static final Map<String, Object> USER_INFO = ImmutableMap.<String, Object>of("name", "John Doe");
+    private static final Map<String, Object> USER_INFO = ImmutableMap.<String, Object> of("name", "John Doe");
     private static final Date EXPIRATION_DATE = new Date();
     private PKPass pkPass;
 
@@ -48,12 +50,19 @@ public class PKPassTest {
     }
 
     private void fillPkPassFields() {
-       pkPass.setAppLaunchURL(APP_LAUNCH_URL);
-       pkPass.setGroupingIdentifier(GROUPING_ID);
-       pkPass.setMaxDistance(MAX_DISTANCE);
-       pkPass.setVoided(true);
-       pkPass.setUserInfo(USER_INFO);
-       pkPass.setExpirationDate(EXPIRATION_DATE);
+        pkPass.setAppLaunchURL(APP_LAUNCH_URL);
+        pkPass.setGroupingIdentifier(GROUPING_ID);
+        pkPass.setMaxDistance(MAX_DISTANCE);
+        pkPass.setVoided(true);
+        pkPass.setUserInfo(USER_INFO);
+        pkPass.setExpirationDate(EXPIRATION_DATE);
+
+        PKBarcode barcode1 = new PKBarcode();
+        barcode1.setFormat(PKBarcodeFormat.PKBarcodeFormatQR);
+        PKBarcode barcode2 = new PKBarcode();
+        barcode2.setFormat(PKBarcodeFormat.PKBarcodeFormatCode128);
+
+        pkPass.setBarcodes(Arrays.asList(barcode1, barcode2));
     }
 
     @Test
@@ -66,6 +75,22 @@ public class PKPassTest {
         Assert.assertTrue(pkPass.isVoided());
         Assert.assertEquals(pkPass.getUserInfo(), USER_INFO);
         Assert.assertEquals(pkPass.getExpirationDate(), EXPIRATION_DATE);
+        List<PKBarcode> barcodes = pkPass.getBarcodes();
+        Assert.assertNotNull(barcodes);
+        Assert.assertEquals(barcodes.size(), 2);
+    }
+    
+    @Test
+    public void test_barcodeFallback() {
+        fillPkPassFields();
+        
+        List<PKBarcode> barcodes = pkPass.getBarcodes();
+        Assert.assertNotNull(barcodes);
+        Assert.assertEquals(barcodes.size(), 2);
+        
+        PKBarcode barcodeFromDeprecatedFieldForIos8 = pkPass.getBarcode();
+        Assert.assertNotNull(barcodeFromDeprecatedFieldForIos8);
+        Assert.assertEquals(barcodeFromDeprecatedFieldForIos8.getFormat(), PKBarcodeFormat.PKBarcodeFormatQR);
     }
 
     @Test
