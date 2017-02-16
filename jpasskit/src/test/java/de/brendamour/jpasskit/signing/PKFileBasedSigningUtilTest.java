@@ -79,6 +79,26 @@ public class PKFileBasedSigningUtilTest {
 
         createZipAndAssert(pass, "target/passFileBasedGenerated.zip");
     }
+    
+    @Test
+    public void testFileBasedSigningWithGeneratedPass_andiOS8Fallback() throws Exception {
+        PKBarcode barcode = new PKBarcode();
+        barcode.setFormat(PKBarcodeFormat.PKBarcodeFormatCode128);
+        barcode.setMessage("abcdefg");
+        barcode.setMessageEncoding(Charset.forName("UTF-8"));
+        
+        PKBarcode barcode2 = new PKBarcode();
+        barcode2.setFormat(PKBarcodeFormat.PKBarcodeFormatQR);
+        barcode2.setMessage("abcdefg");
+        barcode2.setMessageEncoding(Charset.forName("UTF-8"));
+        
+        PKPass pass = new PKPass();
+        pass.setBarcodes(Arrays.asList(barcode, barcode2));
+        pass.setPassTypeIdentifier("pti");
+        pass.setTeamIdentifier("ti");
+        
+        createZipAndAssert(pass, "target/passFileBasedGenerated_andiOS8Fallback.zip");
+    }
 
     @Test
     public void testFileBasedSigningWithGeneratedPassAndPersonalization() throws Exception {
