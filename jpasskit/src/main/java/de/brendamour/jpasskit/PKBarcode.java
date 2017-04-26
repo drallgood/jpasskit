@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -41,6 +43,7 @@ public class PKBarcode implements IPKValidateable {
     private String altText;
     private String message;
     // updated as Charset is not serializable
+
     private String messageEncoding;
 
     public String getMessage() {
@@ -59,6 +62,8 @@ public class PKBarcode implements IPKValidateable {
         this.format = format;
     }
 
+    // Ignore this when serializing
+    @JsonIgnore
     public Charset getMessageEncoding() {
         if (StringUtils.isNotEmpty(messageEncoding)) {
             return Charset.forName(messageEncoding);
@@ -67,6 +72,7 @@ public class PKBarcode implements IPKValidateable {
         }
     }
 
+    @JsonProperty("messageEncoding")
     public String getMessageEncodingAsString() {
         return messageEncoding;
     }
