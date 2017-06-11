@@ -145,7 +145,7 @@ Example to do it all in one step:
 ```
 PKSigningInformation pkSigningInformation = new  PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(keyStorePath,  keyStorePassword, appleWWDRCA);
 PKPassTemplateFolder passTemplate = new PKPassTemplateFolder(template_path);
-PKFileBasedSigningUtil pkSigningUtil = new PKFileBasedSigningUtil(new ObjectMapper());
+PKFileBasedSigningUtil pkSigningUtil = new PKFileBasedSigningUtil();
 byte[] signedAndZippedPkPassArchive = pkSigningUtil.createSignedAndZippedPkPassArchive(pass, passTemplate, pkSigningInformation);
 ```
 	
