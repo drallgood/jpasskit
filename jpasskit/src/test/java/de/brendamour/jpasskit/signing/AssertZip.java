@@ -15,13 +15,13 @@
  */
 package de.brendamour.jpasskit.signing;
 
-import org.junit.Assert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.zip.ZipFile;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.Assert;
 
 /**
  * @author stepio

@@ -119,7 +119,7 @@ public class PKRestServer {
 		}
 
 		Series<Parameter> parameters = restTrustedServer.getContext().getParameters();
-		parameters.add("sslContextFactory", "org.restlet.ext.ssl.PkixSslContextFactory");
+		parameters.add("sslContextFactory", "org.restlet.engine.ssl.DefaultSslContextFactory");
 		parameters.add("keystorePath", keystorePath);
 		parameters.add("keystorePassword", keystorePassword);
 		parameters.add("keyPassword", keyPassword);
