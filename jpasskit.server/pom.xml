@@ -61,7 +61,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<target.dir>target</target.dir>
 		<org.slf4j.version>1.7.12</org.slf4j.version>
-		<current.year>2016</current.year>
+		<current.year>2017</current.year>
 		<restlet.version>2.3.2</restlet.version>
 	</properties>
 
