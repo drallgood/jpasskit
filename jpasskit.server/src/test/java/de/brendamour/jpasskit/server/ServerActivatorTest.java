@@ -27,9 +27,14 @@ public class ServerActivatorTest {
 	public static void main(final String[] args) {
 
 		Properties serverConfigurationProperties = new Properties();
-		serverConfigurationProperties.put("rest.bindIP", "::");
-		serverConfigurationProperties.put("rest.bindPort", "8082");
-		serverConfigurationProperties.put("rest.ssl.enabled", false);
+		serverConfigurationProperties.put(PKRestServer.SERVER_BIND_IP_KEY, "::");
+		serverConfigurationProperties.put(PKRestServer.SERVER_BIND_PORT_KEY, "8083");
+		serverConfigurationProperties.put(PKRestServer.SERVER_BIND_SSL_ENABLED_KEY, "true");
+		serverConfigurationProperties.put(PKRestServer.SERVER_BIND_SSL_KEYSTORE_PATH_KEY, "src/test/resources/serverX.jks");
+		serverConfigurationProperties.put(PKRestServer.SERVER_BIND_SSL_KEYSTORE_PASSWORD_KEY, "password");
+		serverConfigurationProperties.put(PKRestServer.SERVER_BIND_SSL_KEY_PASSWORD_KEY, "password");
+		serverConfigurationProperties.put(PKRestServer.SERVER_BIND_SSL_KEYSTORE_TYPE_KEY, "JKS");
+		
 
 		IPKRestletServerResourceFactory pkRestletServerResourceFactory = new PKRestletServerResourceFactory();
 		PKRestServer pkRestServer = new PKRestServer(serverConfigurationProperties, pkRestletServerResourceFactory);

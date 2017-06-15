@@ -28,14 +28,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PKRestServer {
+	public static final String SERVER_BIND_IP_KEY = "rest.bindIP";
+	public static final String SERVER_BIND_PORT_KEY = "rest.bindPort";
+	public static final String SERVER_BIND_SSL_ENABLED_KEY = "rest.ssl.enabled";
+	public static final String SERVER_BIND_SSL_KEYSTORE_PATH_KEY = "rest.ssl.keystore.path";
+	public static final String SERVER_BIND_SSL_KEYSTORE_TYPE_KEY = "rest.ssl.keystore.type";
+	public static final String SERVER_BIND_SSL_KEYSTORE_PASSWORD_KEY = "rest.ssl.keystore.password";
+	public static final String SERVER_BIND_SSL_KEY_PASSWORD_KEY = "rest.ssl.key.password";
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PKRestServer.class);
-	private static final String SERVER_BIND_IP_KEY = "rest.bindIP";
-	private static final String SERVER_BIND_PORT_KEY = "rest.bindPort";
-	private static final String SERVER_BIND_SSL_ENABLED_KEY = "rest.ssl.enabled";
-	private static final String SERVER_BIND_SSL_KEYSTORE_PATH_KEY = "rest.ssl.keystore.path";
-	private static final String SERVER_BIND_SSL_KEYSTORE_TYPE_KEY = "rest.ssl.keystore.type";
-	private static final String SERVER_BIND_SSL_KEYSTORE_PASSWORD_KEY = "rest.ssl.keystore.password";
-	private static final String SERVER_BIND_SSL_KEY_PASSWORD_KEY = "rest.ssl.key.password";
 	private Properties serverConfigurationProperties;
 	private Component restTrustedServerComponent;
 	private Server restTrustedServer;
