@@ -9,10 +9,7 @@ There are two separate projects:
 
 **Current stable release:** 0.0.9
 
-**Development Version:** 0.1.0-SNAPSHOT [![Build Status](https://ci.brendamour.net/buildStatus/icon?job=jPasskit)](http://ci.brendamour.net/job/jPasskit)
-
-
-**Support jPasskit by contributing to my [Gratipay fund][1].**
+**Development Version:** 0.1.0-SNAPSHOT [![Build Status][image-1]][1]
 
 ## Installation
 
@@ -87,13 +84,13 @@ Usually, passes contain additional information that need to be included in the f
 
 jPasskit provides a flexible mechanism to provide such templates:
 
-- as a folder (using ```PKPassTemplateFolder```)
-- as a set of streams (using ```PKPassTemplateInMemory```)
-- using your own implementation (implementing ```IPKPassTemplate```)
+- as a folder (using `PKPassTemplateFolder`)
+- as a set of streams (using `PKPassTemplateInMemory`)
+- using your own implementation (implementing `IPKPassTemplate`)
 
 #### Folder-based templates (standard approach)
 
-In order to use an existing folder on the file system as you pass's template, you create an instance of ```PKPassTemplateFolder``` using the path to your folder as argument:
+In order to use an existing folder on the file system as you pass's template, you create an instance of `PKPassTemplateFolder` using the path to your folder as argument:
 
 ```
 IPKPassTemplate pkPassTemplateFolder = new PKPassTemplateFolder(PASS_TEMPLATE_FOLDER);
@@ -105,7 +102,7 @@ The content of this directory is defined in the PassKit Developer Documentation.
 
 That's it. When signing the pass, the contents of this folder will be copied into the pass.
 
-#### Dynamic templates (in memory) 
+#### Dynamic templates (in memory)
 
 This approach requires more code, but is also more flexible. The template is stored as a list of input streams, whose content gets copied into the pass when it is signed and packaged.
 
@@ -148,7 +145,7 @@ PKPassTemplateFolder passTemplate = new PKPassTemplateFolder(template_path);
 PKFileBasedSigningUtil pkSigningUtil = new PKFileBasedSigningUtil();
 byte[] signedAndZippedPkPassArchive = pkSigningUtil.createSignedAndZippedPkPassArchive(pass, passTemplate, pkSigningInformation);
 ```
-	
+ 
 ## Using the jPasskit Server
 
 The jPasskit Server doesn't provide a full fledged PassKit Web Service but merely the basics you need implement your own standalone server. Things like storing passes and registrations still need to be implemented according to your own needs (or added to an existing Application).
@@ -164,7 +161,7 @@ The set up and start the Server you need two things:
 	- rest.ssl.keystore.type : The type of this keystore (e.g. PKCS12 or JKS)
 	- rest.ssl.keystore.password : The password to access the keystore
 	- rest.ssl.key.password : The password to access the private key
-		 
+			  
 	Apple requires all production passes to use SSL.
 2. An implementation of IPKRestletServerResourceFactory.
 
@@ -174,7 +171,7 @@ The IPKRestletServerResourceFactory is used to create instances of three classes
 
 *PKPassResource* is used to fetch the latest version of a pass.
 
-_PKPersonalizePassResource_ is used to store the signup information for a rewards program (see https://developer.apple.com/library/prerelease/content/documentation/UserExperience/Conceptual/PassKit_PG/PassPersonalization.html)
+_PKPersonalizePassResource_ is used to store the signup information for a rewards program (see https://developer.apple.com/library/prerelease/content/documentation/UserExperience/Conceptual/PassKit\_PG/PassPersonalization.html)
 
 *PKLogResource* is used for the log messages, that the devices send in case of an error.
 
@@ -196,7 +193,7 @@ That's it. Your web service is running. Just point your passes to the URL where 
 
 ### About Personalized Passes and Rewards Programs
 
-Apple provides a handy, albeit short, guide about how this works: https://developer.apple.com/library/prerelease/content/documentation/UserExperience/Conceptual/PassKit_PG/PassPersonalization.html
+Apple provides a handy, albeit short, guide about how this works: https://developer.apple.com/library/prerelease/content/documentation/UserExperience/Conceptual/PassKit\_PG/PassPersonalization.html
 
 The process in broad strokes works as follows:
 
@@ -206,4 +203,6 @@ The process in broad strokes works as follows:
 4. You store the provided information and link it to the `serialNumber`
 5. Next time the user's device downloads a new version of the pass, you provide a custom pass with his information (Make sure you DON'T provide a personalizable pass this time!)
 
-[1]:	https://www.gittip.com/drallgood/
+[1]:	http://ci.brendamour.net/job/jPasskit
+
+[image-1]:	https://ci.brendamour.net/buildStatus/icon?job=jPasskit
