@@ -97,6 +97,9 @@ public class PKPass implements IPKValidateable {
     // Feature added in iOS 9.0. It is not applicable to older iOS
     private PKNFC nfc;
     
+    // Added 2018-06-07
+    private boolean sharingProhibited;
+    
     public String getSerialNumber() {
         return serialNumber;
     }
@@ -425,6 +428,14 @@ public class PKPass implements IPKValidateable {
 
     public void setNFC(PKNFC nfc) {
         this.nfc = nfc;
+    }
+
+    public boolean isSharingProhibited() {
+        return sharingProhibited;
+    }
+
+    public void setSharingProhibited(boolean sharingProhibited) {
+        this.sharingProhibited = sharingProhibited;
     }
 
     public boolean isValid() {
