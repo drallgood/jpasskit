@@ -56,6 +56,7 @@ public class PKPassTest {
         pkPass.setVoided(true);
         pkPass.setUserInfo(USER_INFO);
         pkPass.setExpirationDate(EXPIRATION_DATE);
+        pkPass.setSharingProhibited(true);
 
         PKBarcode barcode1 = new PKBarcode();
         barcode1.setFormat(PKBarcodeFormat.PKBarcodeFormatQR);
@@ -75,6 +76,7 @@ public class PKPassTest {
         Assert.assertTrue(pkPass.isVoided());
         Assert.assertEquals(pkPass.getUserInfo(), USER_INFO);
         Assert.assertEquals(pkPass.getExpirationDate(), EXPIRATION_DATE);
+        Assert.assertTrue(pkPass.isSharingProhibited());
         List<PKBarcode> barcodes = pkPass.getBarcodes();
         Assert.assertNotNull(barcodes);
         Assert.assertEquals(barcodes.size(), 2);
