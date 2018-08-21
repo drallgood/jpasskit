@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- Adds `sharingProhibited` field to PKPass
 
 ### Deprecated
 
