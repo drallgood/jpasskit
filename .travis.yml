@@ -13,6 +13,7 @@ before_deploy:
 - mvn help:evaluate -N -Dexpression=project.version|grep -v '\['
 - export project_version=$(mvn help:evaluate -N -Dexpression=project.version|grep
   -v '\[')
+
 cache:
   directories:
   - "$HOME/.cache"
@@ -20,7 +21,7 @@ cache:
 
 jobs:
   include:
-    - stage: all tests
+    - stage: test
       script: cd $BUILD_DIR && mvn test package -B
 
 
