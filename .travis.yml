@@ -6,8 +6,8 @@ services:
 jdk: oraclejdk8
 
 env:
-  - BUILD_DIR=jPasskit
-  - BUILD_DIR=jPasskit.server
+  - BUILD_DIR=jpasskit
+  - BUILD_DIR=jpasskit.server
 
 before_deploy:
 - mvn help:evaluate -N -Dexpression=project.version|grep -v '\['
