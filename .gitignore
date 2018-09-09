@@ -1,3 +1,6 @@
 .metadata
 .idea
+.vscode
+.eclipse
+.settings
 *.iml
