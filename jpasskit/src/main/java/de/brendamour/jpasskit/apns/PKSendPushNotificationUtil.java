@@ -40,6 +40,8 @@ import org.slf4j.LoggerFactory;
 
 import io.netty.util.concurrent.Future;
 
+import java.lang.Deprecated;
+
 
 public class PKSendPushNotificationUtil {
 
