@@ -74,7 +74,7 @@ public class PKSendPushNotificationUtil {
         return new FileInputStream(p12File);
     }
 
-    @Deprecated(since="0.1.0")
+    @Deprecated //since="0.1.0"
     public void sendPushNotification(final String pushtoken) {
         try {
             
@@ -115,7 +115,7 @@ public class PKSendPushNotificationUtil {
         return client.sendNotification(pushNotification);
     }
 
-    @Deprecated(since="0.1.0")
+    @Deprecated //since="0.1.0"
     public void sendMultiplePushNotifications(final List<String> pushtokens) {
 
         LOGGER.debug("Sending Push notification for keys: {}", pushtokens);

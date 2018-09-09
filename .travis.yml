@@ -4,6 +4,11 @@ sudo: required
 services:
 - docker
 jdk: oraclejdk8
+
+env:
+  - BUILD_DIR=jPasskit
+  - BUILD_DIR=jPasskit.server
+
 before_deploy:
 - mvn help:evaluate -N -Dexpression=project.version|grep -v '\['
 - export project_version=$(mvn help:evaluate -N -Dexpression=project.version|grep
@@ -11,7 +16,9 @@ before_deploy:
 cache:
   directories:
   - "$HOME/.cache"
-  
+
+script: cd $BUILD_DIR
+
 deploy:
   provider: releases
   api_key:
