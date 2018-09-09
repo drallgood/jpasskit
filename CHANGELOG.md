@@ -9,7 +9,11 @@ All notable changes to this project will be documented in this file.
 
 ### Deprecated
 
+- most methods in `PKSendPushNotificationUtil` deprecated
+
 ### Removed
+
+- Removed unsupported APNS dependency and replaced it with [pushy](https://github.com/relayrides/pushy)
 
 ### Fixed
 
