@@ -4,30 +4,34 @@ sudo: required
 services:
 - docker
 jdk: oraclejdk8
-
 env:
+  matrix:
   - BUILD_DIR=jpasskit
   - BUILD_DIR=jpasskit.server
+  global:
+  - secure: e/fpJ+pK7VPrMIn1nKGjo4cwm7yfIWWVBdT42WT8gM+DkQ82xBpMHszHrdEHAX/v8hwSj14YlEYzBtpH7+6F0PvcISBgBV/Bo2Knq5a84cmtSMGmYjGKnmoasN3wA2h2kjmGXKX4Lb6mH9UvhOdKZfv4Tuzj9MoMdnOLyO2cPUw8cd8vjiyetym9gwRf4n0/i6acic8xGlynqGkOPJZowb3lksFEXFLmA7l/S+r0/D3xI245Q9KYy7xbs2mujPIrE7MgD9irpJm6ktu9t87Mp6QDycSfgcrHVNDKS0d89bQmq/X5JIVROQA5o/nxy2Ezgljx7LbW1pmsUJwGRSStAj5YeJajlmI/Nn8VNqw1D8tC3rTzxLFFrM9GdzPeILiWayewoCHjWjsbOQZpISxkRQxf15F0yMekCAcj5HkfZHnyayqW8l0gVE8Jn2apbtACC+MN29i0lIcJ45LBv4U+oI4H/kYCfaDrTbXHSgKtouRLmjtWEFPmdvmcva05omIQV7chWe7nSaeMq+Wfyvie00VsdmhdsIEDin+2e7qXZ4P5yFOKX9Dkb9i5n6vfKi3SK5ExtlTNIomuM36SteFzzmFKU9gckVV9h7Q6YlnIu03hC3XHRw0IgG6UhOxjulNiJ9VmGaQMCEBx9zSqujw7gql8zwpOGjRHYKVfzD2idHw=
+  - secure: PCoKLmjZa4qO55epEe3BNjJI0Fdizls3brKufuNqqWYFRqV8M4xkphJFH5d8iz+uDAr8u7SqzMoLO44siMCb9t+K5yGibBxvNoOp4lzOt0s+5WkLPkXYoVGvSJYFafu6mOjaE5tiWHYAdVJS68ha7btRiJZzaTyT4SAAAOs4a+M/uLmJ7oFysSWEMflVFqe5U1bBSjR518UAi0oslMoXmiwYolpeWY5TDHjAjkCCJRFVKYRY3309cmetsiIsg69hk6cvSpheceHe+qeg52yLEsXaefctYunamHnfF+FAFXN5B5ei7nkBNYmwc4hWC/x1Z0TTrQ3dylF8uqa4voOccFssuL0Rpb7tR9i4Wkr7kHA095q84p4Qxv6YWWQNMH5rKnljnnm91+0IqzuG7ueh+DOJq2vYGtvdnloD8Rfx1OL6G3RMZqQuir4sGh73tauIH6VJTVTsALeE91adEPZzQKsmGWg98OQngjOYE8R4egUjFllMPmGZbiP4GtaQinC7mJ/cnqrncy3KAIlZWHCEAp64Z1OJ/tWsuydUu0rN/3sZQw7+UUDhzOvsBRhLWs/Tl4cWFoxYF5tqvGtGOBqCP5M8mXwmOitBS6O+6Sv7BsTmFKSBjNxW8kIrFbKzvOl2U9JrDKH5BzhLhpUBl31EAOhzRsatuSgw5zuLBJsRJPI=
 
 before_deploy:
 - mvn help:evaluate -N -Dexpression=project.version|grep -v '\['
 - export project_version=$(mvn help:evaluate -N -Dexpression=project.version|grep
   -v '\[')
-
 cache:
   directories:
   - "$HOME/.cache"
-
-
-before_install: cd $BUILD_DIR
-
-
-# deploy:
-#   provider: releases
-#   api_key:
-#     secure: Sm0tfwrDMY6G62itcRcx8CRKv34QIJtf0lElywlLqgpyARAB9nAhf9/Pv9Iw9pAPY28CC6Q88ZHTcG/kno+wLUu7ROvcz/lHhefVVU8OmWJxRBhsY90kD3ge/8KApRGqM+IKVb8f7X+xrbCMy0dMUjV5Ii/cbUE5co5EWQv1ISNn02qLf2C+BHegZ5Kz1/YPpy4mFlKtSpmdc7eNG+xXB330A6QQo6ns63c69vtZZ1OZIqM1TQ6U9/7xRx45Qr3xQcrlk9hDj8qNCEUAmsVpYdjrnNVyyAkObbxemXuvCensEhDsuHgcsnqUzJ4WqQCQpdU3EPAGD176vu0oNSlhK26eAI065BmMWfncsjvT4GF8UtfMne/+xigFZUl0h2NKa5xrsBSvZSAoqgHZkNP2m9F7iVnwUfyuETKXgAEoE2NvR5Pm7n6o/Hj13KwEIo8rKhPi+4OKdlRvN4U+LBP12fWAoOXzP5BKXnk5OYBe3NL9Apf0V1Kjcb2PcmCGZNY8vyO+tF1QwRbL0tEJccjns5X8WWfRt56LEMLTz1uZiXshllqgcmthsqtOsZ0jRS+fXtPHCFGlEBLoxaLOCWLyQ7q5FMgaQUf+LjNe/Hp26Da9G1exbc3/ebtDLAjvmVJYPOY3AkJxE2AETEKiU7tD/AAfN+gA/uVJNCzKI0jAr3U=
-#   file: jpasskit/target/jpasskit-$project_version.jar
-#   on:
-#     repo: drallgood/jpasskit
-#   skip_cleanup: true
-#   name: $project_version
+before_install: cd $BUILD_NAME
+deploy:
+- provider: releases
+  api_key:
+    secure: Sm0tfwrDMY6G62itcRcx8CRKv34QIJtf0lElywlLqgpyARAB9nAhf9/Pv9Iw9pAPY28CC6Q88ZHTcG/kno+wLUu7ROvcz/lHhefVVU8OmWJxRBhsY90kD3ge/8KApRGqM+IKVb8f7X+xrbCMy0dMUjV5Ii/cbUE5co5EWQv1ISNn02qLf2C+BHegZ5Kz1/YPpy4mFlKtSpmdc7eNG+xXB330A6QQo6ns63c69vtZZ1OZIqM1TQ6U9/7xRx45Qr3xQcrlk9hDj8qNCEUAmsVpYdjrnNVyyAkObbxemXuvCensEhDsuHgcsnqUzJ4WqQCQpdU3EPAGD176vu0oNSlhK26eAI065BmMWfncsjvT4GF8UtfMne/+xigFZUl0h2NKa5xrsBSvZSAoqgHZkNP2m9F7iVnwUfyuETKXgAEoE2NvR5Pm7n6o/Hj13KwEIo8rKhPi+4OKdlRvN4U+LBP12fWAoOXzP5BKXnk5OYBe3NL9Apf0V1Kjcb2PcmCGZNY8vyO+tF1QwRbL0tEJccjns5X8WWfRt56LEMLTz1uZiXshllqgcmthsqtOsZ0jRS+fXtPHCFGlEBLoxaLOCWLyQ7q5FMgaQUf+LjNe/Hp26Da9G1exbc3/ebtDLAjvmVJYPOY3AkJxE2AETEKiU7tD/AAfN+gA/uVJNCzKI0jAr3U=
+  file: $BUILD_NAME/target/$BUILD_NAME-$project_version.jar
+  on:
+    repo: drallgood/jpasskit
+  skip_cleanup: true
+  name: "$BUILD_NAME-$project_version"
+- provider: script
+  script: cp .travis.settings.xml $HOME/.m2/settings.xml && mvn deploy
+  skip_cleanup: true
+  on:
+    branch: master
+    condition: $BUILD_NAME = jpasskit
