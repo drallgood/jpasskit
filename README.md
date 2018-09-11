@@ -203,6 +203,6 @@ The process in broad strokes works as follows:
 4. You store the provided information and link it to the `serialNumber`
 5. Next time the user's device downloads a new version of the pass, you provide a custom pass with his information (Make sure you DON'T provide a personalizable pass this time!)
 
-[1]:	http://ci.brendamour.net/job/jPasskit
+[1]:	https://travis-ci.org/drallgood/jpasskit
 
-[image-1]:	https://ci.brendamour.net/buildStatus/icon?job=jPasskit
+[image-1]:	https://travis-ci.org/drallgood/jpasskit.svg?branch=master
