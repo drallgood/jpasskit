@@ -25,6 +25,7 @@ before_deploy:
 - mvn help:evaluate -N -Dexpression=project.version|grep -v '\['
 - export project_version=$(mvn help:evaluate -N -Dexpression=project.version|grep
   -v '\[')
+- echo "Building $project_version"
 cache:
   directories:
   - "$HOME/.cache"
@@ -42,8 +43,8 @@ deploy:
   skip_cleanup: true
   name: "$BUILD_NAME-$project_version"
 - provider: script
-  before_script: ./cd/before-deploy.sh
-  script: cp .travis.settings.xml $HOME/.m2/settings.xml && mvn deploy
+  before_script: ../cd/before-deploy.sh
+  script: cp ../.travis.settings.xml $HOME/.m2/settings.xml && mvn deploy
   skip_cleanup: true
   on:
     branch: master
