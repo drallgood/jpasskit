@@ -1,16 +1,25 @@
 language: java
 install: true
 sudo: required
+
 services:
 - docker
+
 jdk: oraclejdk8
+
 env:
   matrix:
   - BUILD_NAME=jpasskit
   - BUILD_NAME=jpasskit.server
   global:
   - secure: e/fpJ+pK7VPrMIn1nKGjo4cwm7yfIWWVBdT42WT8gM+DkQ82xBpMHszHrdEHAX/v8hwSj14YlEYzBtpH7+6F0PvcISBgBV/Bo2Knq5a84cmtSMGmYjGKnmoasN3wA2h2kjmGXKX4Lb6mH9UvhOdKZfv4Tuzj9MoMdnOLyO2cPUw8cd8vjiyetym9gwRf4n0/i6acic8xGlynqGkOPJZowb3lksFEXFLmA7l/S+r0/D3xI245Q9KYy7xbs2mujPIrE7MgD9irpJm6ktu9t87Mp6QDycSfgcrHVNDKS0d89bQmq/X5JIVROQA5o/nxy2Ezgljx7LbW1pmsUJwGRSStAj5YeJajlmI/Nn8VNqw1D8tC3rTzxLFFrM9GdzPeILiWayewoCHjWjsbOQZpISxkRQxf15F0yMekCAcj5HkfZHnyayqW8l0gVE8Jn2apbtACC+MN29i0lIcJ45LBv4U+oI4H/kYCfaDrTbXHSgKtouRLmjtWEFPmdvmcva05omIQV7chWe7nSaeMq+Wfyvie00VsdmhdsIEDin+2e7qXZ4P5yFOKX9Dkb9i5n6vfKi3SK5ExtlTNIomuM36SteFzzmFKU9gckVV9h7Q6YlnIu03hC3XHRw0IgG6UhOxjulNiJ9VmGaQMCEBx9zSqujw7gql8zwpOGjRHYKVfzD2idHw=
+  # - ^^ CI_DEPLOY_USERNAME
   - secure: PCoKLmjZa4qO55epEe3BNjJI0Fdizls3brKufuNqqWYFRqV8M4xkphJFH5d8iz+uDAr8u7SqzMoLO44siMCb9t+K5yGibBxvNoOp4lzOt0s+5WkLPkXYoVGvSJYFafu6mOjaE5tiWHYAdVJS68ha7btRiJZzaTyT4SAAAOs4a+M/uLmJ7oFysSWEMflVFqe5U1bBSjR518UAi0oslMoXmiwYolpeWY5TDHjAjkCCJRFVKYRY3309cmetsiIsg69hk6cvSpheceHe+qeg52yLEsXaefctYunamHnfF+FAFXN5B5ei7nkBNYmwc4hWC/x1Z0TTrQ3dylF8uqa4voOccFssuL0Rpb7tR9i4Wkr7kHA095q84p4Qxv6YWWQNMH5rKnljnnm91+0IqzuG7ueh+DOJq2vYGtvdnloD8Rfx1OL6G3RMZqQuir4sGh73tauIH6VJTVTsALeE91adEPZzQKsmGWg98OQngjOYE8R4egUjFllMPmGZbiP4GtaQinC7mJ/cnqrncy3KAIlZWHCEAp64Z1OJ/tWsuydUu0rN/3sZQw7+UUDhzOvsBRhLWs/Tl4cWFoxYF5tqvGtGOBqCP5M8mXwmOitBS6O+6Sv7BsTmFKSBjNxW8kIrFbKzvOl2U9JrDKH5BzhLhpUBl31EAOhzRsatuSgw5zuLBJsRJPI=
+  # - ^^ CI_DEPLOY_PASSWORD
+  - secure: "WjuFR5DnLlbhWfMxgDfglyBTIUJu6gGbnFZp379r5i9zy3VPwxie3w4YkwsAuRFLeNKMb/v78/swg81W+7GWceVCbpo1HBkxHnqr698uU19IYPNdSljlCAJbf9uyfIWV8yvVASYfrl5GN5QHRB28R/4fSYb7o9I6os6j8lDuVXGapRGkeR9oZAefjMscmaibRc5/8Qk97tgS6zWhUh9PRYtLve2g/lS6SRVugGpgZ59zYC2pwfNf1wyyIPufh3ME7jp7SDICdIqErIfJsyawWGbzU+OwKUPxsWqYeyl+GQYHjcMaL7/OVvMBR6lKlBdmBPtgtIHZk3cO8tMr1vNXcSCzQDUhYYV88qFME6FrOHP4xjM/N96eXGFTvqhL8lK8rEh4y4An/+xowGk0SApsR6LZyQEuKUShMhfrvp+a2C/08cVSBrfySiARKXho64uL5LCufnQzOir6Tk5cClc1Vi1hDbkNd+3/VMHQbBqnnbUFqzg7t9wtK45xgn/x2Jh1/8n+1Dh+Un/ZKLvST7pgBSc3HJVdN4uWN6Gp8OwZhLLdEhgYqCU4T1lDHkMrehJvPURK3mXDB/JsOgmWwL8MmTb8NUF3uPW642oCThgb0KQnUd/5bW7DixxkqElCmayjMGif/zOmeYCVkX/GWmnidFSW5wJqonkBvK/ONAj/hEE="
+  # - ^^ CI_GPG_KEY_NAME
+  - secure: "llkrM3ygNYFvAaHBPKC7mlOUOOx8V1mQlWQNLurSXZom8IyHiWcAE58Z2DCfO9RifNF+IwAn/q1YhCq5FA2YeCh6OERHealo1NNR2kHAsx5TOw4mlKX6IhVno/65zlbc0y20DOOCmpNjzVBDv0eloEa0IwYV7Ob2sUefTYFe2KlWJQZLQQ2RaplDUiViJcfpMU5nBN2H75jaAHk43XAx0RnZe/GbqDrw4YWIsjkDySj8aVcRUb05HqQ/xMkFzDmg4SXXka19vu1Fn9yNPgRG3nAH1yyTya+QhQFukqYaEVueJzi0IJUbW1EMJHCBR6cATq7Q/0i07eHj30GmxrSdEgGfFBTULXct8E9nbAxF5fpKL87hM/MoSdUz64DQZqlM6Qdbc/Fn0uZ8cWelyOBd3nFJhGd6j9peS+CBLd1ACh1iXaPY/4fAHf2bHbVadmvUkF3jCG4wf9Y5pNr521fU6BP2KYr4DV3zyovwiNHkY+o8d69jSEs/490fM9cMZVS3GABbwFpv4+Yi9J1O49dncxhhh+edA3aPLzsUPCso04SwcqoNV/D5cfvb9hvxIXDIsUEEcY8EW2t3X95omZSd5oIPRtOdJ6Xo+JjSgZlt8nwWw8y4emZieQXRqg8h1IGEVbsLzK30vUWI7j98Gshk9VQtXLrLz/vaVc3buiCVerY="
+  # - ^^ CI_GPG_PASSWORD
 
 before_deploy:
 - mvn help:evaluate -N -Dexpression=project.version|grep -v '\['
@@ -19,7 +28,10 @@ before_deploy:
 cache:
   directories:
   - "$HOME/.cache"
+  - "$HOME/.m2/repository"
+
 before_install: cd $BUILD_NAME
+
 deploy:
 - provider: releases
   api_key:
@@ -30,6 +42,7 @@ deploy:
   skip_cleanup: true
   name: "$BUILD_NAME-$project_version"
 - provider: script
+  before_script: ./cd/before-deploy.sh
   script: cp .travis.settings.xml $HOME/.m2/settings.xml && mvn deploy
   skip_cleanup: true
   on:
