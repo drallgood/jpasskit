@@ -38,8 +38,11 @@ deploy:
   api_key:
     secure: Sm0tfwrDMY6G62itcRcx8CRKv34QIJtf0lElywlLqgpyARAB9nAhf9/Pv9Iw9pAPY28CC6Q88ZHTcG/kno+wLUu7ROvcz/lHhefVVU8OmWJxRBhsY90kD3ge/8KApRGqM+IKVb8f7X+xrbCMy0dMUjV5Ii/cbUE5co5EWQv1ISNn02qLf2C+BHegZ5Kz1/YPpy4mFlKtSpmdc7eNG+xXB330A6QQo6ns63c69vtZZ1OZIqM1TQ6U9/7xRx45Qr3xQcrlk9hDj8qNCEUAmsVpYdjrnNVyyAkObbxemXuvCensEhDsuHgcsnqUzJ4WqQCQpdU3EPAGD176vu0oNSlhK26eAI065BmMWfncsjvT4GF8UtfMne/+xigFZUl0h2NKa5xrsBSvZSAoqgHZkNP2m9F7iVnwUfyuETKXgAEoE2NvR5Pm7n6o/Hj13KwEIo8rKhPi+4OKdlRvN4U+LBP12fWAoOXzP5BKXnk5OYBe3NL9Apf0V1Kjcb2PcmCGZNY8vyO+tF1QwRbL0tEJccjns5X8WWfRt56LEMLTz1uZiXshllqgcmthsqtOsZ0jRS+fXtPHCFGlEBLoxaLOCWLyQ7q5FMgaQUf+LjNe/Hp26Da9G1exbc3/ebtDLAjvmVJYPOY3AkJxE2AETEKiU7tD/AAfN+gA/uVJNCzKI0jAr3U=
   file: $BUILD_NAME/target/$BUILD_NAME-$project_version.jar
+  before_deploy: 
+    - git tag "$BUILD_NAME-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
   on:
     repo: drallgood/jpasskit
+    branch: master
   skip_cleanup: true
   name: "$BUILD_NAME-$project_version"
 - provider: script
@@ -47,5 +50,6 @@ deploy:
   script: cp ../.travis.settings.xml $HOME/.m2/settings.xml && mvn deploy
   skip_cleanup: true
   on:
+    repo: drallgood/jpasskit
     branch: master
     condition: $BUILD_NAME = jpasskit
