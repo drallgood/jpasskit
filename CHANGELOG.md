@@ -1,7 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 0.1.0 - 2017-??
+## 0.x.x - date
+
+### Added
+- Added filter to ignore all files starting with dot
+
+### Deprecated
+### Removed
+
+## 0.1.0 - 2018-10-04
 
 ### Added
 
@@ -17,7 +25,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
-- Added filter to ignore all files starting with dot
+- none
 
 
 ## 0.0.9 - 2017-01-12
