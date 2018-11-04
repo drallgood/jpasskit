@@ -27,6 +27,8 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.filefilter.RegexFileFilter;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +55,7 @@ public class PKPassTemplateFolder implements IPKPassTemplate {
     public Map<String, ByteBuffer> getAllFiles() throws IOException {
         Map<String, ByteBuffer> allFiles = new HashMap<>();
         String base = templateDir.getCanonicalPath();
-        for (File file : FileUtils.listFiles(templateDir, null, true)) {
+        for (File file : FileUtils.listFiles(templateDir, new RegexFileFilter("^(?!\\.).*"), TrueFileFilter.TRUE)) {
             byte[] byteArray = IOUtils.toByteArray(new FileInputStream(file));
             String filePath = file.getCanonicalPath().substring(base.length() + 1);
             LOGGER.debug("File's own path: {}", filePath);
