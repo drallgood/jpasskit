@@ -33,6 +33,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.filefilter.RegexFileFilter;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 
 public class PKPassTemplateInMemory implements IPKPassTemplate {
 
@@ -127,7 +129,7 @@ public class PKPassTemplateInMemory implements IPKPassTemplate {
         }
 
         Path pathToSourceFolder = Paths.get(directoryWithFilesToAddAsFile.getAbsolutePath());
-        Collection<File> filesInDir = FileUtils.listFiles(directoryWithFilesToAddAsFile, null, true);
+        Collection<File> filesInDir = FileUtils.listFiles(directoryWithFilesToAddAsFile, new RegexFileFilter("^(?!\\.).*"), TrueFileFilter.TRUE);
         for (File file : filesInDir) {
             Path relativePathOfFile = pathToSourceFolder.relativize(Paths.get(file.getAbsolutePath()));
             addFile(relativePathOfFile.toString(), file);
