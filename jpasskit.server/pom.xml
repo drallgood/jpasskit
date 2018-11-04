@@ -60,16 +60,16 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<target.dir>target</target.dir>
-		<org.slf4j.version>1.7.12</org.slf4j.version>
+		<org.slf4j.version>[1.7.12,)</org.slf4j.version>
 		<current.year>2018</current.year>
-		<restlet.version>2.3.2</restlet.version>
+		<restlet.version>[2.3.12,)</restlet.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>de.brendamour</groupId>
 			<artifactId>jpasskit</artifactId>
-			<version>0.1.0-SNAPSHOT</version>
+			<version>0.1.1-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
