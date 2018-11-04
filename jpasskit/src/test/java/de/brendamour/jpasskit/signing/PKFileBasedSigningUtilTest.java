@@ -32,6 +32,10 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.charset.Charset;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Date;
@@ -146,6 +150,13 @@ public class PKFileBasedSigningUtilTest {
         Assert.assertTrue(passZipFile.exists());
         Assert.assertTrue(passZipFile.length() > 0);
         AssertZip.assertValid(passZipFile);
+        
+        Path pkpassFile = Paths.get(fileName);
+		FileSystem fs = FileSystems.newFileSystem(pkpassFile, null);
+		Path bgFilePath = fs.getPath(PKPassTemplateInMemory.PK_ICON);
+		Assert.assertTrue(Files.exists(bgFilePath));
+		Path ignoredFilePath = fs.getPath(".ignored_file");
+		Assert.assertFalse(Files.exists(ignoredFilePath));
     }
 
     private String getPathFromClasspath(String path) throws Exception {
