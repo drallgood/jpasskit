@@ -28,6 +28,8 @@ import de.brendamour.jpasskit.personalization.PKPersonalization;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.filefilter.RegexFileFilter;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.bouncycastle.cms.CMSProcessableFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -173,7 +175,7 @@ public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
         try {
             String base = tempPassDir.getCanonicalPath() + File.separator;
             HashCode hash;
-            for (File file : FileUtils.listFiles(tempPassDir, null, true)) {
+            for (File file : FileUtils.listFiles(tempPassDir, new RegexFileFilter("^(?!\\.).*"), TrueFileFilter.TRUE)) {
                 hash = Files.hash(file, hashFunction);
                 fileWithHashMap.put(getRelativePathOfZipEntry(file.getCanonicalPath(), base), Hex.encodeHexString(hash.asBytes()));
             }
@@ -188,7 +190,7 @@ public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
         try (ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStreamForZippedPass)) {
             String base = tempPassDir.getCanonicalPath() + File.separator;
             ZipEntry entry;
-            for (File file : FileUtils.listFiles(tempPassDir, null, true)) {
+            for (File file : FileUtils.listFiles(tempPassDir, new RegexFileFilter("^(?!\\.).*"), TrueFileFilter.TRUE)) {
                 try (FileInputStream fileInputStream = new FileInputStream(file)) {
                     entry = new ZipEntry(getRelativePathOfZipEntry(file.getCanonicalPath(), base));
                     zipOutputStream.putNextEntry(entry);
