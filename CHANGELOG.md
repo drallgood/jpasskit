@@ -17,6 +17,8 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+- Added filter to ignore all files starting with dot
+
 
 ## 0.0.9 - 2017-01-12
 
