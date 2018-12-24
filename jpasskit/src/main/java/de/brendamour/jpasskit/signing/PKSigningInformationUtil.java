@@ -237,9 +237,7 @@ public class PKSigningInformationUtil {
                 return (X509Certificate) certificate;
             }
             throw new IOException("The key from the input stream could not be decrypted");
-        } catch (IOException ex) {
-            throw new IOException("The key from the input stream could not be decrypted", ex);
-        } catch (NoSuchProviderException ex) {
+        } catch (IOException | NoSuchProviderException ex) {
             throw new IOException("The key from the input stream could not be decrypted", ex);
         }
     }

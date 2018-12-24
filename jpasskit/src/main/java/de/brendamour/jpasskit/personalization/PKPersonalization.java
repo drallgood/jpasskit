@@ -78,8 +78,8 @@ public class PKPersonalization implements IPKValidateable {
     public List<String> getValidationErrors() {
         List<String> validationErrors = new ArrayList<String>();
 
-        if(requiredPersonalizationFields == null || requiredPersonalizationFields.size() == 0) {
-            validationErrors.add("You need to provide atleast one requiredPersonalizationField"); 
+        if(requiredPersonalizationFields == null || requiredPersonalizationFields.isEmpty()) {
+            validationErrors.add("You need to provide at least one requiredPersonalizationField");
         }
         if (StringUtils.isEmpty(description)) {
             validationErrors.add("You need to provide a description");
