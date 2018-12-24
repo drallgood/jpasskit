@@ -28,12 +28,10 @@ import com.turo.pushy.apns.util.SimpleApnsPushNotification;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class PKSendPushNotificationUtilTest {
 
-    private PKSendPushNotificationUtil util;
     private static final String keyStorePath = "passbook/jpasskittest.p12";
     private static final String keyStorePassword = "password";
     private static final String CA_CERTIFICATE_FILENAME = "/ca.pem";
@@ -42,19 +40,23 @@ public class PKSendPushNotificationUtilTest {
     private static final String HOST = "localhost";
     private static final int PORT = 8443;
 
+    private PKSendPushNotificationUtil util;
     private MockApnsServer apnsServer;
 
     @BeforeClass
     public void prepareTest() throws Exception {
         util = new PKSendPushNotificationUtil(keyStorePath, keyStorePassword);
-        InputStream certificateStream = util.getStreamOfP12File(keyStorePath);
-        ApnsClient client = new ApnsClientBuilder().setApnsServer(HOST,PORT)
-        .setClientCredentials(certificateStream,keyStorePassword)
-        .setTrustedServerCertificateChain(getClass().getResourceAsStream(CA_CERTIFICATE_FILENAME))
-        .build();
-        util.setClient(client);
-        apnsServer = new MockApnsServerBuilder().setHandlerFactory(new AcceptAllPushNotificationHandlerFactory()).setServerCredentials(getClass().getResourceAsStream(SERVER_CERTIFICATES_FILENAME), getClass().getResourceAsStream(SERVER_KEY_FILENAME), null)
-        .build();
+        try (InputStream certificateStream = util.getStreamOfP12File(keyStorePath)) {
+            ApnsClient client = new ApnsClientBuilder().setApnsServer(HOST, PORT)
+                    .setClientCredentials(certificateStream, keyStorePassword)
+                    .setTrustedServerCertificateChain(getClass().getResourceAsStream(CA_CERTIFICATE_FILENAME))
+                    .build();
+            util.setClient(client);
+        }
+        apnsServer = new MockApnsServerBuilder()
+                .setHandlerFactory(new AcceptAllPushNotificationHandlerFactory())
+                .setServerCredentials(getClass().getResourceAsStream(SERVER_CERTIFICATES_FILENAME), getClass().getResourceAsStream(SERVER_KEY_FILENAME), null)
+                .build();
         apnsServer.start(PORT).await();
     }
 
@@ -66,6 +68,7 @@ public class PKSendPushNotificationUtilTest {
 
     @AfterClass
     public void shutDownTest() throws Exception {
+        util.close();
         apnsServer.shutdown();
     }
 }

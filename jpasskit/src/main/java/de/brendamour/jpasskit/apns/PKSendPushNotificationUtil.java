@@ -24,8 +24,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import javax.net.ssl.SSLException;
-
 import com.turo.pushy.apns.ApnsClient;
 import com.turo.pushy.apns.ApnsClientBuilder;
 import com.turo.pushy.apns.PushNotificationResponse;
@@ -38,27 +36,29 @@ import com.turo.pushy.apns.util.concurrent.PushNotificationResponseListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.netty.util.concurrent.Future;
-
-import java.lang.Deprecated;
-
-
-public class PKSendPushNotificationUtil {
+public class PKSendPushNotificationUtil implements AutoCloseable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PKSendPushNotificationUtil.class);
     private static final String EMPTY_PUSH_JSON_STRING = "{}";
+    private static final int POOL_SIZE_DEFAULT = 10;
+
     private ApnsClient client;
 
-    public PKSendPushNotificationUtil(final String pathToP12, final String passwordForP12) throws FileNotFoundException, SSLException, IOException {
-        this(pathToP12, passwordForP12, 10);
+    public PKSendPushNotificationUtil(final String pathToP12, final String passwordForP12) throws IOException {
+        this(pathToP12, passwordForP12, POOL_SIZE_DEFAULT);
     }
 
-    public PKSendPushNotificationUtil(final String pathToP12, final String passwordForP12, final int poolSize) throws FileNotFoundException, SSLException, IOException {
-        InputStream certificateStream = getStreamOfP12File(pathToP12);
-        client = new ApnsClientBuilder().setApnsServer(ApnsClientBuilder.PRODUCTION_APNS_HOST, ApnsClientBuilder.DEFAULT_APNS_PORT)
-        .setClientCredentials(certificateStream,passwordForP12)
-        .setConcurrentConnections(poolSize)
-        .build();
+    public PKSendPushNotificationUtil(final String pathToP12, final String passwordForP12, final int poolSize) throws IOException {
+        try (InputStream certificateStream = getStreamOfP12File(pathToP12)) {
+            client = new ApnsClientBuilder().setApnsServer(ApnsClientBuilder.PRODUCTION_APNS_HOST, ApnsClientBuilder.DEFAULT_APNS_PORT)
+                    .setClientCredentials(certificateStream, passwordForP12)
+                    .setConcurrentConnections(poolSize)
+                    .build();
+        }
+    }
+
+    public void setClient(ApnsClient client) {
+        this.client = client;
     }
 
     protected InputStream getStreamOfP12File(final String pathToP12) throws FileNotFoundException {
@@ -74,7 +74,11 @@ public class PKSendPushNotificationUtil {
         return new FileInputStream(p12File);
     }
 
-    @Deprecated //since="0.1.0"
+    /**
+     * @deprecated
+     * @since 0.1.0
+     */
+    @Deprecated
     public void sendPushNotification(final String pushtoken) {
         try {
             
@@ -85,11 +89,11 @@ public class PKSendPushNotificationUtil {
             if (pushNotificationResponse.isAccepted()) {
                 LOGGER.debug("Push notification accepted by APNs gateway.");
             } else {
-                LOGGER.debug("Notification rejected by the APNs gateway: " +
+                LOGGER.debug("Notification rejected by the APNs gateway: {}",
                         pushNotificationResponse.getRejectionReason());
         
                 if (pushNotificationResponse.getTokenInvalidationTimestamp() != null) {
-                    LOGGER.debug("\t…and the token is invalid as of " +
+                    LOGGER.debug("\t…and the token is invalid as of {}",
                         pushNotificationResponse.getTokenInvalidationTimestamp());
                 }
             }
@@ -97,6 +101,7 @@ public class PKSendPushNotificationUtil {
             LOGGER.error("Failed to send push notification.", e);
         }  catch (final InterruptedException e) {
             LOGGER.error("Failed to send push notification.", e);
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -115,7 +120,11 @@ public class PKSendPushNotificationUtil {
         return client.sendNotification(pushNotification);
     }
 
-    @Deprecated //since="0.1.0"
+    /**
+     * @deprecated
+     * @since 0.1.0
+     */
+    @Deprecated
     public void sendMultiplePushNotifications(final List<String> pushtokens) {
 
         LOGGER.debug("Sending Push notification for keys: {}", pushtokens);
@@ -124,12 +133,10 @@ public class PKSendPushNotificationUtil {
         }
     }
 
-    public void finalize() {
-        try {
-            final Future<Void> closeFuture = client.close();
-            closeFuture.await();
-        } catch(Exception e) {
-            LOGGER.error("error when closing down APNS client",e);
+    @Override
+    public void close() throws InterruptedException {
+        if (this.client != null) {
+            this.client.close().await();
         }
     }
 
@@ -149,9 +156,5 @@ public class PKSendPushNotificationUtil {
                 LOGGER.error("Error sending push notification",future.cause());
             }
         }
-    }
-
-    public void setClient(ApnsClient newClient) {
-        client = newClient;
     }
 }

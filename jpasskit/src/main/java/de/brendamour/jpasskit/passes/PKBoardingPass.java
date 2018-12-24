@@ -33,6 +33,7 @@ public class PKBoardingPass extends PKGenericPass {
         this.transitType = transitType;
     }
 
+    @Override
     public boolean isValid() {
         return getValidationErrors().isEmpty();
     }
