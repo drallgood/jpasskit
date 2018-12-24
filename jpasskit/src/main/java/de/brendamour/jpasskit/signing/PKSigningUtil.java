@@ -22,12 +22,9 @@ import java.net.URL;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.brendamour.jpasskit.PKPass;
 
@@ -58,7 +55,7 @@ public class PKSigningUtil {
     @Deprecated
     public static PKSigningInformation loadSigningInformationFromPKCS12FileAndIntermediateCertificateFile(final String pkcs12KeyStoreFilePath,
             final String keyStorePassword, final String appleWWDRCAFilePath) throws IOException, NoSuchAlgorithmException, CertificateException,
-            KeyStoreException, NoSuchProviderException, UnrecoverableKeyException {
+            KeyStoreException, UnrecoverableKeyException {
 
         return new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(pkcs12KeyStoreFilePath,
                 keyStorePassword, appleWWDRCAFilePath);
@@ -67,21 +64,20 @@ public class PKSigningUtil {
     @Deprecated
     public static PKSigningInformation loadSigningInformationFromPKCS12AndIntermediateCertificateStreams(
             final InputStream pkcs12KeyStoreInputStream, final String keyStorePassword, final InputStream appleWWDRCAFileInputStream)
-            throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, NoSuchProviderException,
-            UnrecoverableKeyException {
+            throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, UnrecoverableKeyException {
         return new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(pkcs12KeyStoreInputStream,
                 keyStorePassword, appleWWDRCAFileInputStream);
     }
 
     @Deprecated
     public static KeyStore loadPKCS12File(final String pathToP12, final String password) throws IOException, NoSuchAlgorithmException,
-            CertificateException, KeyStoreException, NoSuchProviderException {
+            CertificateException, KeyStoreException {
         return new PKSigningInformationUtil().loadPKCS12File(pathToP12, password);
     }
 
     @Deprecated
     public static KeyStore loadPKCS12File(final InputStream inputStreamOfP12, final String password) throws IOException,
-            NoSuchAlgorithmException, CertificateException, KeyStoreException, NoSuchProviderException {
+            NoSuchAlgorithmException, CertificateException, KeyStoreException {
         return new PKSigningInformationUtil().loadPKCS12File(inputStreamOfP12, password);
     }
 

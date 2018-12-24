@@ -38,6 +38,7 @@ public class PKPass implements IPKValidateable {
     private static final long serialVersionUID = -1727648896679270606L;
 
     private static final int EXPECTED_AUTHTOKEN_LENGTH = 16;
+
     private int formatVersion = 1;
     private String serialNumber;
     private String passTypeIdentifier;
@@ -164,7 +165,7 @@ public class PKPass implements IPKValidateable {
         this.teamIdentifier = teamIdentifier;
     }
 
-     public Boolean isVoided() {
+    public Boolean isVoided() {
         return voided;
     }
 
@@ -180,7 +181,7 @@ public class PKPass implements IPKValidateable {
         this.organizationName = organizationName;
     }
 
-   public Map<String, Object> getUserInfo() {
+    public Map<String, Object> getUserInfo() {
         return userInfo;
     }
 
@@ -451,13 +452,12 @@ public class PKPass implements IPKValidateable {
                     + " teamIdentifier" + teamIdentifier + " Description: " + description + " FormatVersion: " + formatVersion
                     + " OrganizationName: " + organizationName);
         }
-        if (passThatWasSet == null) {
-            validationErrors.add("No pass was defined");
-        }
         if (authenticationToken != null && authenticationToken.length() < EXPECTED_AUTHTOKEN_LENGTH) {
             validationErrors.add("The authenticationToken needs to be at least " + EXPECTED_AUTHTOKEN_LENGTH + " long");
         }
-        if (!passThatWasSet.isValid()) {
+        if (passThatWasSet == null) {
+            validationErrors.add("No pass was defined");
+        } else if (!passThatWasSet.isValid()) {
             validationErrors.addAll(passThatWasSet.getValidationErrors());
         }
         // If appLaunchURL key is present, the associatedStoreIdentifiers key must also be present
