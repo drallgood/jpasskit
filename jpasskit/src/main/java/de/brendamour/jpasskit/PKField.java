@@ -15,6 +15,7 @@
  */
 package de.brendamour.jpasskit;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,11 +35,11 @@ public class PKField implements IPKValidateable {
 
     private String key;
     private String label;
-    private Object value;
+    private Serializable value;
     /**
      * @since iOS 7.0
      */
-    private Object attributedValue;
+    private Serializable attributedValue;
     private String changeMessage;
     private PKTextAlignment textAlignment;
 
@@ -67,7 +68,7 @@ public class PKField implements IPKValidateable {
     public PKField() {
     }
 
-    public PKField(String key, String label, Object value) {
+    public PKField(String key, String label, Serializable value) {
         this.key = key;
         this.label = label;
         this.value = value;
@@ -89,11 +90,11 @@ public class PKField implements IPKValidateable {
         this.label = label;
     }
 
-    public Object getValue() {
+    public Serializable getValue() {
         return value;
     }
 
-    public void setValue(final Object value) {
+    public void setValue(final Serializable value) {
         this.value = value;
     }
 
@@ -153,11 +154,11 @@ public class PKField implements IPKValidateable {
         this.isRelative = isRelative;
     }
 
-    public Object getAttributedValue() {
+    public Serializable getAttributedValue() {
         return attributedValue;
     }
 
-    public void setAttributedValue(final Object attributedValue) {
+    public void setAttributedValue(final Serializable attributedValue) {
         this.attributedValue = attributedValue;
     }
 
