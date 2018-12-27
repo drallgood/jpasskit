@@ -98,7 +98,7 @@ public class PKPassTemplateInMemory implements IPKPassTemplate {
         addFile(pathInTemplate, new FileInputStream(file));
     }
 
-    public void addFile(String pathInTemplate, StringBuffer content) throws IOException {
+    public void addFile(String pathInTemplate, CharSequence content) throws IOException {
         addFile(pathInTemplate, new ByteArrayInputStream(content.toString().getBytes()));
     }
 
@@ -114,7 +114,7 @@ public class PKPassTemplateInMemory implements IPKPassTemplate {
         addFile(pathForLocale(pathInTemplate, locale), stream);
     }
 
-    public void addFile(String pathInTemplate, Locale locale, StringBuffer content) throws IOException {
+    public void addFile(String pathInTemplate, Locale locale, CharSequence content) throws IOException {
         addFile(pathForLocale(pathInTemplate, locale), new ByteArrayInputStream(content.toString().getBytes()));
     }
 
