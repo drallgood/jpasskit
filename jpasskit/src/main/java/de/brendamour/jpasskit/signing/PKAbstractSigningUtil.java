@@ -48,7 +48,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
+import com.fasterxml.jackson.databind.util.StdDateFormat;
 
 import de.brendamour.jpasskit.PKBarcode;
 import de.brendamour.jpasskit.PKPass;
@@ -126,7 +126,7 @@ public abstract class PKAbstractSigningUtil implements IPKSigningUtil {
 
     protected ObjectWriter configureObjectMapper(final ObjectMapper jsonObjectMapper) {
         jsonObjectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        jsonObjectMapper.setDateFormat(new ISO8601DateFormat());
+        jsonObjectMapper.setDateFormat(new StdDateFormat());
 
         SimpleFilterProvider filters = new SimpleFilterProvider();
 

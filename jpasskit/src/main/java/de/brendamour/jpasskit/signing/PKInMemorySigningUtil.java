@@ -137,7 +137,7 @@ public final class PKInMemorySigningUtil extends PKAbstractSigningUtil {
         }
     }
 
-    private Map<String, String> hashFiles(Map<String, ByteBuffer> files, final HashFunction hashFunction) throws PKSigningException {
+    private Map<String, String> hashFiles(Map<String, ByteBuffer> files, final HashFunction hashFunction) {
         Map<String, String> fileWithHashMap = new HashMap<>();
         for (Entry<String, ByteBuffer> passResourceFile : files.entrySet()) {
             HashCode hash = hashFunction.hashBytes(passResourceFile.getValue().array());
