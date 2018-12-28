@@ -9,7 +9,9 @@ There are two separate projects:
 
 **Current stable release:** 0.1.0
 
-**Development Version:** 0.1.1-SNAPSHOT [![Build Status][image-1]][1]
+**Development Version:** 0.1.1-SNAPSHOT [![Build Status][image-1]][1] 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/06abe09a4e9a4d52b044230d4a811ca2)](https://app.codacy.com/app/drallgood/jpasskit?utm_source=github.com&utm_medium=referral&utm_content=drallgood/jpasskit&utm_campaign=Badge_Grade_Settings)
+[![DepShield Badge](https://depshield.sonatype.org/badges/drallgood/jpasskit/depshield.svg)](https://depshield.github.io)
 
 ## Installation
 
