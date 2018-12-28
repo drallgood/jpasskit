@@ -185,27 +185,52 @@ public class PKField implements IPKValidateable {
     public List<String> getValidationErrors() {
 
         List<String> validationErrors = new ArrayList<String>();
-        if (value == null || StringUtils.isEmpty(key)) {
-            validationErrors.add("Not all required Fields are set. Key: " + key + " Value:" + value);
+        checkRequiredFields(validationErrors);
+        checkValueType(validationErrors);
+        checkCurrencyCodeAndNumberStyleAreNotBothSet(validationErrors);
+        checkNumberOrCurrencyAndDateNotSetAtTheSameTime(validationErrors);
+        checkChangeMessageContainsPlaceholder(validationErrors);
+        checkCurrencyValueIsNumeric(validationErrors);
+        return validationErrors;
+    }
+
+	private void checkCurrencyValueIsNumeric(List<String> validationErrors) {
+		if (currencyCode != null && !(value instanceof Integer || value instanceof Float || value instanceof Long
+                || value instanceof Double || value instanceof BigDecimal)) {
+            validationErrors.add("When using currencies, the values have to be numbers");
         }
-        if (!(value instanceof String || value instanceof Integer || value instanceof Float || value instanceof Long || value instanceof Double
-                || value instanceof Date || value instanceof BigDecimal)) {
-            validationErrors.add("Invalid value type. Allowed: String, Integer, Float, Long, Double, java.util.Date, BigDecimal");
-        }
-        if (currencyCode != null && numberStyle != null) {
-            validationErrors.add("CurrencyCode and numberStyle are both set");
-        }
-        if ((currencyCode != null || numberStyle != null) && (dateStyle != null || timeStyle != null)) {
-            validationErrors.add("Can't be number/currency and date at the same time");
-        }
+    }
+
+    private void checkChangeMessageContainsPlaceholder(List<String> validationErrors) {
         if (changeMessage != null && !changeMessage.contains("%@")) {
             validationErrors.add("ChangeMessage needs to contain %@ placeholder");
         }
-        if (currencyCode != null
-                && !(value instanceof Integer || value instanceof Float || value instanceof Long || value instanceof Double || value instanceof BigDecimal)) {
-            validationErrors.add("When using currencies, the values have to be numbers");
+    }
+
+    private void checkNumberOrCurrencyAndDateNotSetAtTheSameTime(List<String> validationErrors) {
+        if ((currencyCode != null || numberStyle != null) && (dateStyle != null || timeStyle != null)) {
+            validationErrors.add("Can't be number/currency and date at the same time");
         }
-        return validationErrors;
+    }
+
+    private void checkCurrencyCodeAndNumberStyleAreNotBothSet(List<String> validationErrors) {
+        if (currencyCode != null && numberStyle != null) {
+            validationErrors.add("CurrencyCode and numberStyle are both set");
+        }
+    }
+
+    private void checkValueType(List<String> validationErrors) {
+		if (!(value instanceof String || value instanceof Integer || value instanceof Float || value instanceof Long
+                || value instanceof Double || value instanceof Date || value instanceof BigDecimal)) {
+            validationErrors.add(
+                    "Invalid value type. Allowed: String, Integer, Float, Long, Double, java.util.Date, BigDecimal");
+        }
+    }
+
+    private void checkRequiredFields(List<String> validationErrors) {
+        if (value == null || StringUtils.isEmpty(key)) {
+            validationErrors.add("Not all required Fields are set. Key: " + key + " Value:" + value);
+        }
     }
 
     @Override
