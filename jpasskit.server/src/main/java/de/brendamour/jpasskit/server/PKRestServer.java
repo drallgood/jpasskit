@@ -67,7 +67,7 @@ public class PKRestServer {
 				return;
 			}
 		}
-		throw new RuntimeException("Server needs to be configured accordingly.");
+		throw new PKServerConfigurationException("Server needs to be configured accordingly.");
 	}
 
 	private void createPKRestWebService() {
@@ -116,7 +116,7 @@ public class PKRestServer {
 		String keyPassword = serverConfigurationProperties.getProperty(SERVER_BIND_SSL_KEY_PASSWORD_KEY);
 
 		if (StringUtils.isEmpty(keystorePath) || StringUtils.isEmpty(keystoreType)) {
-			throw new RuntimeException("SSL is enabled but not set up correct. We need at least a keystore path and -type");
+			throw new PKServerConfigurationException("SSL is enabled but not set up correct. We need at least a keystore path and -type");
 		}
 
 		Series<Parameter> parameters = restTrustedServer.getContext().getParameters();
