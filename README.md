@@ -10,7 +10,7 @@ There are two separate projects:
 **Current stable release:** 0.1.0
 
 **Development Version:** 0.1.1-SNAPSHOT [![Build Status][image-1]][1] 
-[![DepShield Badge](https://depshield.sonatype.org/badges/owner/repository/depshield.svg)](https://depshield.github.io)
+[![DepShield Badge](https://depshield.sonatype.org/badges/drallgood/jpasskit/depshield.svg)](https://depshield.github.io)
 
 ## Installation
 
