@@ -276,7 +276,6 @@ public class PKPass implements IPKValidateable {
 
     public void setBarcodes(final List<PKBarcode> barcodes) {
         this.barcodes = barcodes;
-        this.barcode = null;
     }
 
     public PKEventTicket getEventTicket() {
