@@ -446,29 +446,53 @@ public class PKPass implements IPKValidateable {
     public List<String> getValidationErrors() {
         List<String> validationErrors = new ArrayList<String>();
 
-        if (StringUtils.isEmpty(serialNumber) || StringUtils.isEmpty(passTypeIdentifier) || StringUtils.isEmpty(teamIdentifier)
-                || StringUtils.isEmpty(description) || formatVersion == 0 || StringUtils.isEmpty(organizationName)) {
-            validationErrors.add("Not all required Fields are set. SerialNumber" + serialNumber + " PassTypeIdentifier: " + passTypeIdentifier
-                    + " teamIdentifier" + teamIdentifier + " Description: " + description + " FormatVersion: " + formatVersion
-                    + " OrganizationName: " + organizationName);
+        checkRequiredFields(validationErrors);
+        checkAuthToken(validationErrors);
+        checkPass(validationErrors);
+        checkAssociatedAppIfSet(validationErrors);
+        checkGroupingIdentifierIsOnlySetWhenAllowed(validationErrors);
+        return validationErrors;
+    }
+
+	private void checkGroupingIdentifierIsOnlySetWhenAllowed(List<String> validationErrors) {
+		// groupingIdentifier key is optional for event tickets and boarding passes;
+        // otherwise not allowed
+        if (StringUtils.isNotEmpty(groupingIdentifier) && eventTicket == null && boardingPass == null) {
+            validationErrors.add(
+                    "The groupingIdentifier is optional for event tickets and boarding passes, otherwise not allowed");
         }
-        if (authenticationToken != null && authenticationToken.length() < EXPECTED_AUTHTOKEN_LENGTH) {
-            validationErrors.add("The authenticationToken needs to be at least " + EXPECTED_AUTHTOKEN_LENGTH + " long");
+    }
+
+    private void checkAssociatedAppIfSet(List<String> validationErrors) {
+        // If appLaunchURL key is present, the associatedStoreIdentifiers key must also
+        // be present
+        if (appLaunchURL != null && CollectionUtils.isEmpty(associatedStoreIdentifiers)) {
+            validationErrors.add("The appLaunchURL requires associatedStoreIdentifiers to be specified");
         }
+    }
+
+    private void checkPass(List<String> validationErrors) {
         if (passThatWasSet == null) {
             validationErrors.add("No pass was defined");
         } else if (!passThatWasSet.isValid()) {
             validationErrors.addAll(passThatWasSet.getValidationErrors());
         }
-        // If appLaunchURL key is present, the associatedStoreIdentifiers key must also be present
-        if (appLaunchURL != null && CollectionUtils.isEmpty(associatedStoreIdentifiers)) {
-            validationErrors.add("The appLaunchURL requires associatedStoreIdentifiers to be specified");
+    }
+
+    private void checkAuthToken(List<String> validationErrors) {
+        if (authenticationToken != null && authenticationToken.length() < EXPECTED_AUTHTOKEN_LENGTH) {
+            validationErrors.add("The authenticationToken needs to be at least " + EXPECTED_AUTHTOKEN_LENGTH + " long");
         }
-        // groupingIdentifier key is optional for event tickets and boarding passes; otherwise not allowed
-        if (StringUtils.isNotEmpty(groupingIdentifier) && eventTicket == null && boardingPass == null) {
-            validationErrors.add("The groupingIdentifier is optional for event tickets and boarding passes, otherwise not allowed");
+    }
+
+    private void checkRequiredFields(List<String> validationErrors) {
+		if (StringUtils.isEmpty(serialNumber) || StringUtils.isEmpty(passTypeIdentifier) || StringUtils.isEmpty(teamIdentifier)
+                || StringUtils.isEmpty(description) || formatVersion == 0 || StringUtils.isEmpty(organizationName)) {
+            validationErrors
+                    .add("Not all required Fields are set. SerialNumber" + serialNumber + " PassTypeIdentifier: "
+                            + passTypeIdentifier + " teamIdentifier" + teamIdentifier + " Description: " + description
+                            + " FormatVersion: " + formatVersion + " OrganizationName: " + organizationName);
         }
-        return validationErrors;
     }
 
     @Override
