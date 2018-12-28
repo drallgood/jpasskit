@@ -62,9 +62,6 @@ public class PKPass implements IPKValidateable {
     private List<PKBeacon> beacons;
     private List<PKLocation> locations;
 
-    @Deprecated //deprecated in iOS 9 and replaced with barcodes
-    private PKBarcode barcode;
-    
     private List<PKBarcode> barcodes;
 
     private PKEventTicket eventTicket;
@@ -92,15 +89,12 @@ public class PKPass implements IPKValidateable {
     private Date expirationDate;
     private Boolean voided; // The key is optional, default value is false
 
-    @Deprecated // In iOS 7.0, a shine effect is never applied
-    private Boolean suppressStripShine;
-
     // Feature added in iOS 9.0. It is not applicable to older iOS
     private PKNFC nfc;
-    
+
     // Added 2018-06-07
     private boolean sharingProhibited;
-    
+
     public String getSerialNumber() {
         return serialNumber;
     }
@@ -253,35 +247,12 @@ public class PKPass implements IPKValidateable {
         this.locations = locations;
     }
 
-    public PKBarcode getBarcode() {
-        List<PKBarcode> barcodes = getBarcodes();
-        if (CollectionUtils.isNotEmpty(barcodes)) {
-            for (PKBarcode barcode : barcodes) {
-                if (barcode.isValidInIosVersionsBefore9()) {
-                    return barcode;
-                }
-            }
-        }
-        return null;
-    }
-
-    @Deprecated
-    public void setBarcode(final PKBarcode barcode) {
-        // avoid conflicts with 'setBarcodes' method:
-        if (barcodes == null || barcodes.size() < 2) {
-            if (barcode != null) {
-                setBarcodes(Collections.singletonList(barcode));
-            }
-        }
-    }
-
     public List<PKBarcode> getBarcodes() {
         return barcodes;
     }
 
     public void setBarcodes(final List<PKBarcode> barcodes) {
         this.barcodes = barcodes;
-        this.barcode = null;
     }
 
     public PKEventTicket getEventTicket() {
@@ -409,20 +380,6 @@ public class PKPass implements IPKValidateable {
         this.expirationDate = expirationDate;
     }
 
-    @Deprecated
-    public Boolean isSuppressStripShine() {
-        return suppressStripShine;
-    }
-
-    @Deprecated
-    public void setSuppressStripShine(final Boolean suppressStripShine) {
-        if (suppressStripShine) {
-            this.suppressStripShine = suppressStripShine;
-        } else {
-            this.suppressStripShine = null;
-        }
-    }
-
     public PKNFC getNFC() {
         return this.nfc;
     }
@@ -446,29 +403,53 @@ public class PKPass implements IPKValidateable {
     public List<String> getValidationErrors() {
         List<String> validationErrors = new ArrayList<String>();
 
-        if (StringUtils.isEmpty(serialNumber) || StringUtils.isEmpty(passTypeIdentifier) || StringUtils.isEmpty(teamIdentifier)
-                || StringUtils.isEmpty(description) || formatVersion == 0 || StringUtils.isEmpty(organizationName)) {
-            validationErrors.add("Not all required Fields are set. SerialNumber" + serialNumber + " PassTypeIdentifier: " + passTypeIdentifier
-                    + " teamIdentifier" + teamIdentifier + " Description: " + description + " FormatVersion: " + formatVersion
-                    + " OrganizationName: " + organizationName);
+        checkRequiredFields(validationErrors);
+        checkAuthToken(validationErrors);
+        checkPass(validationErrors);
+        checkAssociatedAppIfSet(validationErrors);
+        checkGroupingIdentifierIsOnlySetWhenAllowed(validationErrors);
+        return validationErrors;
+    }
+
+    private void checkGroupingIdentifierIsOnlySetWhenAllowed(List<String> validationErrors) {
+        // groupingIdentifier key is optional for event tickets and boarding passes;
+        // otherwise not allowed
+        if (StringUtils.isNotEmpty(groupingIdentifier) && eventTicket == null && boardingPass == null) {
+            validationErrors.add(
+                    "The groupingIdentifier is optional for event tickets and boarding passes, otherwise not allowed");
         }
-        if (authenticationToken != null && authenticationToken.length() < EXPECTED_AUTHTOKEN_LENGTH) {
-            validationErrors.add("The authenticationToken needs to be at least " + EXPECTED_AUTHTOKEN_LENGTH + " long");
+    }
+
+    private void checkAssociatedAppIfSet(List<String> validationErrors) {
+        // If appLaunchURL key is present, the associatedStoreIdentifiers key must also
+        // be present
+        if (appLaunchURL != null && CollectionUtils.isEmpty(associatedStoreIdentifiers)) {
+            validationErrors.add("The appLaunchURL requires associatedStoreIdentifiers to be specified");
         }
+    }
+
+    private void checkPass(List<String> validationErrors) {
         if (passThatWasSet == null) {
             validationErrors.add("No pass was defined");
         } else if (!passThatWasSet.isValid()) {
             validationErrors.addAll(passThatWasSet.getValidationErrors());
         }
-        // If appLaunchURL key is present, the associatedStoreIdentifiers key must also be present
-        if (appLaunchURL != null && CollectionUtils.isEmpty(associatedStoreIdentifiers)) {
-            validationErrors.add("The appLaunchURL requires associatedStoreIdentifiers to be specified");
+    }
+
+    private void checkAuthToken(List<String> validationErrors) {
+        if (authenticationToken != null && authenticationToken.length() < EXPECTED_AUTHTOKEN_LENGTH) {
+            validationErrors.add("The authenticationToken needs to be at least " + EXPECTED_AUTHTOKEN_LENGTH + " long");
         }
-        // groupingIdentifier key is optional for event tickets and boarding passes; otherwise not allowed
-        if (StringUtils.isNotEmpty(groupingIdentifier) && eventTicket == null && boardingPass == null) {
-            validationErrors.add("The groupingIdentifier is optional for event tickets and boarding passes, otherwise not allowed");
+    }
+
+    private void checkRequiredFields(List<String> validationErrors) {
+        if (StringUtils.isEmpty(serialNumber) || StringUtils.isEmpty(passTypeIdentifier) || StringUtils.isEmpty(teamIdentifier)
+                || StringUtils.isEmpty(description) || formatVersion == 0 || StringUtils.isEmpty(organizationName)) {
+            validationErrors
+                    .add("Not all required Fields are set. SerialNumber" + serialNumber + " PassTypeIdentifier: "
+                            + passTypeIdentifier + " teamIdentifier" + teamIdentifier + " Description: " + description
+                            + " FormatVersion: " + formatVersion + " OrganizationName: " + organizationName);
         }
-        return validationErrors;
     }
 
     @Override

@@ -4,9 +4,13 @@ All notable changes to this project will be documented in this file.
 ## 0.x.x - date
 
 ### Added
+
 - Added filter to ignore all files starting with dot
 
 ### Deprecated
+
+- Removed deprecated methods that haven't been valid since iOS 9
+
 ### Removed
 
 ## 0.1.0 - 2018-10-04

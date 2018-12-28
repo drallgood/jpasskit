@@ -81,19 +81,6 @@ public class PKPassTest {
         Assert.assertNotNull(barcodes);
         Assert.assertEquals(barcodes.size(), 2);
     }
-    
-    @Test
-    public void test_barcodeFallback() {
-        fillPkPassFields();
-        
-        List<PKBarcode> barcodes = pkPass.getBarcodes();
-        Assert.assertNotNull(barcodes);
-        Assert.assertEquals(barcodes.size(), 2);
-        
-        PKBarcode barcodeFromDeprecatedFieldForIos8 = pkPass.getBarcode();
-        Assert.assertNotNull(barcodeFromDeprecatedFieldForIos8);
-        Assert.assertEquals(barcodeFromDeprecatedFieldForIos8.getFormat(), PKBarcodeFormat.PKBarcodeFormatQR);
-    }
 
     @Test
     public void test_colorConversionFromString() {
