@@ -194,8 +194,8 @@ public class PKField implements IPKValidateable {
         return validationErrors;
     }
 
-	private void checkCurrencyValueIsNumeric(List<String> validationErrors) {
-		if (currencyCode != null && !(value instanceof Integer || value instanceof Float || value instanceof Long
+    private void checkCurrencyValueIsNumeric(List<String> validationErrors) {
+        if (currencyCode != null && !(value instanceof Integer || value instanceof Float || value instanceof Long
                 || value instanceof Double || value instanceof BigDecimal)) {
             validationErrors.add("When using currencies, the values have to be numbers");
         }
@@ -220,7 +220,7 @@ public class PKField implements IPKValidateable {
     }
 
     private void checkValueType(List<String> validationErrors) {
-		if (!(value instanceof String || value instanceof Integer || value instanceof Float || value instanceof Long
+        if (!(value instanceof String || value instanceof Integer || value instanceof Float || value instanceof Long
                 || value instanceof Double || value instanceof Date || value instanceof BigDecimal)) {
             validationErrors.add(
                     "Invalid value type. Allowed: String, Integer, Float, Long, Double, java.util.Date, BigDecimal");

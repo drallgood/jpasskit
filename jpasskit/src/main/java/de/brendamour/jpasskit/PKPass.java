@@ -61,7 +61,7 @@ public class PKPass implements IPKValidateable {
 
     private List<PKBeacon> beacons;
     private List<PKLocation> locations;
-    
+
     private List<PKBarcode> barcodes;
 
     private PKEventTicket eventTicket;
@@ -94,10 +94,10 @@ public class PKPass implements IPKValidateable {
 
     // Feature added in iOS 9.0. It is not applicable to older iOS
     private PKNFC nfc;
-    
+
     // Added 2018-06-07
     private boolean sharingProhibited;
-    
+
     public String getSerialNumber() {
         return serialNumber;
     }
@@ -448,8 +448,8 @@ public class PKPass implements IPKValidateable {
         return validationErrors;
     }
 
-	private void checkGroupingIdentifierIsOnlySetWhenAllowed(List<String> validationErrors) {
-		// groupingIdentifier key is optional for event tickets and boarding passes;
+    private void checkGroupingIdentifierIsOnlySetWhenAllowed(List<String> validationErrors) {
+        // groupingIdentifier key is optional for event tickets and boarding passes;
         // otherwise not allowed
         if (StringUtils.isNotEmpty(groupingIdentifier) && eventTicket == null && boardingPass == null) {
             validationErrors.add(
@@ -480,7 +480,7 @@ public class PKPass implements IPKValidateable {
     }
 
     private void checkRequiredFields(List<String> validationErrors) {
-		if (StringUtils.isEmpty(serialNumber) || StringUtils.isEmpty(passTypeIdentifier) || StringUtils.isEmpty(teamIdentifier)
+        if (StringUtils.isEmpty(serialNumber) || StringUtils.isEmpty(passTypeIdentifier) || StringUtils.isEmpty(teamIdentifier)
                 || StringUtils.isEmpty(description) || formatVersion == 0 || StringUtils.isEmpty(organizationName)) {
             validationErrors
                     .add("Not all required Fields are set. SerialNumber" + serialNumber + " PassTypeIdentifier: "
