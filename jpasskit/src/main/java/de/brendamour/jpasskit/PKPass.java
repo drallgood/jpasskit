@@ -89,9 +89,6 @@ public class PKPass implements IPKValidateable {
     private Date expirationDate;
     private Boolean voided; // The key is optional, default value is false
 
-    @Deprecated // In iOS 7.0, a shine effect is never applied
-    private Boolean suppressStripShine;
-
     // Feature added in iOS 9.0. It is not applicable to older iOS
     private PKNFC nfc;
 
@@ -250,26 +247,6 @@ public class PKPass implements IPKValidateable {
         this.locations = locations;
     }
 
-    public PKBarcode getBarcode() {
-        List<PKBarcode> barcodes = getBarcodes();
-        if (CollectionUtils.isNotEmpty(barcodes)) {
-            for (PKBarcode barcode : barcodes) {
-                if (barcode.isValidInIosVersionsBefore9()) {
-                    return barcode;
-                }
-            }
-        }
-        return null;
-    }
-
-    @Deprecated
-    public void setBarcode(final PKBarcode barcode) {
-        // avoid conflicts with 'setBarcodes' method:
-        if ((barcodes == null || barcodes.size() < 2) && barcode != null) {
-            setBarcodes(Collections.singletonList(barcode));
-        }
-    }
-
     public List<PKBarcode> getBarcodes() {
         return barcodes;
     }
@@ -401,20 +378,6 @@ public class PKPass implements IPKValidateable {
 
     public void setExpirationDate(final Date expirationDate) {
         this.expirationDate = expirationDate;
-    }
-
-    @Deprecated
-    public Boolean isSuppressStripShine() {
-        return suppressStripShine;
-    }
-
-    @Deprecated
-    public void setSuppressStripShine(final Boolean suppressStripShine) {
-        if (suppressStripShine) {
-            this.suppressStripShine = suppressStripShine;
-        } else {
-            this.suppressStripShine = null;
-        }
     }
 
     public PKNFC getNFC() {
