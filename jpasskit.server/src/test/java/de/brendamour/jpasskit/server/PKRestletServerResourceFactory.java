@@ -121,7 +121,7 @@ public class PKRestletServerResourceFactory implements IPKRestletServerResourceF
 					return new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(PKCS12_FILE_PATH,
 							PKCS12_FILE_PASSWORD, APPLE_WWDRCA_CERT_PATH);
 				} catch (Exception e) {
-					throw new RuntimeException(e);
+					throw new PKServerConfigurationException(e);
 				}
 			}
 
