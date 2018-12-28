@@ -22,6 +22,9 @@ public class PKNFC implements Serializable {
     private static final long serialVersionUID = -2017873167088954297L;
     private String message;
     private String encryptionPublicKey;
+    
+    public PKNFC() {
+    }
 
     public String getMessage() {
         return message;
