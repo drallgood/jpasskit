@@ -88,7 +88,7 @@ public class PKPassTemplateInMemory implements IPKPassTemplate {
     }
 
     public void addFile(String pathInTemplate, InputStream stream) throws IOException {
-        try(InputStream inputStream = stream) {
+        try (InputStream inputStream = stream) {
             byte[] byteArray = IOUtils.toByteArray(inputStream);
             files.put(pathInTemplate, byteArray);
         }
