@@ -15,9 +15,12 @@
  */
 package de.brendamour.jpasskit.signing;
 
+import static org.apache.commons.io.IOUtils.toByteArray;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -28,7 +31,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.testng.Assert;
@@ -52,89 +54,91 @@ public class PKPassTemplateInMemoryTest {
 
     @Test
     public void addFile_asStream() throws IOException {
-        byte[] expectedArray = "Hello".getBytes();
-        pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_BACKGROUND, new ByteArrayInputStream(expectedArray));
-        Map<String, byte[]> files = pkPassTemplateInMemory.getFiles();
+        byte[] source = "Hello".getBytes();
+        ByteBuffer expectedBuffer = ByteBuffer.wrap(source);
+        pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_BACKGROUND, new ByteArrayInputStream(source));
+        Map<String, ByteBuffer> files = pkPassTemplateInMemory.getAllFiles();
         Assert.assertEquals(files.size(), 1);
-        Assert.assertEquals(files.get(PKPassTemplateInMemory.PK_BACKGROUND), expectedArray);
+        Assert.assertEquals(files.get(PKPassTemplateInMemory.PK_BACKGROUND), expectedBuffer);
     }
 
     @Test
     public void addFile_asStream_withLocale() throws IOException {
-        byte[] expectedArray = "Hello".getBytes();
-        pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_BACKGROUND, Locale.ENGLISH, new ByteArrayInputStream(expectedArray));
-        Map<String, byte[]> files = pkPassTemplateInMemory.getFiles();
+        byte[] source = "Hello".getBytes();
+        ByteBuffer expectedBuffer = ByteBuffer.wrap(source);
+        pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_BACKGROUND, Locale.ENGLISH, new ByteArrayInputStream(source));
+        Map<String, ByteBuffer> files = pkPassTemplateInMemory.getAllFiles();
         Assert.assertEquals(files.size(), 1);
-        Assert.assertEquals(files.get("en.lproj" + SEPARATOR + PKPassTemplateInMemory.PK_BACKGROUND), expectedArray);
+        Assert.assertEquals(files.get("en.lproj" + SEPARATOR + PKPassTemplateInMemory.PK_BACKGROUND), expectedBuffer);
     }
 
     @Test
     public void addFile_asFile() throws IOException {
         URL iconFileURL = PKPassTemplateInMemoryTest.class.getClassLoader().getResource("StoreCard.raw/icon@2x.png");
         File iconFile = new File(iconFileURL.getFile());
-        byte[] expectedArray = IOUtils.toByteArray(iconFileURL);
+        ByteBuffer expectedBuffer = ByteBuffer.wrap(toByteArray(iconFileURL));
         pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, iconFile);
-        Map<String, byte[]> files = pkPassTemplateInMemory.getFiles();
+        Map<String, ByteBuffer> files = pkPassTemplateInMemory.getAllFiles();
         Assert.assertEquals(files.size(), 1);
-        Assert.assertEquals(files.get(PKPassTemplateInMemory.PK_ICON_RETINA), expectedArray);
+        Assert.assertEquals(files.get(PKPassTemplateInMemory.PK_ICON_RETINA), expectedBuffer);
     }
 
     @Test
     public void addFile_asFile_withLocale() throws IOException {
         URL iconFileURL = PKPassTemplateInMemoryTest.class.getClassLoader().getResource("StoreCard.raw/icon@2x.png");
         File iconFile = new File(iconFileURL.getFile());
-        byte[] expectedArray = IOUtils.toByteArray(iconFileURL);
+        ByteBuffer expectedBuffer = ByteBuffer.wrap(toByteArray(iconFileURL));
         pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, Locale.ENGLISH, iconFile);
-        Map<String, byte[]> files = pkPassTemplateInMemory.getFiles();
+        Map<String, ByteBuffer> files = pkPassTemplateInMemory.getAllFiles();
         Assert.assertEquals(files.size(), 1);
-        Assert.assertEquals(files.get("en.lproj" + SEPARATOR + PKPassTemplateInMemory.PK_ICON_RETINA), expectedArray);
+        Assert.assertEquals(files.get("en.lproj" + SEPARATOR + PKPassTemplateInMemory.PK_ICON_RETINA), expectedBuffer);
     }
 
     @Test
     public void addFile_asString() throws IOException {
         StringBuffer stringBuffer = new StringBuffer("Hi");
         pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, stringBuffer);
-        byte[] expectedArray = stringBuffer.toString().getBytes();
-        Map<String, byte[]> files = pkPassTemplateInMemory.getFiles();
+        ByteBuffer expectedBuffer = ByteBuffer.wrap(stringBuffer.toString().getBytes());
+        Map<String, ByteBuffer> files = pkPassTemplateInMemory.getAllFiles();
         Assert.assertEquals(files.size(), 1);
-        Assert.assertEquals(files.get(PKPassTemplateInMemory.PK_ICON_RETINA), expectedArray);
+        Assert.assertEquals(files.get(PKPassTemplateInMemory.PK_ICON_RETINA), expectedBuffer);
     }
 
     @Test
     public void addFile_asString_withLocale() throws IOException {
         StringBuffer stringBuffer = new StringBuffer("Hi");
         pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, Locale.ENGLISH, stringBuffer);
-        byte[] expectedArray = stringBuffer.toString().getBytes();
-        Map<String, byte[]> files = pkPassTemplateInMemory.getFiles();
+        ByteBuffer expectedBuffer = ByteBuffer.wrap(stringBuffer.toString().getBytes());
+        Map<String, ByteBuffer> files = pkPassTemplateInMemory.getAllFiles();
         Assert.assertEquals(files.size(), 1);
-        Assert.assertEquals(files.get("en.lproj" + SEPARATOR + PKPassTemplateInMemory.PK_ICON_RETINA), expectedArray);
+        Assert.assertEquals(files.get("en.lproj" + SEPARATOR + PKPassTemplateInMemory.PK_ICON_RETINA), expectedBuffer);
     }
 
     @Test
     public void addFile_fromURL() throws IOException {
         URL url = new URL("https://upload.wikimedia.org/wikipedia/commons/2/22/Big.Buck.Bunny.-.Bunny.Portrait.png");
         pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, url);
-        byte[] expectedArray = IOUtils.toByteArray(url);
-        Map<String, byte[]> files = pkPassTemplateInMemory.getFiles();
+        ByteBuffer expectedBuffer = ByteBuffer.wrap(toByteArray(url));
+        Map<String, ByteBuffer> files = pkPassTemplateInMemory.getAllFiles();
         Assert.assertEquals(files.size(), 1);
-        Assert.assertEquals(files.get(PKPassTemplateInMemory.PK_ICON_RETINA), expectedArray);
+        Assert.assertEquals(files.get(PKPassTemplateInMemory.PK_ICON_RETINA), expectedBuffer);
     }
 
     @Test
     public void addFile_fromURL_withLocale() throws IOException {
         URL url = new URL("https://upload.wikimedia.org/wikipedia/commons/2/22/Big.Buck.Bunny.-.Bunny.Portrait.png");
         pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, Locale.ENGLISH, url);
-        byte[] expectedArray = IOUtils.toByteArray(url);
-        Map<String, byte[]> files = pkPassTemplateInMemory.getFiles();
+        ByteBuffer expectedBuffer = ByteBuffer.wrap(toByteArray(url));
+        Map<String, ByteBuffer> files = pkPassTemplateInMemory.getAllFiles();
         Assert.assertEquals(files.size(), 1);
-        Assert.assertEquals(files.get("en.lproj" + SEPARATOR + PKPassTemplateInMemory.PK_ICON_RETINA), expectedArray);
+        Assert.assertEquals(files.get("en.lproj" + SEPARATOR + PKPassTemplateInMemory.PK_ICON_RETINA), expectedBuffer);
     }
 
     @Test
     public void addAllFiles() throws IOException {
 
         pkPassTemplateInMemory.addAllFiles(PASS_TEMPLATE_FOLDER);
-        Map<String, byte[]> files = pkPassTemplateInMemory.getFiles();
+        Map<String, ByteBuffer> files = pkPassTemplateInMemory.getAllFiles();
         Assert.assertEquals(files.size(), 8);
     }
 
@@ -176,6 +180,20 @@ public class PKPassTemplateInMemoryTest {
         }
     }
 
+    @Test
+    public void test_getFilesShouldReturnTheExpectedResult() throws IOException, URISyntaxException {
+        byte[] source = "Hello".getBytes();
+        pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_BACKGROUND, new ByteArrayInputStream(source));
+        Map<String, InputStream> streamMap = pkPassTemplateInMemory.getFiles();
+        Assert.assertEquals(streamMap.size(), 1);
+        Assert.assertEquals(inputStreamToArray(streamMap.get(PKPassTemplateInMemory.PK_BACKGROUND)), source);
+    }
+
+    private byte[] inputStreamToArray(InputStream stream) throws IOException {
+        try (InputStream is = stream) {
+            return toByteArray(is);
+        }
+    }
     private void prepareTemplate() throws IOException {
         // icon
         URL iconFileURL = PKPassTemplateInMemoryTest.class.getClassLoader().getResource("StoreCard.raw/icon@2x.png");
