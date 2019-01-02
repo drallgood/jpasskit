@@ -136,8 +136,13 @@ public class PKPassTemplateInMemory implements IPKPassTemplate {
         }
     }
 
-    public Map<String, byte[]> getFiles() {
-        return files;
+    @Deprecated
+    public Map<String, InputStream> getFiles() {
+        Map<String, InputStream> streamMap = new HashMap<>(files.size());
+        for (Entry<String, byte[]> entry : files.entrySet()) {
+            streamMap.put(entry.getKey(), new ByteArrayInputStream(entry.getValue()));
+        }
+        return streamMap;
     }
 
     private String pathForLocale(String pathInTemplate, Locale locale) {
