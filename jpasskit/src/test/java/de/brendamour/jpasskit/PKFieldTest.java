@@ -33,7 +33,7 @@ public class PKFieldTest {
     private static final String VALUE_TEXT = "some Text";
     private static final String CHANGEMESSAGE = "Changed %@";
     private static final String LABEL = "Label";
-    private static final BigDecimal VALUE_CURRENCY = new BigDecimal(25.20).setScale(2, RoundingMode.HALF_UP);
+    private static final BigDecimal VALUE_CURRENCY = new BigDecimal("25.20").setScale(2, RoundingMode.HALF_UP);
     private static final String CURRENCYCODE = "EUR";
     private static final String ATTRIBUTED_VALUE = "<a href='http://example.com/customers/123'>Edit my profile</a>";
     private PKField pkField;
