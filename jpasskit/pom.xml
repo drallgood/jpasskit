@@ -64,7 +64,7 @@
 	<properties>
 		<current.year>2018</current.year>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<javadoc.version>2.9.1</javadoc.version>
+		<javadoc.version>3.0.1</javadoc.version>
 	</properties>
 
 	<dependencies>
