@@ -18,12 +18,11 @@ package de.brendamour.jpasskit;
 import java.awt.Color;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -423,7 +422,7 @@ public class PKPass implements IPKValidateable {
     private void checkAssociatedAppIfSet(List<String> validationErrors) {
         // If appLaunchURL key is present, the associatedStoreIdentifiers key must also
         // be present
-        if (appLaunchURL != null && CollectionUtils.isEmpty(associatedStoreIdentifiers)) {
+        if (appLaunchURL != null && isEmpty(associatedStoreIdentifiers)) {
             validationErrors.add("The appLaunchURL requires associatedStoreIdentifiers to be specified");
         }
     }
@@ -492,5 +491,9 @@ public class PKPass implements IPKValidateable {
             }
         }
         return color;
+    }
+
+    public static boolean isEmpty(Collection<?> coll) {
+        return coll == null || coll.isEmpty();
     }
 }
