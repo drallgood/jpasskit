@@ -16,6 +16,7 @@
 package de.brendamour.jpasskit.server;
 
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
@@ -47,13 +48,13 @@ public class PKRestletServerResourceFactory implements IPKRestletServerResourceF
 
 			@Override
 			protected Status handleRegisterDeviceRequest(final String deviceLibraryIdentifier, final String passTypeIdentifier,
-					final String serialNumber, final String authString, final PKPushToken pushToken) throws PKAuthTokenNotValidException {
+					final String serialNumber, final String authString, final PKPushToken pushToken) {
 				return null;
 			}
 
 			@Override
 			protected Status handleUnregisterDeviceRequest(final String deviceLibraryIdentifier, final String passTypeIdentifier,
-					final String serialNumber, final ChallengeResponse authString) throws PKAuthTokenNotValidException {
+					final String serialNumber, final ChallengeResponse authString) {
 				return null;
 			}
 
@@ -74,9 +75,8 @@ public class PKRestletServerResourceFactory implements IPKRestletServerResourceF
 		return new PKPassResource("passes/coupons.raw") {
 
 			@Override
-			protected GetPKPassResponse handleGetLatestVersionOfPass(final String passTypeIdentifier, final String serialNumber,
-					final String authString, final Date modifiedSince) throws PKAuthTokenNotValidException, PKPassNotModifiedException {
-				PKPass pass = new PKPass();
+			protected GetPKPassResponse handleGetLatestVersionOfPass(final String passTypeIdentifier, final String serialNumber, final String authString, final Date modifiedSince) {
+				PKPass pass;
 				try {
 					pass = jsonObjectMapper.readValue(new File("passes/coupons.raw/pass2.json"), PKPass.class);
 
@@ -100,8 +100,8 @@ public class PKRestletServerResourceFactory implements IPKRestletServerResourceF
 
 					}
 
-				} catch (Exception e) {
-					throw new RuntimeException(e);
+				} catch (IOException e) {
+					throw new IllegalStateException("Failed to read pass from JSON file", e);
 				}
 				GetPKPassResponse getPKPassResponse = new GetPKPassResponse(pass, new Date());
 
@@ -111,7 +111,7 @@ public class PKRestletServerResourceFactory implements IPKRestletServerResourceF
 			private float getNewRandomAmount() {
 				Random random = new Random();
 				float amount = random.nextInt(100) + random.nextFloat();
-				BigDecimal bigDecimalForRounding = new BigDecimal(amount).setScale(2, RoundingMode.HALF_EVEN);
+				BigDecimal bigDecimalForRounding = BigDecimal.valueOf(amount).setScale(2, RoundingMode.HALF_EVEN);
 				return bigDecimalForRounding.floatValue();
 			}
 
@@ -145,8 +145,7 @@ public class PKRestletServerResourceFactory implements IPKRestletServerResourceF
 		return new PKPersonalizePassResource() {
 
 			@Override
-			protected Status handleSignUpUserRequest(String passTypeIdentifier, String serialNumber, String authString,
-					PKPersonalizePassPayload personalizePayload) throws PKAuthTokenNotValidException {
+			protected Status handleSignUpUserRequest(String passTypeIdentifier, String serialNumber, String authString, PKPersonalizePassPayload personalizePayload) {
 				return Status.SUCCESS_CREATED;
 			}
 
@@ -156,7 +155,7 @@ public class PKRestletServerResourceFactory implements IPKRestletServerResourceF
 					return new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(PKCS12_FILE_PATH,
 							PKCS12_FILE_PASSWORD, APPLE_WWDRCA_CERT_PATH);
 				} catch (Exception e) {
-					throw new RuntimeException(e);
+					throw new PKServerConfigurationException(e);
 				}
 			}
 		};

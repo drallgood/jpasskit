@@ -80,10 +80,7 @@ public abstract class PKPersonalizePassResource extends ServerResource {
 		} catch (PKAuthTokenNotValidException e) {
 			LOGGER.error("Error when processing signup request",e);
 			responseStatus = Status.CLIENT_ERROR_UNAUTHORIZED;
-		} catch (IOException e) {
-			LOGGER.error("Error when processing signup request",e);
-			responseStatus = Status.SERVER_ERROR_INTERNAL;
-		} catch (PKSigningException e) {
+		} catch (IOException | PKSigningException e) {
 			LOGGER.error("Error when processing signup request",e);
 			responseStatus = Status.SERVER_ERROR_INTERNAL;
 		}
