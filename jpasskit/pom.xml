@@ -64,7 +64,7 @@
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<current.year>2018</current.year>
+		<current.year>2019</current.year>
 		<!-- Dependency versions -->
 		<bouncy-castle.version>1.60</bouncy-castle.version>
 		<commons-codec.version>1.11</commons-codec.version>
