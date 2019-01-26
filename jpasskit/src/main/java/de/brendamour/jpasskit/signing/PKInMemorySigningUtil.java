@@ -29,8 +29,6 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -50,7 +48,6 @@ public final class PKInMemorySigningUtil extends PKAbstractSigningUtil {
         super(new ObjectMapper());
     }
 
-    @Inject
     public PKInMemorySigningUtil(ObjectWriter objectWriter) {
         super(objectWriter);
     }
