@@ -15,14 +15,21 @@
  */
 package de.brendamour.jpasskit.signing;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
-import java.io.*;
-import java.net.URL;
-import java.security.*;
-import java.security.cert.Certificate;
-import java.security.cert.*;
-import java.util.Enumeration;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.Security;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
+import static de.brendamour.jpasskit.util.CertUtils.extractCertificateWithKey;
+import static de.brendamour.jpasskit.util.CertUtils.toInputStream;
+import static de.brendamour.jpasskit.util.CertUtils.toKeyStore;
+import static de.brendamour.jpasskit.util.CertUtils.toX509Certificate;
 
 public class PKSigningInformationUtil {
 
@@ -33,7 +40,7 @@ public class PKSigningInformationUtil {
     /**
      * Load all signing information necessary for pass generation from the filesystem or classpath.
      *
-     * @param pkcs12KeyStoreFilePath
+     * @param keyStoreFilePath
      *            path to keystore (classpath or filesystem)
      * @param keyStorePassword
      *            Password used to access the key store
@@ -43,12 +50,12 @@ public class PKSigningInformationUtil {
      *        a {@link PKSigningInformation} object filled with all certificates from the provided files
      * @throws PKSigningException
      */
-    public PKSigningInformation loadSigningInformation(final String pkcs12KeyStoreFilePath,
+    public PKSigningInformation loadSigningInformation(final String keyStoreFilePath,
                                                        final String keyStorePassword,
                                                        final String appleWWDRCAFilePath) throws PKSigningException {
         try {
-            return loadSigningInformationFromPKCS12AndIntermediateCertificate(pkcs12KeyStoreFilePath, keyStorePassword, appleWWDRCAFilePath);
-        } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException | UnrecoverableKeyException e) {
+            return loadSigningInformationFromPKCS12AndIntermediateCertificate(keyStoreFilePath, keyStorePassword, appleWWDRCAFilePath);
+        } catch (IOException | CertificateException e) {
             throw new PKSigningException("Failed to load signing information", e);
         }
     }
@@ -56,28 +63,29 @@ public class PKSigningInformationUtil {
     /**
      * Load all signing information necessary for pass generation from the filesystem or classpath.
      * 
-     * @param pkcs12KeyStoreFilePath
+     * @param keyPath
      *            path to keystore (classpath or filesystem)
-     * @param keyStorePassword
+     * @param keyPassword
      *            Password used to access the key store
      * @param appleWWDRCAFilePath
      *            path to apple's WWDRCA certificate file (classpath or filesystem)
      * @return
      *        a {@link PKSigningInformation} object filled with all certificates from the provided files
      * @throws IOException
-     * @throws NoSuchAlgorithmException
+     * @throws IllegalStateException
      * @throws CertificateException
-     * @throws KeyStoreException
-     * @throws UnrecoverableKeyException
      */
-    public PKSigningInformation loadSigningInformationFromPKCS12AndIntermediateCertificate(final String pkcs12KeyStoreFilePath,
-            final String keyStorePassword, final String appleWWDRCAFilePath) throws IOException, NoSuchAlgorithmException, CertificateException,
-            KeyStoreException, UnrecoverableKeyException {
+    public PKSigningInformation loadSigningInformationFromPKCS12AndIntermediateCertificate(final String keyPath,final String keyPassword, final String appleWWDRCAFilePath)
+            throws IOException, CertificateException {
 
-        KeyStore pkcs12KeyStore = loadPKCS12File(pkcs12KeyStoreFilePath, keyStorePassword);
-        X509Certificate appleWWDRCACert = loadDERCertificate(appleWWDRCAFilePath);
+        try (InputStream walletCertStream = toInputStream(keyPath);
+             InputStream appleWWDRCertStream = toInputStream(appleWWDRCAFilePath)) {
 
-        return loadSigningInformationFromPKCS12AndIntermediateCertificate(pkcs12KeyStore, keyStorePassword.toCharArray(), appleWWDRCACert);
+            KeyStore pkcs12KeyStore = loadPKCS12File(walletCertStream, keyPassword);
+            X509Certificate appleWWDRCert = loadDERCertificate(appleWWDRCertStream);
+
+            return loadSigningInformation(pkcs12KeyStore, keyPassword, appleWWDRCert);
+        }
     }
 
     /**
@@ -85,7 +93,7 @@ public class PKSigningInformationUtil {
      * 
      * The caller is responsible for closing the stream after this method returns successfully or fails.
      * 
-     * @param pkcs12KeyStoreInputStream
+     * @param keyStoreInputStream
      *            <code>InputStream</code> of the key store
      * @param keyStorePassword
      *            Password used to access the key store
@@ -93,46 +101,21 @@ public class PKSigningInformationUtil {
      *            <code>InputStream</code> of the Apple WWDRCA certificate.
      * @return Signing information necessary to sign a pass.
      * @throws IOException
-     * @throws NoSuchAlgorithmException
+     * @throws IllegalStateException
      * @throws CertificateException
-     * @throws KeyStoreException
-     * @throws UnrecoverableKeyException
      */
-    public PKSigningInformation loadSigningInformationFromPKCS12AndIntermediateCertificate(final InputStream pkcs12KeyStoreInputStream,
-            final String keyStorePassword, final InputStream appleWWDRCAFileInputStream) throws IOException, NoSuchAlgorithmException,
-            CertificateException, KeyStoreException, UnrecoverableKeyException {
+    public PKSigningInformation loadSigningInformationFromPKCS12AndIntermediateCertificate(InputStream keyStoreInputStream,
+            String keyStorePassword, InputStream appleWWDRCAFileInputStream) throws IOException, CertificateException {
 
-        KeyStore pkcs12KeyStore = loadPKCS12File(pkcs12KeyStoreInputStream, keyStorePassword);
+        KeyStore pkcs12KeyStore = loadPKCS12File(keyStoreInputStream, keyStorePassword);
         X509Certificate appleWWDRCACert = loadDERCertificate(appleWWDRCAFileInputStream);
 
-        return loadSigningInformationFromPKCS12AndIntermediateCertificate(pkcs12KeyStore, keyStorePassword.toCharArray(), appleWWDRCACert);
+        return loadSigningInformation(pkcs12KeyStore, keyStorePassword, appleWWDRCACert);
     }
 
-    private PKSigningInformation loadSigningInformationFromPKCS12AndIntermediateCertificate(final KeyStore pkcs12KeyStore,
-                                                                                            final char[] keyStorePassword,
-                                                                                            final X509Certificate appleWWDRCACert) throws IOException, NoSuchAlgorithmException,
-            CertificateException, KeyStoreException, UnrecoverableKeyException {
-
-        Enumeration<String> aliases = pkcs12KeyStore.aliases();
-
-        PrivateKey signingPrivateKey = null;
-        X509Certificate signingCert = null;
-
-        while (aliases.hasMoreElements()) {
-            String aliasName = aliases.nextElement();
-
-            Key key = pkcs12KeyStore.getKey(aliasName, keyStorePassword);
-            if (key instanceof PrivateKey) {
-                signingPrivateKey = (PrivateKey) key;
-                Object cert = pkcs12KeyStore.getCertificate(aliasName);
-                if (cert instanceof X509Certificate) {
-                    signingCert = (X509Certificate) cert;
-                    break;
-                }
-            }
-        }
-
-        return checkCertsAndReturnSigningInformationObject(signingPrivateKey, signingCert, appleWWDRCACert);
+    private PKSigningInformation loadSigningInformation(KeyStore keyStore, String keyStorePassword, X509Certificate appleWWDRCACert) throws IOException, CertificateException {
+        Pair<PrivateKey, X509Certificate> pair = extractCertificateWithKey(keyStore, keyStorePassword);
+        return checkCertsAndReturnSigningInformationObject(pair.getLeft(), pair.getRight(), appleWWDRCACert);
     }
 
     /**
@@ -144,24 +127,14 @@ public class PKSigningInformationUtil {
      *            password to access the key store
      * @return Key store loaded from the provided files
      * @throws IOException
-     * @throws NoSuchAlgorithmException
      * @throws CertificateException
-     * @throws KeyStoreException
      * @throws IllegalArgumentException
+     * @deprecated
      */
-    public KeyStore loadPKCS12File(final String pathToP12, final String password) throws KeyStoreException, NoSuchAlgorithmException,
-            CertificateException, IOException {
-        File p12File = new File(pathToP12);
-        if (!p12File.exists()) {
-            // try loading it from the classpath
-            URL localP12File = PKFileBasedSigningUtil.class.getClassLoader().getResource(pathToP12);
-            if (localP12File == null) {
-                throw new FileNotFoundException("File at " + pathToP12 + " not found");
-            }
-            p12File = new File(localP12File.getFile());
-        }
-        try (InputStream streamOfFile = new FileInputStream(p12File)) {
-            return loadPKCS12File(streamOfFile, password);
+    @Deprecated
+    public KeyStore loadPKCS12File(String pathToP12, String password) throws CertificateException, IOException {
+        try (InputStream keystoreInputStream = toInputStream(pathToP12)) {
+            return loadPKCS12File(keystoreInputStream, password);
         }
     }
 
@@ -176,44 +149,34 @@ public class PKSigningInformationUtil {
      *            Password to access the key store
      * @return Key store loaded from <code>inputStreamOfP12</code>
      * @throws IOException
-     * @throws NoSuchAlgorithmException
      * @throws CertificateException
-     * @throws KeyStoreException
      * @throws IllegalArgumentException
      *             If the parameter <code>inputStreamOfP12</code> is <code>null</code>.
+     * @deprecated
      */
-    public KeyStore loadPKCS12File(final InputStream inputStreamOfP12, final String password) throws KeyStoreException, NoSuchAlgorithmException,
-            CertificateException, IOException {
-        if (inputStreamOfP12 == null) {
-            throw new IllegalArgumentException("InputStream of key store must not be null");
+    @Deprecated
+    public KeyStore loadPKCS12File(InputStream inputStreamOfP12, String password) throws CertificateException, IOException {
+        try {
+            return toKeyStore(inputStreamOfP12, password);
+        } catch (IllegalStateException ex) {
+            throw new IOException("Key from the input stream could not be decrypted", ex);
         }
-        KeyStore keystore = KeyStore.getInstance("PKCS12");
-
-        keystore.load(inputStreamOfP12, password.toCharArray());
-        return keystore;
     }
 
     /**
      * Load certificate file in DER format from the filesystem or the classpath
-     * 
+     *
      * @param filePath
      *          Path to the file, containing the certificate.
      * @return Loaded certificate.
      * @throws IOException
      * @throws CertificateException
+     * @deprecated
      */
-    public X509Certificate loadDERCertificate(final String filePath) throws IOException, CertificateException {
-        File certFile = new File(filePath);
-        if (!certFile.exists()) {
-            // try loading it from the classpath
-            URL localCertFile = PKFileBasedSigningUtil.class.getClassLoader().getResource(filePath);
-            if (localCertFile == null) {
-                throw new FileNotFoundException("File at " + filePath + " not found");
-            }
-            certFile = new File(localCertFile.getFile());
-        }
-        try (FileInputStream certificateFileInputStream = new FileInputStream(certFile)) {
-            return loadDERCertificate(certificateFileInputStream);
+    @Deprecated
+    public X509Certificate loadDERCertificate(String filePath) throws IOException, CertificateException {
+        try (InputStream certificateInputStream = toInputStream(filePath)) {
+            return loadDERCertificate(certificateInputStream);
         }
     }
 
@@ -227,25 +190,21 @@ public class PKSigningInformationUtil {
      * @return Loaded certificate.
      * @throws IOException
      * @throws CertificateException
+     * @deprecated
      */
-    public X509Certificate loadDERCertificate(final InputStream certificateInputStream) throws IOException, CertificateException {
+    @Deprecated
+    public X509Certificate loadDERCertificate(InputStream certificateInputStream) throws IOException, CertificateException {
         try {
-            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509", BouncyCastleProvider.PROVIDER_NAME);
-            Certificate certificate = certificateFactory.generateCertificate(certificateInputStream);
-            if (certificate instanceof X509Certificate) {
-                ((X509Certificate) certificate).checkValidity();
-                return (X509Certificate) certificate;
-            }
-            throw new IOException("The key from the input stream could not be decrypted");
-        } catch (IOException | NoSuchProviderException ex) {
-            throw new IOException("The key from the input stream could not be decrypted", ex);
+            return toX509Certificate(certificateInputStream);
+        } catch (IllegalStateException ex) {
+            throw new IOException("Certificate from the input stream could not be decrypted", ex);
         }
     }
 
     private PKSigningInformation checkCertsAndReturnSigningInformationObject(PrivateKey signingPrivateKey, X509Certificate signingCert,
-            X509Certificate appleWWDRCACert) throws IOException, CertificateExpiredException, CertificateNotYetValidException {
+            X509Certificate appleWWDRCACert) throws IOException, CertificateException {
         if (signingCert == null || signingPrivateKey == null || appleWWDRCACert == null) {
-            throw new IOException("Couldn't load all the neccessary certificates/keys.");
+            throw new IOException("Couldn't load all the necessary certificates/keys.");
         }
 
         // check the Validity of the Certificate to make sure it isn't expired

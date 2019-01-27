@@ -15,12 +15,8 @@
  */
 package de.brendamour.jpasskit.apns;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -36,6 +32,8 @@ import com.turo.pushy.apns.util.concurrent.PushNotificationResponseListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static de.brendamour.jpasskit.util.CertUtils.toInputStream;
+
 public class PKSendPushNotificationUtil implements AutoCloseable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PKSendPushNotificationUtil.class);
@@ -48,10 +46,10 @@ public class PKSendPushNotificationUtil implements AutoCloseable {
         this(pathToP12, passwordForP12, POOL_SIZE_DEFAULT);
     }
 
-    public PKSendPushNotificationUtil(final String pathToP12, final String passwordForP12, final int poolSize) throws IOException {
-        try (InputStream certificateStream = getStreamOfP12File(pathToP12)) {
-            client = new ApnsClientBuilder().setApnsServer(ApnsClientBuilder.PRODUCTION_APNS_HOST, ApnsClientBuilder.DEFAULT_APNS_PORT)
-                    .setClientCredentials(certificateStream, passwordForP12)
+    public PKSendPushNotificationUtil(final String keyStorePath, final String keyStorePassword, final int poolSize) throws IOException {
+        try (InputStream keyStoreInputStream = toInputStream(keyStorePath)) {
+            this.client = new ApnsClientBuilder().setApnsServer(ApnsClientBuilder.PRODUCTION_APNS_HOST, ApnsClientBuilder.DEFAULT_APNS_PORT)
+                    .setClientCredentials(keyStoreInputStream, keyStorePassword)
                     .setConcurrentConnections(poolSize)
                     .build();
         }
@@ -61,19 +59,6 @@ public class PKSendPushNotificationUtil implements AutoCloseable {
         this.client = client;
     }
 
-    protected InputStream getStreamOfP12File(final String pathToP12) throws FileNotFoundException {
-        File p12File = new File(pathToP12);
-        if (!p12File.exists()) {
-            // try loading it from the classpath
-            URL localP12File = this.getClass().getClassLoader().getResource(pathToP12);
-            if (localP12File == null) {
-                throw new FileNotFoundException("File at " + pathToP12 + " not found");
-            }
-            p12File = new File(localP12File.getFile());
-        }
-        return new FileInputStream(p12File);
-    }
-
     /**
      * @deprecated
      * @since 0.1.0
@@ -81,17 +66,17 @@ public class PKSendPushNotificationUtil implements AutoCloseable {
     @Deprecated
     public void sendPushNotification(final String pushtoken) {
         try {
-            
+
             PushNotificationFuture<SimpleApnsPushNotification, PushNotificationResponse<SimpleApnsPushNotification>> notificationFuture = sendPushNotificationAsync(pushtoken);
             notificationFuture.addListener(new ApnsLoggingDelegate());
             final PushNotificationResponse<SimpleApnsPushNotification> pushNotificationResponse = notificationFuture.get();
-    
+
             if (pushNotificationResponse.isAccepted()) {
                 LOGGER.debug("Push notification accepted by APNs gateway.");
             } else {
                 LOGGER.debug("Notification rejected by the APNs gateway: {}",
                         pushNotificationResponse.getRejectionReason());
-        
+
                 if (pushNotificationResponse.getTokenInvalidationTimestamp() != null) {
                     LOGGER.debug("\t…and the token is invalid as of {}",
                         pushNotificationResponse.getTokenInvalidationTimestamp());
@@ -108,7 +93,7 @@ public class PKSendPushNotificationUtil implements AutoCloseable {
     public PushNotificationFuture<SimpleApnsPushNotification, PushNotificationResponse<SimpleApnsPushNotification>> sendPushNotificationAsync(final String pushtoken) {
 
         LOGGER.debug("Sending Push notification for key: {}", pushtoken);
-        
+
         final ApnsPayloadBuilder payloadBuilder = new ApnsPayloadBuilder();
         payloadBuilder.setAlertBody(EMPTY_PUSH_JSON_STRING);
 

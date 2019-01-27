@@ -30,6 +30,8 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import static de.brendamour.jpasskit.util.CertUtils.toInputStream;
+
 public class PKSendPushNotificationUtilTest {
 
     private static final String keyStorePath = "passbook/jpasskittest.p12";
@@ -46,7 +48,7 @@ public class PKSendPushNotificationUtilTest {
     @BeforeClass
     public void prepareTest() throws Exception {
         util = new PKSendPushNotificationUtil(keyStorePath, keyStorePassword);
-        try (InputStream certificateStream = util.getStreamOfP12File(keyStorePath)) {
+        try (InputStream certificateStream = toInputStream(keyStorePath)) {
             ApnsClient client = new ApnsClientBuilder().setApnsServer(HOST, PORT)
                     .setClientCredentials(certificateStream, keyStorePassword)
                     .setTrustedServerCertificateChain(getClass().getResourceAsStream(CA_CERTIFICATE_FILENAME))
