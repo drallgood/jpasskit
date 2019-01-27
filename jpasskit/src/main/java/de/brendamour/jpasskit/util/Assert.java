@@ -16,11 +16,10 @@
 package de.brendamour.jpasskit.util;
 
 import static java.lang.String.format;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
- * Implements basic validations, similar to {@code org.springframework.util.Assert} and {@code org.springframework.util.StringUtils}.
+ * Implements basic validations, similar to {@code org.springframework.util.Assert}.
  */
 public class Assert {
 
@@ -28,13 +27,15 @@ public class Assert {
     }
 
     public static void notNull(Object value, String comment, Object... params) {
-        if (value == null) {
-            throw new IllegalArgumentException(message(comment, params));
-        }
+        isTrue(value != null, comment, params);
     }
 
-    public static void hasLength(String value, String comment, Object... params) {
-        if (isEmpty(value)) {
+    public static void hasLength(CharSequence value, String comment, Object... params) {
+        isTrue(isNotEmpty(value), comment, params);
+    }
+
+    public static void isTrue(boolean flag, String comment, Object... params) {
+        if (!flag) {
             throw new IllegalArgumentException(message(comment, params));
         }
     }

@@ -34,6 +34,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
+import java.security.Security;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -43,12 +44,18 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 
-import static de.brendamour.jpasskit.util.Assert.hasLength;
 import static de.brendamour.jpasskit.util.Assert.notNull;
 
 public class CertUtils {
 
+    private static final String PREFIX_UID = "uid=";
     private static final String TOPIC_OID = "1.2.840.113635.100.6.3.6";
+
+    static {
+        if (Security.getProvider(getProviderName()) == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
+    }
 
     /**
      * Load a keystore from an already opened {@link InputStream}.
@@ -86,12 +93,12 @@ public class CertUtils {
      * @throws CertificateException
      *             If any of the certificates in the keystore could not be loaded.
      */
-    public static KeyStore toKeyStore(InputStream keyStoreInputStream, String keyStorePassword) throws CertificateException {
+    public static KeyStore toKeyStore(InputStream keyStoreInputStream, char [] keyStorePassword) throws CertificateException {
         notNull(keyStoreInputStream, "InputStream of key store is mandatory");
-        hasLength(keyStorePassword, "Non-empty password for key store is mandatory");
+        notNull(keyStorePassword, "Password for key store is mandatory");
         try {
             KeyStore keystore = KeyStore.getInstance("PKCS12");
-            keystore.load(keyStoreInputStream, keyStorePassword.toCharArray());
+            keystore.load(keyStoreInputStream, keyStorePassword);
             return keystore;
         } catch (IOException | NoSuchAlgorithmException | KeyStoreException ex) {
             throw new IllegalStateException("Failed to load signing information", ex);
@@ -111,7 +118,7 @@ public class CertUtils {
      */
     public static X509Certificate toX509Certificate(InputStream certificateInputStream) throws CertificateException {
         try {
-            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509", BouncyCastleProvider.PROVIDER_NAME);
+            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509", getProviderName());
             Certificate certificate = certificateFactory.generateCertificate(certificateInputStream);
             if (certificate instanceof X509Certificate) {
                 ((X509Certificate) certificate).checkValidity();
@@ -132,15 +139,15 @@ public class CertUtils {
      * @throws IllegalStateException
      *             If {@link X509Certificate} loading failed.
      */
-    public static ImmutablePair<PrivateKey, X509Certificate> extractCertificateWithKey(KeyStore keyStore, String keyStorePassword) {
+    public static ImmutablePair<PrivateKey, X509Certificate> extractCertificateWithKey(KeyStore keyStore, char [] keyStorePassword) {
         notNull(keyStore, "KeyStore is mandatory");
-        hasLength(keyStorePassword, "Non-empty password for key store is mandatory");
+        notNull(keyStorePassword, "Password for key store is mandatory");
         try {
             Enumeration<String> aliases = keyStore.aliases();
             while (aliases.hasMoreElements()) {
                 String aliasName = aliases.nextElement();
 
-                Key key = keyStore.getKey(aliasName, keyStorePassword.toCharArray());
+                Key key = keyStore.getKey(aliasName, keyStorePassword);
                 if (key instanceof PrivateKey) {
                     PrivateKey privateKey = (PrivateKey) key;
                     Object cert = keyStore.getCertificate(aliasName);
@@ -156,20 +163,28 @@ public class CertUtils {
         }
     }
 
+    /**
+     * Extract topics for sending push notifications from {@link X509Certificate} certificate.
+     *
+     * @param certificate {@link X509Certificate} instance.
+     * @return unique {@link Set} of topics from a certificate
+     * @throws IOException
+     *             If {@link X509Certificate} parsing failed.
+     */
     public static Set<String> extractApnsTopics(X509Certificate certificate) throws IOException {
-        final Set<String> topics = new HashSet<>();
+        Set<String> topics = new HashSet<>();
 
-        for (final String keyValuePair : certificate.getSubjectX500Principal().getName().split(",")) {
-            if (keyValuePair.toLowerCase().startsWith("uid=")) {
-                topics.add(keyValuePair.substring(4));
+        for (String keyValuePair : certificate.getSubjectX500Principal().getName().split(",")) {
+            if (keyValuePair.toLowerCase().startsWith(PREFIX_UID)) {
+                topics.add(keyValuePair.substring(PREFIX_UID.length()));
                 break;
             }
         }
 
-        final byte[] topicExtensionData = certificate.getExtensionValue(TOPIC_OID);
+        byte[] topicExtensionData = certificate.getExtensionValue(TOPIC_OID);
 
         if (topicExtensionData != null) {
-            final ASN1Primitive extensionValue = JcaX509ExtensionUtils.parseExtensionValue(topicExtensionData);
+            ASN1Primitive extensionValue = JcaX509ExtensionUtils.parseExtensionValue(topicExtensionData);
 
             if (extensionValue instanceof ASN1Sequence) {
                 for (Object object : (ASN1Sequence) extensionValue) {
@@ -181,5 +196,9 @@ public class CertUtils {
         }
 
         return topics;
+    }
+
+    public static String getProviderName() {
+        return BouncyCastleProvider.PROVIDER_NAME;
     }
 }

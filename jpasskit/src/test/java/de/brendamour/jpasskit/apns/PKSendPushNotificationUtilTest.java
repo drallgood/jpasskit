@@ -25,35 +25,41 @@ import com.turo.pushy.apns.server.MockApnsServer;
 import com.turo.pushy.apns.server.MockApnsServerBuilder;
 import com.turo.pushy.apns.util.SimpleApnsPushNotification;
 
-import org.testng.Assert;
+import org.assertj.core.api.ThrowableAssert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import static de.brendamour.jpasskit.util.CertUtils.toInputStream;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class PKSendPushNotificationUtilTest {
 
+    private static final String keyStorePathNoTopics = "passbook/jpasskittest.p12";
+    private static final char [] keyStorePasswordNoTopics = "password".toCharArray();
     private static final String keyStorePath = "passbook/expired_cert.p12";
-    private static final String keyStorePassword = "cert";
+    private static final char [] keyStorePassword = "cert".toCharArray();
     private static final String CA_CERTIFICATE_FILENAME = "/ca.pem";
     private static final String SERVER_CERTIFICATES_FILENAME = "/server-certs.pem";
     private static final String SERVER_KEY_FILENAME = "/server-key.pem";
     private static final String HOST = "localhost";
     private static final int PORT = 8443;
 
-    private PKSendPushNotificationUtil util;
+    private PKSendPushNotificationUtil badCertPushUtil;
+    private PKSendPushNotificationUtil mockPushUtil;
     private MockApnsServer apnsServer;
 
     @BeforeClass
     public void prepareTest() throws Exception {
-        util = new PKSendPushNotificationUtil(keyStorePath, keyStorePassword);
+        badCertPushUtil = new PKSendPushNotificationUtil(keyStorePathNoTopics, keyStorePasswordNoTopics);
+        mockPushUtil = new PKSendPushNotificationUtil(keyStorePath, keyStorePassword);
         try (InputStream certificateStream = toInputStream(keyStorePath)) {
             ApnsClient client = new ApnsClientBuilder().setApnsServer(HOST, PORT)
-                    .setClientCredentials(certificateStream, keyStorePassword)
+                    .setClientCredentials(certificateStream, String.valueOf(keyStorePassword))
                     .setTrustedServerCertificateChain(getClass().getResourceAsStream(CA_CERTIFICATE_FILENAME))
                     .build();
-            util.setClient(client);
+            mockPushUtil.setClient(client);
         }
         apnsServer = new MockApnsServerBuilder()
                 .setHandlerFactory(new AcceptAllPushNotificationHandlerFactory())
@@ -63,14 +69,25 @@ public class PKSendPushNotificationUtilTest {
     }
 
     @Test
-    public void sendPushNotification()  throws Exception {
-        final PushNotificationResponse<SimpleApnsPushNotification> response = util.sendPushNotificationAsync("ABC1234").get();
-        Assert.assertTrue(response.isAccepted());
+    public void sendPushNotificationWithMockAPNS() throws Exception {
+        final PushNotificationResponse<SimpleApnsPushNotification> response = mockPushUtil.sendPushNotificationAsync("ABC1234").get();
+        assertThat(response.isAccepted()).isTrue();
+    }
+
+    @Test
+    public void sendPushNotificationWithBadCertificate() {
+        assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
+            @Override
+            public void call() throws Exception {
+                badCertPushUtil.sendPushNotificationAsync("ABC1234").get();
+            }
+        }).isInstanceOf(IllegalStateException.class).hasMessage("APNS topic is required for sending a push notification");
     }
 
     @AfterClass
     public void shutDownTest() throws Exception {
-        util.close();
+        badCertPushUtil.close();
+        mockPushUtil.close();
         apnsServer.shutdown();
     }
 }

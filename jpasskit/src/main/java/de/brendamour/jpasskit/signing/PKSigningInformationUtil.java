@@ -16,13 +16,11 @@
 package de.brendamour.jpasskit.signing;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.PrivateKey;
-import java.security.Security;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
@@ -32,10 +30,6 @@ import static de.brendamour.jpasskit.util.CertUtils.toKeyStore;
 import static de.brendamour.jpasskit.util.CertUtils.toX509Certificate;
 
 public class PKSigningInformationUtil {
-
-    public PKSigningInformationUtil() {
-        addBCProvider();
-    }
 
     /**
      * Load all signing information necessary for pass generation from the filesystem or classpath.
@@ -114,7 +108,7 @@ public class PKSigningInformationUtil {
     }
 
     private PKSigningInformation loadSigningInformation(KeyStore keyStore, String keyStorePassword, X509Certificate appleWWDRCACert) throws IOException, CertificateException {
-        Pair<PrivateKey, X509Certificate> pair = extractCertificateWithKey(keyStore, keyStorePassword);
+        Pair<PrivateKey, X509Certificate> pair = extractCertificateWithKey(keyStore, keyStorePassword.toCharArray());
         return checkCertsAndReturnSigningInformationObject(pair.getLeft(), pair.getRight(), appleWWDRCACert);
     }
 
@@ -157,7 +151,7 @@ public class PKSigningInformationUtil {
     @Deprecated
     public KeyStore loadPKCS12File(InputStream inputStreamOfP12, String password) throws CertificateException, IOException {
         try {
-            return toKeyStore(inputStreamOfP12, password);
+            return toKeyStore(inputStreamOfP12, password.toCharArray());
         } catch (IllegalStateException ex) {
             throw new IOException("Key from the input stream could not be decrypted", ex);
         }
@@ -211,11 +205,5 @@ public class PKSigningInformationUtil {
         appleWWDRCACert.checkValidity();
         signingCert.checkValidity();
         return new PKSigningInformation(signingCert, signingPrivateKey, appleWWDRCACert);
-    }
-
-    private void addBCProvider() {
-        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-            Security.addProvider(new BouncyCastleProvider());
-        }
     }
 }

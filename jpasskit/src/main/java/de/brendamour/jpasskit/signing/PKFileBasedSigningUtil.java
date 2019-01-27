@@ -41,6 +41,8 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import static de.brendamour.jpasskit.util.Assert.notNull;
+
 public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PKFileBasedSigningUtil.class);
@@ -122,9 +124,8 @@ public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
     public void signManifestFileAndWriteToDirectory(final File temporaryPassDirectory, final File manifestJSONFile,
             final PKSigningInformation signingInformation) throws PKSigningException {
 
-        if (temporaryPassDirectory == null || manifestJSONFile == null) {
-            throw new IllegalArgumentException("Temporary directory or manifest file not provided");
-        }
+        notNull(temporaryPassDirectory, "Temporary directory is mandatory");
+        notNull(manifestJSONFile, "Manifest JSON file is mandatory");
 
         File signatureFile = new File(temporaryPassDirectory.getAbsolutePath() + File.separator + SIGNATURE_FILE_NAME);
         try (FileOutputStream signatureOutputStream = new FileOutputStream(signatureFile)) {

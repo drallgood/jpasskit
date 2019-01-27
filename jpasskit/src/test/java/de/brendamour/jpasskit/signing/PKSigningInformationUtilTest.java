@@ -23,30 +23,30 @@ import java.security.cert.CertificateExpiredException;
 
 public class PKSigningInformationUtilTest {
 
-    private static final String appleWWDRCA = "passbook/ca-chain.cert.pem";
+    private static final String APPLE_WWDRCA = "passbook/ca-chain.cert.pem";
     private static final String KEYSTORE_PATH = "passbook/jpasskittest.p12";
     private static final String KEYSTORE_PASSWORD = "password";
-    private static final String INVALID_KEYSTORE_PATH = "passbook/expired_cert.p12";
-    private static final String INVALID_KEYSTORE_PASSWORD = "cert";
+    private static final String KEYSTORE_PATH_EXPIRED = "passbook/expired_cert.p12";
+    private static final String KEYSTORE_PASSWORD_EXPIRED = "cert";
 
     @Test
     public void testLoadFiles() throws Exception {
         PKSigningInformation pkSigningInformation = new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
-                KEYSTORE_PATH, KEYSTORE_PASSWORD, appleWWDRCA);
+                KEYSTORE_PATH, KEYSTORE_PASSWORD, APPLE_WWDRCA);
         checkSigningInfoContent(pkSigningInformation);
     }
 
     @Test(expectedExceptions = CertificateExpiredException.class)
     public void testLoadFiles_invalidCert() throws Exception {
-        new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(INVALID_KEYSTORE_PATH,
-                INVALID_KEYSTORE_PASSWORD, appleWWDRCA);
+        new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(KEYSTORE_PATH_EXPIRED,
+                KEYSTORE_PASSWORD_EXPIRED, APPLE_WWDRCA);
     }
 
     @Test
     public void testLoadStreams() throws Exception {
 
         try (InputStream keyStoreFIS = this.getClass().getResourceAsStream("/" + KEYSTORE_PATH);
-             InputStream appleWWDRCAFIS = this.getClass().getResourceAsStream("/" + appleWWDRCA)) {
+             InputStream appleWWDRCAFIS = this.getClass().getResourceAsStream("/" + APPLE_WWDRCA)) {
             Assert.assertNotNull(keyStoreFIS, "Could not find key store file");
             Assert.assertNotNull(appleWWDRCAFIS, "Could not find certificate file");
 

@@ -53,22 +53,32 @@ public class PKSendPushNotificationUtil implements AutoCloseable {
     private ApnsClient client;
     private Set<String> topics;
 
-    public PKSendPushNotificationUtil(final String pathToP12, final String passwordForP12) throws IOException {
-        this(pathToP12, passwordForP12, POOL_SIZE_DEFAULT);
+    public PKSendPushNotificationUtil(String keyStorePath, char [] keyStorePassword) throws IOException {
+        this(keyStorePath, keyStorePassword, POOL_SIZE_DEFAULT);
     }
 
-    public PKSendPushNotificationUtil(final String keyStorePath, final String keyStorePassword, final int poolSize) throws IOException {
+    public PKSendPushNotificationUtil(String keyStorePath, char [] keyStorePassword, int poolSize) throws IOException {
         try (InputStream keyStoreInputStream = toInputStream(keyStorePath)) {
             KeyStore keyStore = toKeyStore(keyStoreInputStream, keyStorePassword);
             Pair<PrivateKey, X509Certificate> certificate = extractCertificateWithKey(keyStore, keyStorePassword);
             this.client = new ApnsClientBuilder().setApnsServer(ApnsClientBuilder.PRODUCTION_APNS_HOST, ApnsClientBuilder.DEFAULT_APNS_PORT)
-                    .setClientCredentials(certificate.getRight(), certificate.getLeft(), keyStorePassword)
+                    .setClientCredentials(certificate.getRight(), certificate.getLeft(), String.valueOf(keyStorePassword))
                     .setConcurrentConnections(poolSize)
                     .build();
             this.topics = extractApnsTopics(certificate.getRight());
         } catch (CertificateException ex) {
             throw new IOException("Failed to load keystore from " + keyStorePath);
         }
+    }
+
+    @Deprecated
+    public PKSendPushNotificationUtil(String keyStorePath, String keyStorePassword) throws IOException {
+        this(keyStorePath, keyStorePassword == null ? null : keyStorePassword.toCharArray());
+    }
+
+    @Deprecated
+    public PKSendPushNotificationUtil(String keyStorePath, String keyStorePassword, int poolSize) throws IOException {
+        this(keyStorePath, keyStorePassword == null ? null : keyStorePassword.toCharArray(), poolSize);
     }
 
     public void setClient(ApnsClient client) {
