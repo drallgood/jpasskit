@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018 Patrice Brend'amour <patrice@brendamour.net>
+ * Copyright (C) 2019 Patrice Brend'amour <patrice@brendamour.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,6 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -50,7 +48,6 @@ public final class PKInMemorySigningUtil extends PKAbstractSigningUtil {
         super(new ObjectMapper());
     }
 
-    @Inject
     public PKInMemorySigningUtil(ObjectWriter objectWriter) {
         super(objectWriter);
     }

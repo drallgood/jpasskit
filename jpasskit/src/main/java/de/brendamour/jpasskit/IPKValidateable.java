@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018 Patrice Brend'amour <patrice@brendamour.net>
+ * Copyright (C) 2019 Patrice Brend'amour <patrice@brendamour.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public interface IPKValidateable extends Serializable {
-    public boolean isValid();
+    boolean isValid();
 
-    public List<String> getValidationErrors();
+    List<String> getValidationErrors();
 }

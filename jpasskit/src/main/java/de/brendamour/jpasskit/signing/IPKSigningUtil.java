@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018 Patrice Brend'amour <patrice@brendamour.net>
+ * Copyright (C) 2019 Patrice Brend'amour <patrice@brendamour.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ public interface IPKSigningUtil {
      * @throws PKSigningException
      *             will throw any underlying exception in case something goes wrong (i.e. template not found)
      */
-    public byte[] createSignedAndZippedPkPassArchive(PKPass pass, IPKPassTemplate passTemplate, PKSigningInformation signingInformation)
+    byte[] createSignedAndZippedPkPassArchive(PKPass pass, IPKPassTemplate passTemplate, PKSigningInformation signingInformation)
             throws PKSigningException;
 
     /**
@@ -51,7 +51,7 @@ public interface IPKSigningUtil {
      * @throws PKSigningException
      *             will throw any underlying exception in case something goes wrong (i.e. template not found)
      */
-    public byte[] createSignedAndZippedPersonalizedPkPassArchive(PKPass pass, PKPersonalization personalization, IPKPassTemplate passTemplate,
+    byte[] createSignedAndZippedPersonalizedPkPassArchive(PKPass pass, PKPersonalization personalization, IPKPassTemplate passTemplate,
             PKSigningInformation signingInformation) throws PKSigningException;
 
     /**
@@ -65,6 +65,6 @@ public interface IPKSigningUtil {
      * @throws PKSigningException
      *             will throw any underlying exception in case something goes wrong (i.e. template not found)
      */
-    public byte[] signManifestFile(byte[] manifestJSON, PKSigningInformation signingInformation) throws PKSigningException;
+    byte[] signManifestFile(byte[] manifestJSON, PKSigningInformation signingInformation) throws PKSigningException;
 
 }

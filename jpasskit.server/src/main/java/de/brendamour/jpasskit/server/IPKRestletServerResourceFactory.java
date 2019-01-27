@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018 Patrice Brend'amour <patrice@brendamour.net>
+ * Copyright (C) 2019 Patrice Brend'amour <patrice@brendamour.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,13 @@
  */
 package de.brendamour.jpasskit.server;
 
-
 public interface IPKRestletServerResourceFactory {
 
-    public PKDeviceResource getPKDeviceResource();
+    PKDeviceResource getPKDeviceResource();
 
-    public PKPassResource getPKPassResource();
+    PKPassResource getPKPassResource();
 
-    public PKLogResource getPKLogResource();
+    PKLogResource getPKLogResource();
 
-	public PKPersonalizePassResource getPKPersonalizePassResource();
+	PKPersonalizePassResource getPKPersonalizePassResource();
 }

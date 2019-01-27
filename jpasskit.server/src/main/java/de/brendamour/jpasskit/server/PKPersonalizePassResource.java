@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2018 Patrice Brend'amour <patrice@brendamour.net>
+ * Copyright (C) 2019 Patrice Brend'amour <patrice@brendamour.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,10 +80,7 @@ public abstract class PKPersonalizePassResource extends ServerResource {
 		} catch (PKAuthTokenNotValidException e) {
 			LOGGER.error("Error when processing signup request",e);
 			responseStatus = Status.CLIENT_ERROR_UNAUTHORIZED;
-		} catch (IOException e) {
-			LOGGER.error("Error when processing signup request",e);
-			responseStatus = Status.SERVER_ERROR_INTERNAL;
-		} catch (PKSigningException e) {
+		} catch (IOException | PKSigningException e) {
 			LOGGER.error("Error when processing signup request",e);
 			responseStatus = Status.SERVER_ERROR_INTERNAL;
 		}
