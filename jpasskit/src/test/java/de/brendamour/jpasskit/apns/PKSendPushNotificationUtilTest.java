@@ -34,8 +34,8 @@ import static de.brendamour.jpasskit.util.CertUtils.toInputStream;
 
 public class PKSendPushNotificationUtilTest {
 
-    private static final String keyStorePath = "passbook/jpasskittest.p12";
-    private static final String keyStorePassword = "password";
+    private static final String keyStorePath = "passbook/expired_cert.p12";
+    private static final String keyStorePassword = "cert";
     private static final String CA_CERTIFICATE_FILENAME = "/ca.pem";
     private static final String SERVER_CERTIFICATES_FILENAME = "/server-certs.pem";
     private static final String SERVER_KEY_FILENAME = "/server-key.pem";
