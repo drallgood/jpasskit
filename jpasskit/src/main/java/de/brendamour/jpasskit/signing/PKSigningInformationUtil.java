@@ -15,6 +15,7 @@
  */
 package de.brendamour.jpasskit.signing;
 
+import de.brendamour.jpasskit.util.CertUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.IOException;
@@ -23,11 +24,6 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-
-import static de.brendamour.jpasskit.util.CertUtils.extractCertificateWithKey;
-import static de.brendamour.jpasskit.util.CertUtils.toInputStream;
-import static de.brendamour.jpasskit.util.CertUtils.toKeyStore;
-import static de.brendamour.jpasskit.util.CertUtils.toX509Certificate;
 
 public class PKSigningInformationUtil {
 
@@ -72,8 +68,8 @@ public class PKSigningInformationUtil {
     public PKSigningInformation loadSigningInformationFromPKCS12AndIntermediateCertificate(final String keyPath,final String keyPassword, final String appleWWDRCAFilePath)
             throws IOException, CertificateException {
 
-        try (InputStream walletCertStream = toInputStream(keyPath);
-             InputStream appleWWDRCertStream = toInputStream(appleWWDRCAFilePath)) {
+        try (InputStream walletCertStream = CertUtils.toInputStream(keyPath);
+             InputStream appleWWDRCertStream = CertUtils.toInputStream(appleWWDRCAFilePath)) {
 
             KeyStore pkcs12KeyStore = loadPKCS12File(walletCertStream, keyPassword);
             X509Certificate appleWWDRCert = loadDERCertificate(appleWWDRCertStream);
@@ -108,7 +104,7 @@ public class PKSigningInformationUtil {
     }
 
     private PKSigningInformation loadSigningInformation(KeyStore keyStore, String keyStorePassword, X509Certificate appleWWDRCACert) throws IOException, CertificateException {
-        Pair<PrivateKey, X509Certificate> pair = extractCertificateWithKey(keyStore, keyStorePassword.toCharArray());
+        Pair<PrivateKey, X509Certificate> pair = CertUtils.extractCertificateWithKey(keyStore, keyStorePassword.toCharArray());
         return checkCertsAndReturnSigningInformationObject(pair.getLeft(), pair.getRight(), appleWWDRCACert);
     }
 
@@ -127,7 +123,7 @@ public class PKSigningInformationUtil {
      */
     @Deprecated
     public KeyStore loadPKCS12File(String pathToP12, String password) throws CertificateException, IOException {
-        try (InputStream keystoreInputStream = toInputStream(pathToP12)) {
+        try (InputStream keystoreInputStream = CertUtils.toInputStream(pathToP12)) {
             return loadPKCS12File(keystoreInputStream, password);
         }
     }
@@ -151,7 +147,7 @@ public class PKSigningInformationUtil {
     @Deprecated
     public KeyStore loadPKCS12File(InputStream inputStreamOfP12, String password) throws CertificateException, IOException {
         try {
-            return toKeyStore(inputStreamOfP12, password.toCharArray());
+            return CertUtils.toKeyStore(inputStreamOfP12, password.toCharArray());
         } catch (IllegalStateException ex) {
             throw new IOException("Key from the input stream could not be decrypted", ex);
         }
@@ -169,7 +165,7 @@ public class PKSigningInformationUtil {
      */
     @Deprecated
     public X509Certificate loadDERCertificate(String filePath) throws IOException, CertificateException {
-        try (InputStream certificateInputStream = toInputStream(filePath)) {
+        try (InputStream certificateInputStream = CertUtils.toInputStream(filePath)) {
             return loadDERCertificate(certificateInputStream);
         }
     }
@@ -189,7 +185,7 @@ public class PKSigningInformationUtil {
     @Deprecated
     public X509Certificate loadDERCertificate(InputStream certificateInputStream) throws IOException, CertificateException {
         try {
-            return toX509Certificate(certificateInputStream);
+            return CertUtils.toX509Certificate(certificateInputStream);
         } catch (IllegalStateException ex) {
             throw new IOException("Certificate from the input stream could not be decrypted", ex);
         }

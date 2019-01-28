@@ -15,8 +15,6 @@
  */
 package de.brendamour.jpasskit.signing;
 
-import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -74,7 +72,7 @@ public class PKPassTemplateInMemory implements IPKPassTemplate {
     public void provisionPassAtDirectory(File tempPassDir) throws IOException {
         for (Entry<String, byte[]> entry : files.entrySet()) {
             File pathToFile = new File(tempPassDir, entry.getKey());
-                copyInputStreamToFile(new ByteArrayInputStream(entry.getValue()), pathToFile);
+                FileUtils.copyInputStreamToFile(new ByteArrayInputStream(entry.getValue()), pathToFile);
             }
     }
 

@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import de.brendamour.jpasskit.util.Assert;
+import de.brendamour.jpasskit.util.CertUtils;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.DERUTCTime;
@@ -51,10 +53,6 @@ import com.fasterxml.jackson.databind.util.StdDateFormat;
 import de.brendamour.jpasskit.PKBarcode;
 import de.brendamour.jpasskit.PKPass;
 
-import static de.brendamour.jpasskit.util.Assert.isTrue;
-import static de.brendamour.jpasskit.util.Assert.notNull;
-import static de.brendamour.jpasskit.util.CertUtils.getProviderName;
-
 public abstract class PKAbstractSigningUtil implements IPKSigningUtil {
 
     protected static final String MANIFEST_JSON_FILE_NAME = "manifest.json";
@@ -78,19 +76,19 @@ public abstract class PKAbstractSigningUtil implements IPKSigningUtil {
      */
     @Override
     public byte[] signManifestFile(byte[] manifestJSON, PKSigningInformation signingInformation) throws PKSigningException {
-        notNull(manifestJSON, "Manifest JSON is mandatory");
+        Assert.notNull(manifestJSON, "Manifest JSON is mandatory");
         CMSProcessableByteArray content = new CMSProcessableByteArray(manifestJSON);
         return signManifestUsingContent(signingInformation, content);
     }
 
     protected byte[] signManifestUsingContent(PKSigningInformation signingInformation, CMSTypedData content) throws PKSigningException {
-        notNull(signingInformation, "Signing information is mandatory");
-        isTrue(signingInformation.isValid(), "Signing information is incomplete");
+        Assert.notNull(signingInformation, "Signing information is mandatory");
+        Assert.isTrue(signingInformation.isValid(), "Signing information is incomplete");
 
         try {
             CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
             ContentSigner sha1Signer = new JcaContentSignerBuilder("SHA1withRSA")
-                    .setProvider(getProviderName())
+                    .setProvider(CertUtils.getProviderName())
                     .build(signingInformation.getSigningPrivateKey());
 
             final ASN1EncodableVector signedAttributes = new ASN1EncodableVector();
@@ -105,7 +103,7 @@ public abstract class PKAbstractSigningUtil implements IPKSigningUtil {
             generator.addSignerInfoGenerator(
                     new JcaSignerInfoGeneratorBuilder(
                             new JcaDigestCalculatorProviderBuilder()
-                                    .setProvider(getProviderName())
+                                    .setProvider(CertUtils.getProviderName())
                                     .build())
                             .setSignedAttributeGenerator(signedAttributeGenerator)
                             .build(sha1Signer, signingInformation.getSigningCert())

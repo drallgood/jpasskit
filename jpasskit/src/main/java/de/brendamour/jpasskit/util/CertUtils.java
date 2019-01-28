@@ -44,8 +44,6 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 
-import static de.brendamour.jpasskit.util.Assert.notNull;
-
 public class CertUtils {
 
     private static final String PREFIX_UID = "uid=";
@@ -94,8 +92,8 @@ public class CertUtils {
      *             If any of the certificates in the keystore could not be loaded.
      */
     public static KeyStore toKeyStore(InputStream keyStoreInputStream, char [] keyStorePassword) throws CertificateException {
-        notNull(keyStoreInputStream, "InputStream of key store is mandatory");
-        notNull(keyStorePassword, "Password for key store is mandatory");
+        Assert.notNull(keyStoreInputStream, "InputStream of key store is mandatory");
+        Assert.notNull(keyStorePassword, "Password for key store is mandatory");
         try {
             KeyStore keystore = KeyStore.getInstance("PKCS12");
             keystore.load(keyStoreInputStream, keyStorePassword);
@@ -140,8 +138,8 @@ public class CertUtils {
      *             If {@link X509Certificate} loading failed.
      */
     public static ImmutablePair<PrivateKey, X509Certificate> extractCertificateWithKey(KeyStore keyStore, char [] keyStorePassword) {
-        notNull(keyStore, "KeyStore is mandatory");
-        notNull(keyStorePassword, "Password for key store is mandatory");
+        Assert.notNull(keyStore, "KeyStore is mandatory");
+        Assert.notNull(keyStorePassword, "Password for key store is mandatory");
         try {
             Enumeration<String> aliases = keyStore.aliases();
             while (aliases.hasMoreElements()) {

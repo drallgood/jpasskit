@@ -34,15 +34,11 @@ import com.turo.pushy.apns.util.TokenUtil;
 import com.turo.pushy.apns.util.concurrent.PushNotificationFuture;
 import com.turo.pushy.apns.util.concurrent.PushNotificationResponseListener;
 
+import de.brendamour.jpasskit.util.Assert;
+import de.brendamour.jpasskit.util.CertUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static de.brendamour.jpasskit.util.Assert.state;
-import static de.brendamour.jpasskit.util.CertUtils.extractApnsTopics;
-import static de.brendamour.jpasskit.util.CertUtils.extractCertificateWithKey;
-import static de.brendamour.jpasskit.util.CertUtils.toInputStream;
-import static de.brendamour.jpasskit.util.CertUtils.toKeyStore;
 
 public class PKSendPushNotificationUtil implements AutoCloseable {
 
@@ -58,14 +54,14 @@ public class PKSendPushNotificationUtil implements AutoCloseable {
     }
 
     public PKSendPushNotificationUtil(String keyStorePath, char [] keyStorePassword, int poolSize) throws IOException {
-        try (InputStream keyStoreInputStream = toInputStream(keyStorePath)) {
-            KeyStore keyStore = toKeyStore(keyStoreInputStream, keyStorePassword);
-            Pair<PrivateKey, X509Certificate> certificate = extractCertificateWithKey(keyStore, keyStorePassword);
+        try (InputStream keyStoreInputStream = CertUtils.toInputStream(keyStorePath)) {
+            KeyStore keyStore = CertUtils.toKeyStore(keyStoreInputStream, keyStorePassword);
+            Pair<PrivateKey, X509Certificate> certificate = CertUtils.extractCertificateWithKey(keyStore, keyStorePassword);
             this.client = new ApnsClientBuilder().setApnsServer(ApnsClientBuilder.PRODUCTION_APNS_HOST, ApnsClientBuilder.DEFAULT_APNS_PORT)
                     .setClientCredentials(certificate.getRight(), certificate.getLeft(), String.valueOf(keyStorePassword))
                     .setConcurrentConnections(poolSize)
                     .build();
-            this.topics = extractApnsTopics(certificate.getRight());
+            this.topics = CertUtils.extractApnsTopics(certificate.getRight());
         } catch (CertificateException ex) {
             throw new IOException("Failed to load keystore from " + keyStorePath);
         }
@@ -125,7 +121,7 @@ public class PKSendPushNotificationUtil implements AutoCloseable {
 
         final String payload = payloadBuilder.buildWithDefaultMaximumLength();
         final String token = TokenUtil.sanitizeTokenString(pushtoken);
-        state(!this.topics.isEmpty(), "APNS topic is required for sending a push notification");
+        Assert.state(!this.topics.isEmpty(), "APNS topic is required for sending a push notification");
         String topic = null;
         if (!this.topics.isEmpty()) {
             topic = this.topics.iterator().next();
