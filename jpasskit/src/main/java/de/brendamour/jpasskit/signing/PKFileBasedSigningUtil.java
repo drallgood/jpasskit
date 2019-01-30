@@ -25,6 +25,7 @@ import com.google.common.io.Files;
 import de.brendamour.jpasskit.PKPass;
 import de.brendamour.jpasskit.personalization.PKPersonalization;
 
+import de.brendamour.jpasskit.util.Assert;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -122,9 +123,8 @@ public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
     public void signManifestFileAndWriteToDirectory(final File temporaryPassDirectory, final File manifestJSONFile,
             final PKSigningInformation signingInformation) throws PKSigningException {
 
-        if (temporaryPassDirectory == null || manifestJSONFile == null) {
-            throw new IllegalArgumentException("Temporary directory or manifest file not provided");
-        }
+        Assert.notNull(temporaryPassDirectory, "Temporary directory is mandatory");
+        Assert.notNull(manifestJSONFile, "Manifest JSON file is mandatory");
 
         File signatureFile = new File(temporaryPassDirectory.getAbsolutePath() + File.separator + SIGNATURE_FILE_NAME);
         try (FileOutputStream signatureOutputStream = new FileOutputStream(signatureFile)) {

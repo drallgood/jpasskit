@@ -15,13 +15,14 @@
  */
 package de.brendamour.jpasskit.apns;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import com.turo.pushy.apns.ApnsClient;
@@ -33,6 +34,9 @@ import com.turo.pushy.apns.util.TokenUtil;
 import com.turo.pushy.apns.util.concurrent.PushNotificationFuture;
 import com.turo.pushy.apns.util.concurrent.PushNotificationResponseListener;
 
+import de.brendamour.jpasskit.util.Assert;
+import de.brendamour.jpasskit.util.CertUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,35 +47,38 @@ public class PKSendPushNotificationUtil implements AutoCloseable {
     private static final int POOL_SIZE_DEFAULT = 10;
 
     private ApnsClient client;
+    private Set<String> topics;
 
-    public PKSendPushNotificationUtil(final String pathToP12, final String passwordForP12) throws IOException {
-        this(pathToP12, passwordForP12, POOL_SIZE_DEFAULT);
+    public PKSendPushNotificationUtil(String keyStorePath, char [] keyStorePassword) throws IOException {
+        this(keyStorePath, keyStorePassword, POOL_SIZE_DEFAULT);
     }
 
-    public PKSendPushNotificationUtil(final String pathToP12, final String passwordForP12, final int poolSize) throws IOException {
-        try (InputStream certificateStream = getStreamOfP12File(pathToP12)) {
-            client = new ApnsClientBuilder().setApnsServer(ApnsClientBuilder.PRODUCTION_APNS_HOST, ApnsClientBuilder.DEFAULT_APNS_PORT)
-                    .setClientCredentials(certificateStream, passwordForP12)
+    public PKSendPushNotificationUtil(String keyStorePath, char [] keyStorePassword, int poolSize) throws IOException {
+        try (InputStream keyStoreInputStream = CertUtils.toInputStream(keyStorePath)) {
+            KeyStore keyStore = CertUtils.toKeyStore(keyStoreInputStream, keyStorePassword);
+            Pair<PrivateKey, X509Certificate> certificate = CertUtils.extractCertificateWithKey(keyStore, keyStorePassword);
+            this.client = new ApnsClientBuilder().setApnsServer(ApnsClientBuilder.PRODUCTION_APNS_HOST, ApnsClientBuilder.DEFAULT_APNS_PORT)
+                    .setClientCredentials(certificate.getRight(), certificate.getLeft(), String.valueOf(keyStorePassword))
                     .setConcurrentConnections(poolSize)
                     .build();
+            this.topics = CertUtils.extractApnsTopics(certificate.getRight());
+        } catch (CertificateException ex) {
+            throw new IOException("Failed to load keystore from " + keyStorePath);
         }
+    }
+
+    @Deprecated
+    public PKSendPushNotificationUtil(String keyStorePath, String keyStorePassword) throws IOException {
+        this(keyStorePath, keyStorePassword == null ? null : keyStorePassword.toCharArray());
+    }
+
+    @Deprecated
+    public PKSendPushNotificationUtil(String keyStorePath, String keyStorePassword, int poolSize) throws IOException {
+        this(keyStorePath, keyStorePassword == null ? null : keyStorePassword.toCharArray(), poolSize);
     }
 
     public void setClient(ApnsClient client) {
         this.client = client;
-    }
-
-    protected InputStream getStreamOfP12File(final String pathToP12) throws FileNotFoundException {
-        File p12File = new File(pathToP12);
-        if (!p12File.exists()) {
-            // try loading it from the classpath
-            URL localP12File = this.getClass().getClassLoader().getResource(pathToP12);
-            if (localP12File == null) {
-                throw new FileNotFoundException("File at " + pathToP12 + " not found");
-            }
-            p12File = new File(localP12File.getFile());
-        }
-        return new FileInputStream(p12File);
     }
 
     /**
@@ -81,17 +88,17 @@ public class PKSendPushNotificationUtil implements AutoCloseable {
     @Deprecated
     public void sendPushNotification(final String pushtoken) {
         try {
-            
+
             PushNotificationFuture<SimpleApnsPushNotification, PushNotificationResponse<SimpleApnsPushNotification>> notificationFuture = sendPushNotificationAsync(pushtoken);
             notificationFuture.addListener(new ApnsLoggingDelegate());
             final PushNotificationResponse<SimpleApnsPushNotification> pushNotificationResponse = notificationFuture.get();
-    
+
             if (pushNotificationResponse.isAccepted()) {
                 LOGGER.debug("Push notification accepted by APNs gateway.");
             } else {
                 LOGGER.debug("Notification rejected by the APNs gateway: {}",
                         pushNotificationResponse.getRejectionReason());
-        
+
                 if (pushNotificationResponse.getTokenInvalidationTimestamp() != null) {
                     LOGGER.debug("\t…and the token is invalid as of {}",
                         pushNotificationResponse.getTokenInvalidationTimestamp());
@@ -108,14 +115,21 @@ public class PKSendPushNotificationUtil implements AutoCloseable {
     public PushNotificationFuture<SimpleApnsPushNotification, PushNotificationResponse<SimpleApnsPushNotification>> sendPushNotificationAsync(final String pushtoken) {
 
         LOGGER.debug("Sending Push notification for key: {}", pushtoken);
-        
+
         final ApnsPayloadBuilder payloadBuilder = new ApnsPayloadBuilder();
         payloadBuilder.setAlertBody(EMPTY_PUSH_JSON_STRING);
 
         final String payload = payloadBuilder.buildWithDefaultMaximumLength();
         final String token = TokenUtil.sanitizeTokenString(pushtoken);
-
-        SimpleApnsPushNotification pushNotification = new SimpleApnsPushNotification(token, "com.example.myApp", payload);
+        Assert.state(!this.topics.isEmpty(), "APNS topic is required for sending a push notification");
+        String topic = null;
+        if (!this.topics.isEmpty()) {
+            topic = this.topics.iterator().next();
+            if (this.topics.size() > 1) {
+                LOGGER.warn("Multiple APNS topics detected, using {} (first value out of {} available) for sending a push notification", topic, this.topics.size());
+            }
+        }
+        SimpleApnsPushNotification pushNotification = new SimpleApnsPushNotification(token, topic, payload);
         LOGGER.debug("Send Push notification for key: {}", pushtoken);
         return client.sendNotification(pushNotification);
     }

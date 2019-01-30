@@ -36,9 +36,10 @@ import de.brendamour.jpasskit.personalization.PKPersonalization;
 public class PKInMemorySigningUtilTest {
 
     private static final String PASS_TEMPLATE_FOLDER = PKPassTemplateFolderTest.class.getClassLoader().getResource("StoreCard.raw").getPath();
-    private static final String appleWWDRCA = "passbook/ca-chain.cert.pem";
-    private static final String keyStorePath = "passbook/jpasskittest.p12";
-    private static final String keyStorePassword = "password";
+    private static final String APPLE_WWDRCA = "passbook/ca-chain.cert.pem";
+    private static final String KEYSTORE_PATH = "passbook/jpasskittest.p12";
+    private static final String KEYSTORE_PASSWORD = "password";
+
     private PKInMemorySigningUtil pkInMemorySigningUtil;
 
     @BeforeMethod
@@ -99,7 +100,7 @@ public class PKInMemorySigningUtilTest {
     private void createZipAndAssert(IPKPassTemplate pkPassTemplate, PKPass pkPass, PKPersonalization personalization, String fileName)
             throws Exception {
         PKSigningInformation pkSigningInformation = new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
-                keyStorePath, keyStorePassword, appleWWDRCA);
+                KEYSTORE_PATH, KEYSTORE_PASSWORD, APPLE_WWDRCA);
         byte[] signedAndZippedPkPassArchive;
 
         if (personalization != null) {
