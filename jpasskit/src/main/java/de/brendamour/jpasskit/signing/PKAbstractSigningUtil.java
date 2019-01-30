@@ -17,12 +17,13 @@ package de.brendamour.jpasskit.signing;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import de.brendamour.jpasskit.util.Assert;
+import de.brendamour.jpasskit.util.CertUtils;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.DERUTCTime;
@@ -36,7 +37,6 @@ import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.cms.DefaultSignedAttributeTableGenerator;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
@@ -62,12 +62,10 @@ public abstract class PKAbstractSigningUtil implements IPKSigningUtil {
     protected ObjectWriter objectWriter;
 
     protected PKAbstractSigningUtil(ObjectMapper objectMapper) {
-        addBCProvider();
         this.objectWriter = configureObjectMapper(objectMapper);
     }
 
     protected PKAbstractSigningUtil(ObjectWriter objectWriter) {
-        addBCProvider();
         this.objectWriter = objectWriter;
     }
 
@@ -78,23 +76,20 @@ public abstract class PKAbstractSigningUtil implements IPKSigningUtil {
      */
     @Override
     public byte[] signManifestFile(byte[] manifestJSON, PKSigningInformation signingInformation) throws PKSigningException {
-        if (manifestJSON == null) {
-            throw new IllegalArgumentException("manifestJSON has tobe present");
-        }
-
+        Assert.notNull(manifestJSON, "Manifest JSON is mandatory");
         CMSProcessableByteArray content = new CMSProcessableByteArray(manifestJSON);
         return signManifestUsingContent(signingInformation, content);
     }
 
     protected byte[] signManifestUsingContent(PKSigningInformation signingInformation, CMSTypedData content) throws PKSigningException {
-        if (signingInformation == null || !signingInformation.isValid()) {
-            throw new IllegalArgumentException("Signing information not valid");
-        }
+        Assert.notNull(signingInformation, "Signing information is mandatory");
+        Assert.isTrue(signingInformation.isValid(), "Signing information is incomplete");
 
         try {
             CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
-            ContentSigner sha1Signer = new JcaContentSignerBuilder("SHA1withRSA").setProvider(BouncyCastleProvider.PROVIDER_NAME).build(
-                    signingInformation.getSigningPrivateKey());
+            ContentSigner sha1Signer = new JcaContentSignerBuilder("SHA1withRSA")
+                    .setProvider(CertUtils.getProviderName())
+                    .build(signingInformation.getSigningPrivateKey());
 
             final ASN1EncodableVector signedAttributes = new ASN1EncodableVector();
             final Attribute signingAttribute = new Attribute(CMSAttributes.signingTime, new DERSet(new DERUTCTime(new Date())));
@@ -105,9 +100,14 @@ public abstract class PKAbstractSigningUtil implements IPKSigningUtil {
             // Create the table table generator that will added to the Signer builder
             final DefaultSignedAttributeTableGenerator signedAttributeGenerator = new DefaultSignedAttributeTableGenerator(signedAttributesTable);
 
-            generator.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(new JcaDigestCalculatorProviderBuilder().setProvider(
-                    BouncyCastleProvider.PROVIDER_NAME).build()).setSignedAttributeGenerator(signedAttributeGenerator).build(sha1Signer,
-                    signingInformation.getSigningCert()));
+            generator.addSignerInfoGenerator(
+                    new JcaSignerInfoGeneratorBuilder(
+                            new JcaDigestCalculatorProviderBuilder()
+                                    .setProvider(CertUtils.getProviderName())
+                                    .build())
+                            .setSignedAttributeGenerator(signedAttributeGenerator)
+                            .build(sha1Signer, signingInformation.getSigningCert())
+            );
 
             List<X509Certificate> certList = new ArrayList<X509Certificate>();
             certList.add(signingInformation.getAppleWWDRCACert());
@@ -168,11 +168,5 @@ public abstract class PKAbstractSigningUtil implements IPKSigningUtil {
 
     protected @JsonFilter("charsetFilter") class CharsetFilterMixIn {
         // just a dummy
-    }
-
-    private void addBCProvider() {
-        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-            Security.addProvider(new BouncyCastleProvider());
-        }
     }
 }

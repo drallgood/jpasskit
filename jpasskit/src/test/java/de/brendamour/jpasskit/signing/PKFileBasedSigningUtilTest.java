@@ -43,9 +43,9 @@ import java.util.Date;
 public class PKFileBasedSigningUtilTest {
 
     private static final String PASS_TEMPLATE_FOLDER = "StoreCard.raw";
-    private static final String appleWWDRCA = "passbook/ca-chain.cert.pem";
-    private static final String keyStorePath = "passbook/jpasskittest.p12";
-    private static final String keyStorePassword = "password";
+    private static final String APPLE_WWDRCA = "passbook/ca-chain.cert.pem";
+    private static final String KEYSTORE_PATH = "passbook/jpasskittest.p12";
+    private static final String KEYSTORE_PASSWORD = "password";
 
     @Test
     public void testManifest() throws Exception {
@@ -54,7 +54,7 @@ public class PKFileBasedSigningUtilTest {
         File manifestJSONFile = new File(getPathFromClasspath("pass2.json"));
 
         PKSigningInformation pkSigningInformation = new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
-                keyStorePath, keyStorePassword, appleWWDRCA);
+                KEYSTORE_PATH, KEYSTORE_PASSWORD, APPLE_WWDRCA);
         PKFileBasedSigningUtil pkSigningUtil = new PKFileBasedSigningUtil();
         pkSigningUtil.signManifestFileAndWriteToDirectory(temporaryPassDir, manifestJSONFile, pkSigningInformation);
     }
@@ -130,7 +130,7 @@ public class PKFileBasedSigningUtilTest {
 
     private void createZipAndAssert(PKPass pkPass, PKPersonalization personalization, String fileName) throws Exception {
         PKSigningInformation pkSigningInformation = new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
-                keyStorePath, keyStorePassword, appleWWDRCA);
+                KEYSTORE_PATH, KEYSTORE_PASSWORD, APPLE_WWDRCA);
         PKPassTemplateFolder pkPassTemplate = new PKPassTemplateFolder(getPathFromClasspath(PASS_TEMPLATE_FOLDER));
         IPKSigningUtil pkSigningUtil = new PKFileBasedSigningUtil();
         byte[] signedAndZippedPkPassArchive;
