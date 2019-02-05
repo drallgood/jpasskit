@@ -7,11 +7,11 @@ There are two separate projects:
 1. jPasskit - Which contains the Pass objects and useful utilities. It is designed to be included in existing Webservices, thus not including any request handling.
 2. jPasskit Server -  Which contains an additional REST Webservice, that can be included in existing Applications that do not use their own Webservice already. Note: This is still no standalone implementation. Things like storing passes and handling device (un)registrations are left open for the Application to implement.
 
-**Current stable release:** 0.1.0
+**Current stable release:** 0.1.1
 
-**Development Version:** 0.1.1-SNAPSHOT [![Build Status][image-1]][1] 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/06abe09a4e9a4d52b044230d4a811ca2)](https://app.codacy.com/app/drallgood/jpasskit?utm_source=github.com&utm_medium=referral&utm_content=drallgood/jpasskit&utm_campaign=Badge_Grade_Settings)
-[![DepShield Badge](https://depshield.sonatype.org/badges/drallgood/jpasskit/depshield.svg)](https://depshield.github.io)
+**Development Version:** 0.2.0-SNAPSHOT [![Build Status][image-1]][1] 
+[![Codacy Badge][image-2]][2]
+[![DepShield Badge][image-3]][3]
 
 ## Installation
 
@@ -94,9 +94,7 @@ jPasskit provides a flexible mechanism to provide such templates:
 
 In order to use an existing folder on the file system as you pass's template, you create an instance of `PKPassTemplateFolder` using the path to your folder as argument:
 
-```
-IPKPassTemplate pkPassTemplateFolder = new PKPassTemplateFolder(PASS_TEMPLATE_FOLDER);
-```
+	IPKPassTemplate pkPassTemplateFolder = new PKPassTemplateFolder(PASS_TEMPLATE_FOLDER);
 
 The content of this directory is defined in the PassKit Developer Documentation.
 
@@ -111,20 +109,16 @@ This approach requires more code, but is also more flexible. The template is sto
 It does not matter, where the stream comes from, but the data needs to be available when the template is used.
 For convenience, we provide methods to add several additional data types to the template:
 
-```
-pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_BACKGROUND, stream);
-pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_BACKGROUND_RETINA, stringBuffer);
-pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON, file);
-pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, url);
-``` 
+	pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_BACKGROUND, stream);
+	pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_BACKGROUND_RETINA, stringBuffer);
+	pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON, file);
+	pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, url);
 
 As you can see, we're also providing static variables for the most common file names.
 
 You can also add an optional locale parameter to the call, in which case the file will automatically be added only for the given language:
-```
-pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, Locale.ENGLISH, url); 
-//content from URL will be placed in "en.lproj/icon@2x.png"
-```
+	pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, Locale.ENGLISH, url); 
+	//content from URL will be placed in "en.lproj/icon@2x.png"
 
 **Note:** There are no checks, that the content of a provided file is valid. So if you'd provide a PDF file but store it as icon.png, it will not work. 
 
@@ -141,12 +135,10 @@ The PKSigningUtil contains all necessary methods to:
 
 
 Example to do it all in one step: 
-```
-PKSigningInformation pkSigningInformation = new  PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(keyStorePath,  keyStorePassword, appleWWDRCA);
-PKPassTemplateFolder passTemplate = new PKPassTemplateFolder(template_path);
-PKFileBasedSigningUtil pkSigningUtil = new PKFileBasedSigningUtil();
-byte[] signedAndZippedPkPassArchive = pkSigningUtil.createSignedAndZippedPkPassArchive(pass, passTemplate, pkSigningInformation);
-```
+	PKSigningInformation pkSigningInformation = new  PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(keyStorePath,  keyStorePassword, appleWWDRCA);
+	PKPassTemplateFolder passTemplate = new PKPassTemplateFolder(template_path);
+	PKFileBasedSigningUtil pkSigningUtil = new PKFileBasedSigningUtil();
+	byte[] signedAndZippedPkPassArchive = pkSigningUtil.createSignedAndZippedPkPassArchive(pass, passTemplate, pkSigningInformation);
  
 ## Using the jPasskit Server
 
@@ -163,7 +155,6 @@ The set up and start the Server you need two things:
 	- rest.ssl.keystore.type : The type of this keystore (e.g. PKCS12 or JKS)
 	- rest.ssl.keystore.password : The password to access the keystore
 	- rest.ssl.key.password : The password to access the private key
-			  
 	Apple requires all production passes to use SSL.
 2. An implementation of IPKRestletServerResourceFactory.
 
@@ -206,5 +197,9 @@ The process in broad strokes works as follows:
 5. Next time the user's device downloads a new version of the pass, you provide a custom pass with his information (Make sure you DON'T provide a personalizable pass this time!)
 
 [1]:	https://travis-ci.org/drallgood/jpasskit
+[2]:	https://app.codacy.com/app/drallgood/jpasskit?utm_source=github.com&utm_medium=referral&utm_content=drallgood/jpasskit&utm_campaign=Badge_Grade_Settings
+[3]:	https://depshield.github.io
 
 [image-1]:	https://travis-ci.org/drallgood/jpasskit.svg?branch=master
+[image-2]:	https://api.codacy.com/project/badge/Grade/06abe09a4e9a4d52b044230d4a811ca2
+[image-3]:	https://depshield.sonatype.org/badges/drallgood/jpasskit/depshield.svg

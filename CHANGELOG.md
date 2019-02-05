@@ -1,7 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+## 0.2.0 - xxx
 
-## 0.x.x - date
+### Added
+
+- none
+
+### Deprecated
+
+- none
+
+### Removed
+
+- none
+
+### Fixed
+
+## 0.1.1 - 2019-02-04
 
 ### Added
 
@@ -12,6 +27,14 @@ All notable changes to this project will be documented in this file.
 - Removed deprecated methods that haven't been valid since iOS 9
 
 ### Removed
+
+- none
+
+### Fixed
+
+- Security vulnerabilities by updating dependencies
+- Possible ressource leaks in PKPassTemplates
+- Removed static app identifier in `PKSendPushNotificationUtil` and replace it with a dynamic version extracted from the certificate
 
 ## 0.1.0 - 2018-10-04
 
@@ -25,7 +48,7 @@ All notable changes to this project will be documented in this file.
 
 ### Removed
 
-- Removed unsupported APNS dependency and replaced it with [pushy](https://github.com/relayrides/pushy)
+- Removed unsupported APNS dependency and replaced it with [pushy][1]
 
 ### Fixed
 
@@ -114,7 +137,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Switched to the current version of jpasskit (and Jackson 2) in jpasskit.server
-- 
+\- 
 
 ## 0.0.4 - 2014-06-11
 ### Added
@@ -175,7 +198,7 @@ All notable changes to this project will be documented in this file.
 
 ## 0.0.1 - 2012-09-19
 ### Added
-- Initial version (see Apple's spec and readme) 
+- Initial version (see Apple's spec and readme)
 
 ### Deprecated
 - Nothing
@@ -185,3 +208,5 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Nothing
+
+[1]:	https://github.com/relayrides/pushy
