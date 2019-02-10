@@ -20,6 +20,11 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Allows constructing and validating {@link PKBeacon} entities.
+ *
+ * @author Igor Stepanov
+ */
 public class PKBeaconBuilder implements IPKValidateable, IPKBuilder<PKBeacon> {
 
     private PKBeacon beacon;

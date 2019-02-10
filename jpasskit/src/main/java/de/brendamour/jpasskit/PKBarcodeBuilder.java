@@ -23,6 +23,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Allows constructing and validating {@link PKBarcode} entities.
+ *
+ * @author Igor Stepanov
+ */
 public class PKBarcodeBuilder implements IPKValidateable, IPKBuilder<PKBarcode> {
 
     private static final List<PKBarcodeFormat> BARCODE_TYPES_BEFORE_IOS_9;

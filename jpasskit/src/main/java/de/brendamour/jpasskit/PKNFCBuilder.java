@@ -15,6 +15,11 @@
  */
 package de.brendamour.jpasskit;
 
+/**
+ * Allows constructing and validating {@link PKNFC} entities.
+ *
+ * @author Igor Stepanov
+ */
 public class PKNFCBuilder implements IPKBuilder<PKNFC> {
 
     private PKNFC nfc;

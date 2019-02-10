@@ -18,7 +18,6 @@ package de.brendamour.jpasskit.passes;
 import java.io.Serializable;
 import java.util.List;
 
-import de.brendamour.jpasskit.PKBeacon;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import de.brendamour.jpasskit.PKField;

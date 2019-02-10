@@ -22,8 +22,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-/*
+/**
+ * Allows constructing {@link List} of Wallet API entities from  {@link List} of the appropriate builders and vice versa.
  * TODO: use Java 8 API
+ *
+ * @author Igor Stepanov
  */
 public class BuilderUtils {
 

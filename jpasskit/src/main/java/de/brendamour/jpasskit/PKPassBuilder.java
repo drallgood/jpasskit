@@ -32,6 +32,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+/**
+ * Allows constructing and validating {@link PKPass} entities.
+ *
+ * @author Igor Stepanov
+ */
 public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
 
     private static final int EXPECTED_AUTHTOKEN_LENGTH = 16;

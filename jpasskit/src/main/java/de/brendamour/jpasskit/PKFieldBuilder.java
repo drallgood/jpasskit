@@ -30,6 +30,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
+/**
+ * Allows constructing and validating {@link PKField} entities.
+ *
+ * @author Igor Stepanov
+ */
 public class PKFieldBuilder implements IPKValidateable, IPKBuilder<PKField> {
 
     private PKField field;

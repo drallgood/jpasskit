@@ -23,9 +23,13 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import de.brendamour.jpasskit.enums.PKPassPersonalizationField;
 
 /**
- * See https://developer.apple.com/library/prerelease/content/documentation/UserExperience/Conceptual/PassKit_PG/PassPersonalization.html
- * @author patrice
+ * Rewards enrollment lets you create a pass that prompts the user to sign up for a rewards program.
+ * These passes are referred to as personalizable passes, because the user provides personal information during signup that is used to update the pass.
  *
+ * @see <a href="https://developer.apple.com/library/prerelease/content/documentation/UserExperience/Conceptual/PassKit_PG/PassPersonalization.html">Rewards Enrollment</a>
+ *
+ * @author patrice
+ * @author Igor Stepanov
  */
 public class PKPersonalization implements Cloneable, Serializable {
 

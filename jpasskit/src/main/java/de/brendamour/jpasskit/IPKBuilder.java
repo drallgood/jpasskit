@@ -15,6 +15,14 @@
  */
 package de.brendamour.jpasskit;
 
+/**
+ * Defines common interface for constructing entities of Wallet API.
+ * Allows implementing generic utilities.
+ *
+ * @param <T> indicates type of entities, which this builder is intended for.
+ *
+ * @author Igor Stepanov
+ */
 public interface IPKBuilder<T> {
 
     T build();

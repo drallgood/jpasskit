@@ -27,6 +27,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+/**
+ * Allows constructing and validating {@link PKGenericPass} entities.
+ *
+ * @author Igor Stepanov
+ */
 public class PKGenericPassBuilder implements IPKValidateable, IPKBuilder<PKGenericPass> {
 
     private PKPassType passType;

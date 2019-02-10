@@ -15,6 +15,11 @@
  */
 package de.brendamour.jpasskit;
 
+/**
+ * Allows constructing and validating {@link PWAssociatedApp} entities.
+ *
+ * @author Igor Stepanov
+ */
 public class PWAssociatedAppBuilder implements IPKBuilder<PWAssociatedApp> {
 
     private PWAssociatedApp associatedApp;

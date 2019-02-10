@@ -20,6 +20,11 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Allows constructing and validating {@link PKLocation} entities.
+ *
+ * @author Igor Stepanov
+ */
 public class PKLocationBuilder implements IPKValidateable, IPKBuilder<PKLocation> {
 
     private PKLocation location;

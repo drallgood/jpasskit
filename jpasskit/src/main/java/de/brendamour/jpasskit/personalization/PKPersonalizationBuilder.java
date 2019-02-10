@@ -26,9 +26,12 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * See https://developer.apple.com/library/prerelease/content/documentation/UserExperience/Conceptual/PassKit_PG/PassPersonalization.html
- * @author patrice
+ * Allows constructing and validating {@link PKPersonalization} entities.
  *
+ * @see <a href="https://developer.apple.com/library/prerelease/content/documentation/UserExperience/Conceptual/PassKit_PG/PassPersonalization.html">Rewards Enrollment</a>
+ *
+ * @author patrice
+ * @author Igor Stepanov
  */
 public class PKPersonalizationBuilder implements IPKValidateable, IPKBuilder<PKPersonalization> {
 
