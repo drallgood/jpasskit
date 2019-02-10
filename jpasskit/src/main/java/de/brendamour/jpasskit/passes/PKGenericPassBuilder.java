@@ -282,25 +282,25 @@ public class PKGenericPassBuilder implements IPKValidateable, IPKBuilder<PKGener
     }
 
     public static PKGenericPassBuilder builder(PKCoupon pass) {
-        PKGenericPassBuilder passBuilder = builder(pass);
+        PKGenericPassBuilder passBuilder = builder((PKGenericPass) pass);
         passBuilder.passType(PKPassType.PKCoupon);
         return passBuilder;
     }
 
     public static PKGenericPassBuilder builder(PKEventTicket pass) {
-        PKGenericPassBuilder passBuilder = builder(pass);
+        PKGenericPassBuilder passBuilder = builder((PKGenericPass) pass);
         passBuilder.passType(PKPassType.PKEventTicket);
         return passBuilder;
     }
 
     public static PKGenericPassBuilder builder(PKStoreCard pass) {
-        PKGenericPassBuilder passBuilder = builder(pass);
+        PKGenericPassBuilder passBuilder = builder((PKGenericPass) pass);
         passBuilder.passType(PKPassType.PKStoreCard);
         return passBuilder;
     }
 
     public static PKGenericPassBuilder builder(PKBoardingPass pass) {
-        PKGenericPassBuilder passBuilder = builder(pass);
+        PKGenericPassBuilder passBuilder = builder((PKGenericPass) pass);
         passBuilder.transitType(pass.transitType);
         passBuilder.passType(PKPassType.PKBoardingPass);
         return passBuilder;

@@ -26,6 +26,7 @@ import java.awt.Color;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -106,7 +107,9 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
             this.locations = BuilderUtils.toLocationBuilderList(pass.getLocations());
             this.barcodes = BuilderUtils.toBarcodeBuilderList(pass.getBarcodes());
             this.associatedApps = BuilderUtils.toAssociatedAppBuilderList(pass.getAssociatedApps());
-            this.associatedStoreIdentifiers = pass.getAssociatedStoreIdentifiers();
+            if (pass.getAssociatedStoreIdentifiers() != null) {
+                this.associatedStoreIdentifiers = new CopyOnWriteArrayList<>(pass.getAssociatedStoreIdentifiers());
+            }
         }
         return this;
     }
@@ -271,6 +274,13 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
         return this;
     }
 
+    public PKPassBuilder associatedStoreIdentifier(Long associatedStoreIdentifier) {
+        if (associatedStoreIdentifier != null) {
+            this.associatedStoreIdentifiers.add(associatedStoreIdentifier);
+        }
+        return this;
+    }
+
     public PKPassBuilder associatedStoreIdentifiers(List<Long> associatedStoreIdentifiers) {
         if (associatedStoreIdentifiers == null || associatedStoreIdentifiers.isEmpty()) {
             this.associatedStoreIdentifiers.clear();
@@ -417,7 +427,7 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
         this.pkPass.locations = BuilderUtils.buildAll(this.locations);
         this.pkPass.barcodes = BuilderUtils.buildAll(this.barcodes);
         this.pkPass.associatedApps = BuilderUtils.buildAll(this.associatedApps);
-        this.pkPass.associatedStoreIdentifiers = this.associatedStoreIdentifiers;
+        this.pkPass.associatedStoreIdentifiers = Collections.unmodifiableList(this.associatedStoreIdentifiers);
         return this.pkPass;
     }
 }
