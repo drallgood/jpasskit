@@ -25,7 +25,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.awt.Color;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -209,9 +208,9 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
             this.beacons.clear();
             return this;
         }
-        for (PKBeacon beacon : beacons) {
-            beaconsBuilder(PKBeacon.builder(beacon));
-        }
+        beacons.stream()
+                .map(PKBeacon::builder)
+                .forEach(this::beaconsBuilder);
         return this;
     }
 
@@ -232,9 +231,9 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
             this.locations.clear();
             return this;
         }
-        for (PKLocation location : locations) {
-            locationBuilder(PKLocation.builder(location));
-        }
+        locations.stream()
+                .map(PKLocation::builder)
+                .forEach(this::locationBuilder);
         return this;
     }
 
@@ -250,9 +249,9 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
             this.barcodes.clear();
             return this;
         }
-        for (PKBarcode barcode : barcodes) {
-            barcodeBuilder(PKBarcode.builder(barcode));
-        }
+        barcodes.stream()
+                .map(PKBarcode::builder)
+                .forEach(this::barcodeBuilder);
         return this;
     }
 
@@ -307,9 +306,9 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
             this.associatedApps.clear();
             return this;
         }
-        for (PWAssociatedApp associatedApp : associatedApps) {
-            associatedAppBuilder(PWAssociatedApp.builder(associatedApp));
-        }
+        associatedApps.stream()
+                .map(PWAssociatedApp::builder)
+                .forEach(this::associatedAppBuilder);
         return this;
     }
 
@@ -359,7 +358,7 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
 
     private void checkAssociatedAppIfSet(List<String> validationErrors) {
         // If appLaunchURL key is present, the associatedStoreIdentifiers key must also be present
-        if (this.pkPass.appLaunchURL != null && isEmpty(this.pkPass.associatedStoreIdentifiers)) {
+        if (this.pkPass.appLaunchURL != null && BuilderUtils.isEmpty(this.pkPass.associatedStoreIdentifiers)) {
             validationErrors.add("The appLaunchURL requires associatedStoreIdentifiers to be specified");
         }
     }
@@ -399,10 +398,6 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
             return "rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ")";
         }
         return null;
-    }
-
-    private static boolean isEmpty(Collection<?> coll) {
-        return coll == null || coll.isEmpty();
     }
 
     @Override

@@ -17,6 +17,7 @@ package de.brendamour.jpasskit.apns;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.CertificateException;
@@ -42,7 +43,7 @@ import org.slf4j.LoggerFactory;
 
 public class PKSendPushNotificationUtil implements AutoCloseable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PKSendPushNotificationUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final String EMPTY_PUSH_JSON_STRING = "{}";
     private static final int POOL_SIZE_DEFAULT = 10;
 

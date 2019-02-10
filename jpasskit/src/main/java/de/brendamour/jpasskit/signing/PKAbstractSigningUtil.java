@@ -52,6 +52,7 @@ public abstract class PKAbstractSigningUtil implements IPKSigningUtil {
     protected static final String PASS_JSON_FILE_NAME = "pass.json";
     protected static final String PERSONALIZATION_JSON_FILE_NAME = "personalization.json";
     protected static final String SIGNATURE_FILE_NAME = "signature";
+
     protected ObjectWriter objectWriter;
 
     protected PKAbstractSigningUtil(ObjectMapper objectMapper) {

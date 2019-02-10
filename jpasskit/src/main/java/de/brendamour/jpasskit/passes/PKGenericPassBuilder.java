@@ -26,6 +26,7 @@ import de.brendamour.jpasskit.util.BuilderUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Stream;
 
 /**
  * Allows constructing and validating {@link PKGenericPass} entities.
@@ -112,13 +113,11 @@ public class PKGenericPassBuilder implements IPKValidateable, IPKBuilder<PKGener
     }
 
     public PKGenericPassBuilder headerFields(final List<PKField> fields) {
-        if (fields == null || fields.isEmpty()) {
+        if (BuilderUtils.isEmpty(fields)) {
             this.headerFields.clear();
             return this;
         }
-        for (PKField field : fields) {
-            headerField(field);
-        }
+        fields.forEach(this::headerField);
         return this;
     }
 
@@ -132,13 +131,11 @@ public class PKGenericPassBuilder implements IPKValidateable, IPKBuilder<PKGener
     }
 
     public PKGenericPassBuilder primaryFields(final List<PKField> fields) {
-        if (fields == null || fields.isEmpty()) {
+        if (BuilderUtils.isEmpty(fields)) {
             this.primaryFields.clear();
             return this;
         }
-        for (PKField field : fields) {
-            primaryField(field);
-        }
+        fields.forEach(this::primaryField);
         return this;
     }
 
@@ -152,13 +149,11 @@ public class PKGenericPassBuilder implements IPKValidateable, IPKBuilder<PKGener
     }
 
     public PKGenericPassBuilder secondaryFields(final List<PKField> fields) {
-        if (fields == null || fields.isEmpty()) {
+        if (BuilderUtils.isEmpty(fields)) {
             this.secondaryFields.clear();
             return this;
         }
-        for (PKField field : fields) {
-            secondaryField(field);
-        }
+        fields.forEach(this::secondaryField);
         return this;
     }
 
@@ -172,13 +167,11 @@ public class PKGenericPassBuilder implements IPKValidateable, IPKBuilder<PKGener
     }
 
     public PKGenericPassBuilder auxiliaryFields(final List<PKField> fields) {
-        if (fields == null || fields.isEmpty()) {
+        if (BuilderUtils.isEmpty(fields)) {
             this.auxiliaryFields.clear();
             return this;
         }
-        for (PKField field : fields) {
-            auxiliaryField(field);
-        }
+        fields.forEach(this::auxiliaryField);
         return this;
     }
 
@@ -192,13 +185,11 @@ public class PKGenericPassBuilder implements IPKValidateable, IPKBuilder<PKGener
     }
 
     public PKGenericPassBuilder backFields(final List<PKField> fields) {
-        if (fields == null || fields.isEmpty()) {
+        if (BuilderUtils.isEmpty(fields)) {
             this.backFields.clear();
             return this;
         }
-        for (PKField pkField : fields) {
-            backField(pkField);
-        }
+        fields.forEach(this::backField);
         return this;
     }
 
@@ -217,23 +208,15 @@ public class PKGenericPassBuilder implements IPKValidateable, IPKBuilder<PKGener
 
         List<String> validationErrors = new ArrayList<>();
 
-        List<PKFieldBuilder> allFields = new ArrayList<>();
-        allFields.addAll(this.primaryFields);
-        allFields.addAll(this.secondaryFields);
-        allFields.addAll(this.headerFields);
-        allFields.addAll(this.backFields);
-        allFields.addAll(this.auxiliaryFields);
+        Stream.of(this.primaryFields, this.secondaryFields, this.headerFields, this.backFields, this.auxiliaryFields)
+                .flatMap(List::stream)
+                .filter(f -> !f.isValid())
+                .map(PKFieldBuilder::getValidationErrors)
+                .flatMap(List::stream)
+                .forEach(validationErrors::add);
 
-        for (PKFieldBuilder pkField : allFields) {
-            if (!pkField.isValid()) {
-                validationErrors.addAll(pkField.getValidationErrors());
-            }
-        }
-
-        if (this.passType == PKPassType.PKBoardingPass) {
-            if (this.transitType == null) {
-                validationErrors.add("TransitType is not set");
-            }
+        if (this.passType == PKPassType.PKBoardingPass && this.transitType == null) {
+            validationErrors.add("TransitType is not set");
         }
 
         return validationErrors;

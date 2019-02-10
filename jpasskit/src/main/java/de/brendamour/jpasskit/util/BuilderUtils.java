@@ -15,84 +15,72 @@
  */
 package de.brendamour.jpasskit.util;
 
-import de.brendamour.jpasskit.*;
 
-import java.util.ArrayList;
+import de.brendamour.jpasskit.IPKBuilder;
+import de.brendamour.jpasskit.PKBarcode;
+import de.brendamour.jpasskit.PKBarcodeBuilder;
+import de.brendamour.jpasskit.PKBeacon;
+import de.brendamour.jpasskit.PKBeaconBuilder;
+import de.brendamour.jpasskit.PKField;
+import de.brendamour.jpasskit.PKFieldBuilder;
+import de.brendamour.jpasskit.PKLocation;
+import de.brendamour.jpasskit.PKLocationBuilder;
+import de.brendamour.jpasskit.PWAssociatedApp;
+import de.brendamour.jpasskit.PWAssociatedAppBuilder;
+
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Allows constructing {@link List} of Wallet API entities from  {@link List} of the appropriate builders and vice versa.
- * TODO: use Java 8 API
  *
  * @author Igor Stepanov
  */
 public class BuilderUtils {
 
     public static <T, B extends IPKBuilder<T>> List<T> buildAll(List<B> builders) {
-        if (builders == null || builders.isEmpty()) {
+        if (isEmpty(builders)) {
             return Collections.emptyList();
         }
-        List<T> fields = new ArrayList<>();
-        for (B builder : builders) {
-            fields.add(builder.build());
-        }
-        return Collections.unmodifiableList(fields);
+        return builders.stream()
+                .map(IPKBuilder::build)
+                .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
     }
 
     public static List<PKFieldBuilder> toFieldBuilderList(List<PKField> fields) {
-        if (fields == null || fields.isEmpty()) {
-            return Collections.emptyList();
-        }
-        List<PKFieldBuilder> builders = new CopyOnWriteArrayList<>();
-        for (PKField field : fields) {
-            builders.add(PKField.builder(field));
-        }
-        return builders;
+        return toBuilderList(fields, PKField::builder);
     }
 
     public static List<PKBeaconBuilder> toBeaconBuilderList(List<PKBeacon> beacons) {
-        if (beacons == null || beacons.isEmpty()) {
-            return Collections.emptyList();
-        }
-        List<PKBeaconBuilder> builders = new CopyOnWriteArrayList<>();
-        for (PKBeacon beacon : beacons) {
-            builders.add(PKBeacon.builder(beacon));
-        }
-        return builders;
+        return toBuilderList(beacons, PKBeacon::builder);
     }
 
     public static List<PKBarcodeBuilder> toBarcodeBuilderList(List<PKBarcode> barcodes) {
-        if (barcodes == null || barcodes.isEmpty()) {
-            return Collections.emptyList();
-        }
-        List<PKBarcodeBuilder> builders = new CopyOnWriteArrayList<>();
-        for (PKBarcode barcode : barcodes) {
-            builders.add(PKBarcode.builder(barcode));
-        }
-        return builders;
+        return toBuilderList(barcodes, PKBarcode::builder);
     }
 
     public static List<PKLocationBuilder> toLocationBuilderList(List<PKLocation> locations) {
-        if (locations == null || locations.isEmpty()) {
-            return Collections.emptyList();
-        }
-        List<PKLocationBuilder> builders = new CopyOnWriteArrayList<>();
-        for (PKLocation location : locations) {
-            builders.add(PKLocation.builder(location));
-        }
-        return builders;
+        return toBuilderList(locations, PKLocation::builder);
     }
 
     public static List<PWAssociatedAppBuilder> toAssociatedAppBuilderList(List<PWAssociatedApp> associatedApps) {
-        if (associatedApps == null || associatedApps.isEmpty()) {
+        return toBuilderList(associatedApps, PWAssociatedApp::builder);
+    }
+
+    public static <T, B extends IPKBuilder<T>> List<B> toBuilderList(List<T> entities, Function<T,B> toBuilder) {
+        if (isEmpty(entities)) {
             return Collections.emptyList();
         }
-        List<PWAssociatedAppBuilder> builders = new CopyOnWriteArrayList<>();
-        for (PWAssociatedApp associatedApp : associatedApps) {
-            builders.add(PWAssociatedApp.builder(associatedApp));
-        }
-        return builders;
+        return entities.stream()
+                .map(toBuilder)
+                .collect(Collectors.toCollection(CopyOnWriteArrayList::new));
+    }
+
+    public static boolean isEmpty(Collection<?> coll) {
+        return coll == null || coll.isEmpty();
     }
 }
