@@ -13,21 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.brendamour.jpasskit.passes;
+package de.brendamour.jpasskit.enums;
 
-import de.brendamour.jpasskit.enums.PKTransitType;
-
-public class PKBoardingPass extends PKGenericPass {
-
-    private static final long serialVersionUID = 6099662826698064150L;
-
-    PKTransitType transitType;
-
-    protected PKBoardingPass() {
-    }
-
-    public PKTransitType getTransitType() {
-        return transitType;
-    }
-
+public enum PKPassType {
+    PKGenericPass,
+    PKBoardingPass,
+    PKCoupon,
+    PKEventTicket,
+    PKStoreCard
 }

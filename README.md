@@ -45,37 +45,35 @@ The class PKPass is the toplevel class. It represents the pass.json file. Everyt
 
 Example:
 
-	PKPass pass = new PKPass();
-	PKBarcode barcode = new PKBarcode();
-	PKStoreCard storeCard = new PKStoreCard();
-	List<PKField> primaryFields = new ArrayList<PKField>();
-	
-	PKField balanceField = new PKField();
-	balanceField.setKey( "balance" );
-	balanceField.setLabel( "balance" );
-	balanceField.setValue( 20.0 );
-	balanceField.setCurrencyCode( "EUR" );
-	
-	primaryFields.add( balanceField );
-	
-	barcode.setFormat( PKBarcodeFormat.PKBarcodeFormatQR );
-	barcode.setMessage( "ABCDEFG" );
-	barcode.setMessageEncoding( Charset.forName( "utf-8" ) );
-	
-	storeCard.setPrimaryFields( primaryFields );
-	
-	pass.setFormatVersion( 1 );
-	pass.setPassTypeIdentifier( "pass.some.passTypeIdentifier" );
-	pass.setSerialNumber( "000000001" );
-	pass.setTeamIdentifier( "myTeamId" );
-	pass.setBarcode( barcode );
-	pass.setOrganizationName( "OrgName" );
-	pass.setLogoText( "MyPass" );
-	pass.setStoreCard( storeCard );
-	pass.setDescription( "My PassBook" );
-	pass.setBackgroundColorAsObject( Color.BLACK );
-	pass.setForegroundColor( "rgb(255,255,255 )" );
+	PKPass pass = PKPass.builder()
+			.pass(
+					PKGenericPassBuilder.builder()
+							.passType(PKPassType.PKStoreCard)
+							.primaryFieldBuilder(
+									PKField.builder()
+											.key("balance")
+											.label("balance")
+											.value(20.0)
+											.currencyCode("EUR")
+							)
+			)
+			.barcodeBuilder(
+					PKBarcode.builder()
+							.format(PKBarcodeFormat.PKBarcodeFormatQR)
+							.message("ABCDEFG")
+							.messageEncoding(Charset.forName("utf-8"))
+			)
+			.formatVersion(1)
+			.passTypeIdentifier("pass.some.passTypeIdentifier")
+			.serialNumber("000000001")
+			.teamIdentifier("myTeamId")
+			.organizationName("OrgName")
+			.logoText("MyPass")
+			.description("My PassBook")
+			.backgroundColor(Color.BLACK)
+			.foregroundColor("rgb(255,255,255 )")
 	...
+			.build();
 
 ### Providing pass templates
 

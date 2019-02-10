@@ -24,68 +24,73 @@ import org.testng.annotations.Test;
 import de.brendamour.jpasskit.enums.PKBarcodeFormat;
 
 public class PKBarcodeTest {
-    private static final Charset CHARSET = Charset.forName("UTF-8");
+
+    private static final String CHARSET_NAME = "UTF-8";
+    private static final Charset CHARSET = Charset.forName(CHARSET_NAME);
     private static final PKBarcodeFormat PKBARCODEFORMAT = PKBarcodeFormat.PKBarcodeFormatQR;
     private static final String ALT_TEXT = "Text";
     private static final String MESSAGE = "Message";
-    private PKBarcode pkBarcode;
+
+    private PKBarcodeBuilder builder;
 
     @BeforeMethod
     public void prepareTest() {
-        pkBarcode = new PKBarcode();
+        builder = PKBarcode.builder();
         fillBarcode();
     }
 
     @Test
     public void test_getSet() {
-        fillBarcode();
+        Assert.assertTrue(builder.isValid());
 
-        Assert.assertEquals(pkBarcode.getMessage(), MESSAGE);
-        Assert.assertEquals(pkBarcode.getAltText(), ALT_TEXT);
-        Assert.assertEquals(pkBarcode.getMessageEncoding(), CHARSET);
-        Assert.assertEquals(pkBarcode.getFormat(), PKBARCODEFORMAT);
-        Assert.assertTrue(pkBarcode.isValid());
+        PKBarcode barcode = builder.build();
+        Assert.assertEquals(barcode.getMessage(), MESSAGE);
+        Assert.assertEquals(barcode.getAltText(), ALT_TEXT);
+        Assert.assertEquals(barcode.getMessageEncoding(), CHARSET_NAME);
+        Assert.assertEquals(barcode.getFormat(), PKBARCODEFORMAT);
     }
 
     private void fillBarcode() {
-        pkBarcode.setAltText(ALT_TEXT);
-        pkBarcode.setFormat(PKBARCODEFORMAT);
-        pkBarcode.setMessage(MESSAGE);
-        pkBarcode.setMessageEncoding(CHARSET);
+        builder.altText(ALT_TEXT)
+                .format(PKBARCODEFORMAT)
+                .message(MESSAGE)
+                .messageEncoding(CHARSET);
     }
 
     @Test
     public void test_noFormat() {
-        pkBarcode.setFormat(null);
+        builder.format(null);
 
-        Assert.assertFalse(pkBarcode.isValid());
+        Assert.assertFalse(builder.isValid());
     }
 
     @Test
     public void test_noMessage() {
-        pkBarcode.setMessage(null);
+        builder.message(null);
 
-        Assert.assertFalse(pkBarcode.isValid());
+        Assert.assertFalse(builder.isValid());
     }
 
     @Test
     public void test_emptyMessage() {
-        pkBarcode.setMessage("");
+        builder.message("");
 
-        Assert.assertFalse(pkBarcode.isValid());
+        Assert.assertFalse(builder.isValid());
     }
 
     @Test
     public void test_noMessageEncoding() {
-        pkBarcode.setMessageEncoding(null);
+        builder.messageEncoding((Charset) null);
+        Assert.assertFalse(builder.isValid());
 
-        Assert.assertFalse(pkBarcode.isValid());
+        builder.messageEncoding((String) null);
+        Assert.assertFalse(builder.isValid());
     }
 
     @Test
     public void test_noAltText() {
-        pkBarcode.setAltText(null);
+        builder.altText(null);
 
-        Assert.assertTrue(pkBarcode.isValid());
+        Assert.assertTrue(builder.isValid());
     }
 }

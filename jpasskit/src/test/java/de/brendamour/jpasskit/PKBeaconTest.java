@@ -24,63 +24,70 @@ import org.testng.annotations.Test;
  * Date: 06.02.14
  */
 public class PKBeaconTest {
+
     private static final Integer MAJOR = 3;
     private static final Integer MINOR = 29;
     private static final String UUID = "123456789-abcdefghijklmnopqrstuwxyz";
     private static final String TEXT = "County of Zadar";
-    private PKBeacon pkBeacon;
+
+    private PKBeaconBuilder builder;
 
     private void fillBeacon() {
-        pkBeacon.setMajor(MAJOR);
-        pkBeacon.setMinor(MINOR);
-        pkBeacon.setProximityUUID(UUID);
-        pkBeacon.setRelevantText(TEXT);
+        builder.major(MAJOR)
+                .minor(MINOR)
+                .proximityUUID(UUID)
+                .relevantText(TEXT);
     }
 
     @BeforeMethod
     public void prepareTest() {
-        pkBeacon = new PKBeacon();
+        builder = PKBeacon.builder();
         fillBeacon();
     }
 
     @Test
     public void test_getSet() {
-        fillBeacon();
+        Assert.assertTrue(builder.isValid());
 
-        Assert.assertEquals(pkBeacon.getMajor(), MAJOR);
-        Assert.assertEquals(pkBeacon.getMinor(), MINOR);
-        Assert.assertEquals(pkBeacon.getProximityUUID(), UUID);
-        Assert.assertEquals(pkBeacon.getRelevantText(), TEXT);
-        Assert.assertTrue(pkBeacon.isValid());
+        PKBeacon beacon = builder.build();
+        Assert.assertEquals(beacon.getMajor(), MAJOR);
+        Assert.assertEquals(beacon.getMinor(), MINOR);
+        Assert.assertEquals(beacon.getProximityUUID(), UUID);
+        Assert.assertEquals(beacon.getRelevantText(), TEXT);
     }
 
     @Test
     public void test_noProximityUUID() {
-        pkBeacon.setProximityUUID(null);
-        Assert.assertFalse(pkBeacon.isValid());
+        builder.proximityUUID(null);
+
+        Assert.assertFalse(builder.isValid());
     }
 
     @Test
     public void test_emptyProximityUUID() {
-        pkBeacon.setProximityUUID("");
-        Assert.assertFalse(pkBeacon.isValid());
+        builder.proximityUUID("");
+
+        Assert.assertFalse(builder.isValid());
     }
 
     @Test
     public void test_noRelevantText() {
-        pkBeacon.setRelevantText(null);
-        Assert.assertTrue(pkBeacon.isValid());
+        builder.relevantText(null);
+
+        Assert.assertTrue(builder.isValid());
     }
 
     @Test
     public void test_noMajor() {
-        pkBeacon.setMajor(null);
-        Assert.assertTrue(pkBeacon.isValid());
+        builder.major(null);
+
+        Assert.assertTrue(builder.isValid());
     }
 
     @Test
     public void test_noMinor() {
-        pkBeacon.setMinor(null);
-        Assert.assertTrue(pkBeacon.isValid());
+        builder.minor(null);
+
+        Assert.assertTrue(builder.isValid());
     }
 }

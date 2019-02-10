@@ -19,4 +19,7 @@ public class PKEventTicket extends PKGenericPass {
 
     private static final long serialVersionUID = -6952613912289269125L;
 
+    protected PKEventTicket() {
+    }
+
 }

@@ -15,17 +15,34 @@
  */
 package de.brendamour.jpasskit;
 
-import org.testng.Assert;
-import org.testng.annotations.Test;
+public class PKNFCBuilder implements IPKBuilder<PKNFC> {
 
-public class PKPushTokenTest {
+    private PKNFC nfc;
 
-    private static final String PUSHTOKEN = "abcdef49";
+    protected PKNFCBuilder() {
+        this.nfc = new PKNFC();
+    }
 
-    @Test
-    public void test_getterSetter() {
-        PKPushToken pushToken = PKPushToken.of(PUSHTOKEN);
+    @Override
+    public PKNFCBuilder of(final PKNFC source) {
+        if (source != null) {
+            this.nfc = source.clone();
+        }
+        return this;
+    }
 
-        Assert.assertEquals(pushToken.getPushToken(), PUSHTOKEN);
+    public PKNFCBuilder message(String message) {
+        this.nfc.message = message;
+        return this;
+    }
+
+    public PKNFCBuilder encryptionPublicKey(String encryptionPublicKey) {
+        this.nfc.encryptionPublicKey = encryptionPublicKey;
+        return this;
+    }
+
+    @Override
+    public PKNFC build() {
+        return this.nfc;
     }
 }

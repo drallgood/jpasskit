@@ -20,29 +20,30 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class PWAssociatedAppTest {
+
     private static final String TITLE = "PassWallet - Test";
     private static final String ID_GOOGLE_PLAY = "com.attidomobile.passwallet.test.google";
     private static final String ID_AMAZON = "com.attidomobile.passwallet.test.amazon";
-    private PWAssociatedApp pwAssociatedApp;
+
+    private PWAssociatedAppBuilder builder;
 
     private void fillAssociatedApp() {
-        pwAssociatedApp.setTitle(TITLE);
-        pwAssociatedApp.setIdGooglePlay(ID_GOOGLE_PLAY);
-        pwAssociatedApp.setIdAmazon(ID_AMAZON);
+        builder.title(TITLE)
+                .idGooglePlay(ID_GOOGLE_PLAY)
+                .idAmazon(ID_AMAZON);
     }
 
     @BeforeMethod
     public void prepareTest() {
-        pwAssociatedApp = new PWAssociatedApp();
+        builder = PWAssociatedApp.builder();
         fillAssociatedApp();
     }
 
     @Test
     public void test_getSet() {
-
-        Assert.assertEquals(pwAssociatedApp.getTitle(), TITLE);
-        Assert.assertEquals(pwAssociatedApp.getIdGooglePlay(), ID_GOOGLE_PLAY);
-        Assert.assertEquals(pwAssociatedApp.getIdAmazon(), ID_AMAZON);
-        Assert.assertTrue(pwAssociatedApp.isValid());
+        PWAssociatedApp associatedApp = builder.build();
+        Assert.assertEquals(associatedApp.getTitle(), TITLE);
+        Assert.assertEquals(associatedApp.getIdGooglePlay(), ID_GOOGLE_PLAY);
+        Assert.assertEquals(associatedApp.getIdAmazon(), ID_AMAZON);
     }
 }

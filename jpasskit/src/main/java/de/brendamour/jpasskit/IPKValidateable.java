@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public interface IPKValidateable extends Serializable {
+
     boolean isValid();
 
     List<String> getValidationErrors();

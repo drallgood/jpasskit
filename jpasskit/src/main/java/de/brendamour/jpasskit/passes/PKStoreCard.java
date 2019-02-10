@@ -19,4 +19,7 @@ public class PKStoreCard extends PKGenericPass {
 
     private static final long serialVersionUID = 3610754069846200910L;
 
+    protected PKStoreCard() {
+    }
+
 }

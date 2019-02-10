@@ -15,53 +15,49 @@
  */
 package de.brendamour.jpasskit;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class PWAssociatedApp implements IPKValidateable {
+import java.io.Serializable;
+
+public class PWAssociatedApp implements Cloneable, Serializable {
 
     private static final long serialVersionUID = -9021012408747538251L;
 
-    private String title;
-    private String idGooglePlay;
-    private String idAmazon;
+    protected String title;
+    protected String idGooglePlay;
+    protected String idAmazon;
 
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(final String title) {
-        this.title = title;
     }
 
     public String getIdGooglePlay() {
         return idGooglePlay;
     }
 
-    public void setIdGooglePlay(final String idGooglePlay) {
-        this.idGooglePlay = idGooglePlay;
-    }
-
     public String getIdAmazon() {
         return idAmazon;
     }
 
-    public void setIdAmazon(final String idAmazon) {
-        this.idAmazon = idAmazon;
-    }
-
-    public boolean isValid() {
-        return getValidationErrors().isEmpty();
-    }
-
-    public List<String> getValidationErrors() {
-        return Collections.emptyList();
+    @Override
+    protected PWAssociatedApp clone() {
+        try {
+            return (PWAssociatedApp) super.clone();
+        } catch (CloneNotSupportedException ex) {
+            throw new IllegalStateException("Failed to clone PWAssociatedApp instance", ex);
+        }
     }
 
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+    public static PWAssociatedAppBuilder builder() {
+        return new PWAssociatedAppBuilder();
+    }
+
+    public static PWAssociatedAppBuilder builder(PWAssociatedApp associatedApp) {
+        return builder().of(associatedApp);
     }
 }

@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import de.brendamour.jpasskit.passes.PKGenericPassBuilder;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -32,92 +33,88 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableMap;
 
 import de.brendamour.jpasskit.enums.PKBarcodeFormat;
-import de.brendamour.jpasskit.passes.PKGenericPass;
 
 public class PKPassTest {
+
     private static final String COLOR_STRING = "rgb(1,2,3)";
     private static final Color COLOR_OBJECT = new Color(1, 2, 3);
     private static final String APP_LAUNCH_URL = "myapplication://open";
     private static final String GROUPING_ID = "group-1234";
-    private static final Long MAX_DISTANCE = 99999l;
+    private static final Long MAX_DISTANCE = 99999L;
     private static final Map<String, Object> USER_INFO = ImmutableMap.<String, Object> of("name", "John Doe");
     private static final Date EXPIRATION_DATE = new Date();
-    private PKPass pkPass;
+
+    private PKPassBuilder builder;
 
     @BeforeMethod
     public void prepareTest() {
-        pkPass = new PKPass();
+        builder = PKPass.builder();
     }
 
     private void fillPkPassFields() {
-        pkPass.setAppLaunchURL(APP_LAUNCH_URL);
-        pkPass.setGroupingIdentifier(GROUPING_ID);
-        pkPass.setMaxDistance(MAX_DISTANCE);
-        pkPass.setVoided(true);
-        pkPass.setUserInfo(USER_INFO);
-        pkPass.setExpirationDate(EXPIRATION_DATE);
-        pkPass.setSharingProhibited(true);
-
-        PKBarcode barcode1 = new PKBarcode();
-        barcode1.setFormat(PKBarcodeFormat.PKBarcodeFormatQR);
-        PKBarcode barcode2 = new PKBarcode();
-        barcode2.setFormat(PKBarcodeFormat.PKBarcodeFormatCode128);
-
-        pkPass.setBarcodes(Arrays.asList(barcode1, barcode2));
+        builder.appLaunchURL(APP_LAUNCH_URL)
+                .groupingIdentifier(GROUPING_ID)
+                .maxDistance(MAX_DISTANCE)
+                .voided(true)
+                .userInfo(USER_INFO)
+                .expirationDate(EXPIRATION_DATE)
+                .sharingProhibited(true)
+                .barcodes(Arrays.asList(
+                        PKBarcode.builder()
+                                .format(PKBarcodeFormat.PKBarcodeFormatQR)
+                                .build(),
+                        PKBarcode.builder()
+                                .format(PKBarcodeFormat.PKBarcodeFormatCode128)
+                                .build()
+                ));
     }
 
     @Test
     public void test_getSet() {
         fillPkPassFields();
 
-        Assert.assertEquals(pkPass.getAppLaunchURL(), APP_LAUNCH_URL);
-        Assert.assertEquals(pkPass.getGroupingIdentifier(), GROUPING_ID);
-        Assert.assertEquals(pkPass.getMaxDistance(), MAX_DISTANCE);
-        Assert.assertTrue(pkPass.isVoided());
-        Assert.assertEquals(pkPass.getUserInfo(), USER_INFO);
-        Assert.assertEquals(pkPass.getExpirationDate(), EXPIRATION_DATE);
-        Assert.assertTrue(pkPass.isSharingProhibited());
-        List<PKBarcode> barcodes = pkPass.getBarcodes();
+        PKPass pass = builder.build();
+        Assert.assertEquals(pass.getAppLaunchURL(), APP_LAUNCH_URL);
+        Assert.assertEquals(pass.getGroupingIdentifier(), GROUPING_ID);
+        Assert.assertEquals(pass.getMaxDistance(), MAX_DISTANCE);
+        Assert.assertTrue(pass.isVoided());
+        Assert.assertEquals(pass.getUserInfo(), USER_INFO);
+        Assert.assertEquals(pass.getExpirationDate(), EXPIRATION_DATE);
+        Assert.assertTrue(pass.isSharingProhibited());
+        List<PKBarcode> barcodes = pass.getBarcodes();
         Assert.assertNotNull(barcodes);
         Assert.assertEquals(barcodes.size(), 2);
     }
 
     @Test
     public void test_colorConversionFromString() {
+        builder.backgroundColor(COLOR_STRING);
 
-        pkPass.setBackgroundColor(COLOR_STRING);
-
-        Assert.assertEquals(pkPass.getBackgroundColor(), COLOR_STRING);
-        Assert.assertEquals(pkPass.getBackgroundColorAsObject(), COLOR_OBJECT);
-
+        Assert.assertEquals(builder.build().getBackgroundColor(), COLOR_STRING);
     }
 
     @Test
     public void test_colorConversionFromObject() {
+        builder.backgroundColor(COLOR_OBJECT);
 
-        pkPass.setBackgroundColorAsObject(COLOR_OBJECT);
-
-        Assert.assertEquals(pkPass.getBackgroundColor(), COLOR_STRING);
-        Assert.assertEquals(pkPass.getBackgroundColorAsObject(), COLOR_OBJECT);
-
+        Assert.assertEquals(builder.build().getBackgroundColor(), COLOR_STRING);
     }
 
     @Test
     public void test_includesPassErrors() {
-        PKGenericPass subPass = mock(PKGenericPass.class);
-        List<String> subArrayListWithErrors = new ArrayList<String>();
+        PKGenericPassBuilder subPass = mock(PKGenericPassBuilder.class);
+        List<String> subArrayListWithErrors = new ArrayList<>();
         String someValidationMessage = "Some error";
         subArrayListWithErrors.add(someValidationMessage);
 
-        pkPass.setGeneric(subPass);
+        builder.pass(subPass);
 
         when(subPass.isValid()).thenReturn(false);
         when(subPass.getValidationErrors()).thenReturn(subArrayListWithErrors);
 
-        List<String> validationErrors = pkPass.getValidationErrors();
+        List<String> validationErrors = builder.getValidationErrors();
 
         Assert.assertTrue(validationErrors.size() > 0);
         Assert.assertTrue(validationErrors.contains(someValidationMessage));
-
     }
 }
