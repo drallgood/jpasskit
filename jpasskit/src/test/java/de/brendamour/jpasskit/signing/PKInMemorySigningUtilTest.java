@@ -22,6 +22,7 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.util.Locale;
 
+import de.brendamour.jpasskit.personalization.PKPersonalizationBuilder;
 import org.apache.commons.io.IOUtils;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -85,12 +86,12 @@ public class PKInMemorySigningUtilTest {
 
         PKPass pass = new ObjectMapper().readValue(new File(getPathFromClasspath("pass2.json")), PKPass.class);
 
-        PKPersonalization personalization = new PKPersonalization();
-        personalization.setDescription("desc");
-        personalization.setTermsAndConditions("T&C");
-        personalization.addRequiredPersonalizationField(PKPassPersonalizationField.PKPassPersonalizationFieldName);
+        PKPersonalizationBuilder personalization = PKPersonalization.builder()
+                .description("desc")
+                .termsAndConditions("T&C")
+                .requiredPersonalizationField(PKPassPersonalizationField.PKPassPersonalizationFieldName);
 
-        createZipAndAssert(pkPassTemplateInMemory, pass, personalization, "target/passInMemoryStream.zip");
+        createZipAndAssert(pkPassTemplateInMemory, pass, personalization.build(), "target/passInMemoryStream.zip");
     }
 
     private void createZipAndAssert(IPKPassTemplate pkPassTemplate, PKPass pkPass, String fileName) throws Exception {

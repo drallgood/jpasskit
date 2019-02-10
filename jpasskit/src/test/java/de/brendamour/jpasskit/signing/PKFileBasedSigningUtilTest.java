@@ -24,6 +24,7 @@ import de.brendamour.jpasskit.enums.PKBarcodeFormat;
 import de.brendamour.jpasskit.enums.PKPassPersonalizationField;
 import de.brendamour.jpasskit.personalization.PKPersonalization;
 
+import de.brendamour.jpasskit.personalization.PKPersonalizationBuilder;
 import org.apache.commons.io.IOUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -121,12 +122,12 @@ public class PKFileBasedSigningUtilTest {
                 .passTypeIdentifier("pti")
                 .teamIdentifier("ti");
 
-        PKPersonalization personalization = new PKPersonalization();
-        personalization.setDescription("desc");
-        personalization.setTermsAndConditions("T&C");
-        personalization.addRequiredPersonalizationField(PKPassPersonalizationField.PKPassPersonalizationFieldName);
+        PKPersonalizationBuilder personalization = PKPersonalization.builder()
+                .description("desc")
+                .termsAndConditions("T&C")
+                .requiredPersonalizationField(PKPassPersonalizationField.PKPassPersonalizationFieldName);
 
-        createZipAndAssert(passBuilder.build(), personalization, "target/passFileBasedGenerated.zip");
+        createZipAndAssert(passBuilder.build(), personalization.build(), "target/passFileBasedGenerated.zip");
     }
 
     private void createZipAndAssert(PKPass pkPass, String fileName) throws Exception {
