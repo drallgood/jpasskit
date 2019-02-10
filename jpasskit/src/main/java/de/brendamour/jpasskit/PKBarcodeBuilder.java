@@ -19,7 +19,6 @@ import de.brendamour.jpasskit.enums.PKBarcodeFormat;
 import org.apache.commons.lang3.StringUtils;
 
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,15 +28,6 @@ import java.util.List;
  * @author Igor Stepanov
  */
 public class PKBarcodeBuilder implements IPKValidateable, IPKBuilder<PKBarcode> {
-
-    private static final List<PKBarcodeFormat> BARCODE_TYPES_BEFORE_IOS_9;
-    static {
-        List<PKBarcodeFormat> barcodeTypes = new ArrayList<>();
-        barcodeTypes.add(PKBarcodeFormat.PKBarcodeFormatQR);
-        barcodeTypes.add(PKBarcodeFormat.PKBarcodeFormatPDF417);
-        barcodeTypes.add(PKBarcodeFormat.PKBarcodeFormatAztec);
-        BARCODE_TYPES_BEFORE_IOS_9 = Collections.unmodifiableList(barcodeTypes);
-    }
 
     private PKBarcode barcode;
 
@@ -91,10 +81,6 @@ public class PKBarcodeBuilder implements IPKValidateable, IPKBuilder<PKBarcode> 
                     + " Message: " + this.barcode.message + " MessageEncoding: " + this.barcode.messageEncoding);
         }
         return Collections.emptyList();
-    }
-
-    protected boolean isValidInIosVersionsBefore9() {
-        return BARCODE_TYPES_BEFORE_IOS_9.contains(this.barcode.format);
     }
 
     @Override
