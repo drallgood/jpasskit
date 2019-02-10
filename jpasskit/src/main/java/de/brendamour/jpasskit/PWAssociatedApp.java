@@ -35,6 +35,9 @@ public class PWAssociatedApp implements Cloneable, Serializable {
     protected String idGooglePlay;
     protected String idAmazon;
 
+    protected PWAssociatedApp() {
+    }
+
     public String getTitle() {
         return title;
     }
