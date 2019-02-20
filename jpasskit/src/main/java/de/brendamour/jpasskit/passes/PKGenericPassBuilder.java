@@ -237,19 +237,17 @@ public class PKGenericPassBuilder implements IPKValidateable, IPKBuilder<PKGener
 
     @Override
     public PKGenericPass build() {
-        if (this.passType != null) {
-            switch (this.passType) {
-                case PKBoardingPass:
-                    return buildBoardingPass();
-                case PKCoupon:
-                    return buildCoupon();
-                case PKEventTicket:
-                    return buildEventTicket();
-                case PKStoreCard:
-                    return buildStoreCard();
-            }
+        if (PKPassType.PKBoardingPass == this.passType) {
+            return buildBoardingPass();
+        } else if (PKPassType.PKCoupon == this.passType) {
+            return buildCoupon();
+        } else if (PKPassType.PKEventTicket == this.passType) {
+            return buildEventTicket();
+        } else if (PKPassType.PKStoreCard == this.passType) {
+            return buildStoreCard();
+        } else {
+            return buildPass(new PKGenericPass());
         }
-        return buildPass(new PKGenericPass());
     }
 
     public PKBoardingPass buildBoardingPass() {

@@ -22,7 +22,7 @@ public class PKBoardingPass extends PKGenericPass {
 
     private static final long serialVersionUID = 6099662826698064150L;
 
-    PKTransitType transitType;
+    protected PKTransitType transitType;
 
     protected PKBoardingPass() {
     }
