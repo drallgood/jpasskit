@@ -15,9 +15,10 @@
  */
 package de.brendamour.jpasskit;
 
-import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class PWAssociatedAppTest {
 
@@ -40,10 +41,41 @@ public class PWAssociatedAppTest {
     }
 
     @Test
-    public void test_getSet() {
+    public void test_builder() {
+        assertThat(builder.build())
+                .hasFieldOrPropertyWithValue("title", TITLE)
+                .hasFieldOrPropertyWithValue("idGooglePlay", ID_GOOGLE_PLAY)
+                .hasFieldOrPropertyWithValue("idAmazon", ID_AMAZON);
+    }
+
+    @Test
+    public void test_clone() {
         PWAssociatedApp associatedApp = builder.build();
-        Assert.assertEquals(associatedApp.getTitle(), TITLE);
-        Assert.assertEquals(associatedApp.getIdGooglePlay(), ID_GOOGLE_PLAY);
-        Assert.assertEquals(associatedApp.getIdAmazon(), ID_AMAZON);
+        PWAssociatedApp copy = PWAssociatedApp.builder(associatedApp).build();
+
+        assertThat(copy)
+                .isNotSameAs(associatedApp)
+                .isEqualToComparingFieldByFieldRecursively(associatedApp);
+
+        assertThat(copy.getTitle()).isEqualTo(TITLE);
+        assertThat(copy.getIdGooglePlay()).isEqualTo(ID_GOOGLE_PLAY);
+        assertThat(copy.getIdAmazon()).isEqualTo(ID_AMAZON);
+    }
+
+    @Test
+    public void test_getters() {
+        PWAssociatedApp associatedApp = builder.build();
+        assertThat(associatedApp.getTitle()).isEqualTo(TITLE);
+        assertThat(associatedApp.getIdGooglePlay()).isEqualTo(ID_GOOGLE_PLAY);
+        assertThat(associatedApp.getIdAmazon()).isEqualTo(ID_AMAZON);
+    }
+
+    @Test
+    public void test_toString() {
+        PWAssociatedApp associatedApp = builder.build();
+        assertThat(associatedApp.toString())
+                .contains(TITLE)
+                .contains(ID_GOOGLE_PLAY)
+                .contains(ID_AMAZON);
     }
 }

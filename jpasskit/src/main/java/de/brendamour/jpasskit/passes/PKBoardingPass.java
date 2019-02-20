@@ -15,6 +15,7 @@
  */
 package de.brendamour.jpasskit.passes;
 
+import de.brendamour.jpasskit.enums.PKPassType;
 import de.brendamour.jpasskit.enums.PKTransitType;
 
 public class PKBoardingPass extends PKGenericPass {
@@ -30,4 +31,12 @@ public class PKBoardingPass extends PKGenericPass {
         return transitType;
     }
 
+    public static PKGenericPassBuilder builder() {
+        return new PKGenericPassBuilder(PKPassType.PKBoardingPass);
+    }
+
+    public static PKGenericPassBuilder builder(PKBoardingPass pass) {
+        PKGenericPassBuilder passBuilder = builder();
+        return passBuilder.of(pass);
+    }
 }

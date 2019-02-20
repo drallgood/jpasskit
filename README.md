@@ -72,7 +72,7 @@ Example:
 			.description("My PassBook")
 			.backgroundColor(Color.BLACK)
 			.foregroundColor("rgb(255,255,255 )")
-	...
+	// ... and more initializations ...
 			.build();
 
 ### Providing pass templates

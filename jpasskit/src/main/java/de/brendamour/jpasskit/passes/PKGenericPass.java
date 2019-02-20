@@ -18,6 +18,7 @@ package de.brendamour.jpasskit.passes;
 import java.io.Serializable;
 import java.util.List;
 
+import de.brendamour.jpasskit.enums.PKPassType;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import de.brendamour.jpasskit.PKField;
@@ -56,16 +57,16 @@ public class PKGenericPass implements Cloneable, Serializable {
     }
 
     @Override
-    protected PKGenericPass clone() {
-        try {
-            return (PKGenericPass) super.clone();
-        } catch (CloneNotSupportedException ex) {
-            throw new IllegalStateException("Failed to clone PKGenericPass instance", ex);
-        }
-    }
-
-    @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+    public static PKGenericPassBuilder builder() {
+        return new PKGenericPassBuilder();
+    }
+
+    public static PKGenericPassBuilder builder(PKGenericPass pass) {
+        PKGenericPassBuilder passBuilder = builder();
+        return passBuilder.of(pass);
     }
 }

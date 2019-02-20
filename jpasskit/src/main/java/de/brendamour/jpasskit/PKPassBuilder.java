@@ -16,6 +16,7 @@
 package de.brendamour.jpasskit;
 
 import de.brendamour.jpasskit.enums.PKPassType;
+import de.brendamour.jpasskit.passes.PKBoardingPass;
 import de.brendamour.jpasskit.passes.PKGenericPass;
 import de.brendamour.jpasskit.passes.PKGenericPassBuilder;
 import de.brendamour.jpasskit.util.BuilderUtils;
@@ -51,7 +52,7 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
 
     protected PKPassBuilder() {
         this.pkPass = new PKPass();
-        this.pass = PKGenericPassBuilder.builder();
+        this.pass = PKGenericPass.builder();
         this.beacons = new CopyOnWriteArrayList<>();
         this.locations = new CopyOnWriteArrayList<>();
         this.barcodes = new CopyOnWriteArrayList<>();
@@ -158,7 +159,7 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
         return this;
     }
 
-    public PKPassBuilder voided(Boolean voided) {
+    public PKPassBuilder voided(boolean voided) {
         this.pkPass.voided = voided;
         return this;
     }
@@ -261,7 +262,11 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
     }
 
     public PKPassBuilder pass(PKGenericPass generic) {
-        return pass(PKGenericPassBuilder.builder(generic));
+        return pass(PKGenericPass.builder(generic));
+    }
+
+    public PKPassBuilder pass(PKBoardingPass boardingPass) {
+        return pass(PKBoardingPass.builder(boardingPass));
     }
 
     public PKPassBuilder labelColor(String labelColor) {

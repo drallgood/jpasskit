@@ -23,6 +23,8 @@ import org.testng.annotations.Test;
 
 import de.brendamour.jpasskit.enums.PKBarcodeFormat;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class PKBarcodeTest {
 
     private static final String CHARSET_NAME = "UTF-8";
@@ -40,14 +42,76 @@ public class PKBarcodeTest {
     }
 
     @Test
-    public void test_getSet() {
-        Assert.assertTrue(builder.isValid());
+    public void test_getters() {
+        assertThat(builder.isValid()).isTrue();
 
         PKBarcode barcode = builder.build();
-        Assert.assertEquals(barcode.getMessage(), MESSAGE);
-        Assert.assertEquals(barcode.getAltText(), ALT_TEXT);
-        Assert.assertEquals(barcode.getMessageEncoding(), CHARSET_NAME);
-        Assert.assertEquals(barcode.getFormat(), PKBARCODEFORMAT);
+        assertThat(barcode.getMessage()).isEqualTo(MESSAGE);
+        assertThat(barcode.getAltText()).isEqualTo(ALT_TEXT);
+        assertThat(barcode.getMessageEncoding()).isEqualTo(CHARSET_NAME);
+        assertThat(barcode.getFormat()).isEqualTo(PKBARCODEFORMAT);
+    }
+
+    @Test
+    public void test_clone() {
+        PKBarcode barcode = builder.build();
+        PKBarcode copy = PKBarcode.builder(barcode).build();
+
+        assertThat(copy)
+                .isNotSameAs(barcode)
+                .isEqualToComparingFieldByFieldRecursively(barcode);
+
+        assertThat(copy.getMessage()).isEqualTo(MESSAGE);
+        assertThat(copy.getAltText()).isEqualTo(ALT_TEXT);
+        assertThat(copy.getMessageEncoding()).isEqualTo(CHARSET_NAME);
+        assertThat(copy.getFormat()).isEqualTo(PKBARCODEFORMAT);
+    }
+
+    @Test
+    public void test_validation_noFormat() {
+        builder.format(null);
+
+        assertThat(builder.isValid()).isFalse();
+    }
+
+    @Test
+    public void test_validation_noMessage() {
+        builder.message(null);
+
+        assertThat(builder.isValid()).isFalse();
+    }
+
+    @Test
+    public void test_validation_emptyMessage() {
+        builder.message("");
+
+        assertThat(builder.isValid()).isFalse();
+    }
+
+    @Test
+    public void test_validation_noMessageEncoding() {
+        builder.messageEncoding((Charset) null);
+        assertThat(builder.isValid()).isFalse();
+
+        builder.messageEncoding((String) null);
+        assertThat(builder.isValid()).isFalse();
+    }
+
+    @Test
+    public void test_validation_noAltText() {
+        builder.altText(null);
+
+        assertThat(builder.isValid()).isTrue();
+    }
+
+    @Test
+    public void test_toString() {
+        PKBarcode barcode = builder.build();
+
+        assertThat(barcode.toString())
+                .contains(MESSAGE)
+                .contains(ALT_TEXT)
+                .contains(CHARSET_NAME);
     }
 
     private void fillBarcode() {
@@ -55,42 +119,5 @@ public class PKBarcodeTest {
                 .format(PKBARCODEFORMAT)
                 .message(MESSAGE)
                 .messageEncoding(CHARSET);
-    }
-
-    @Test
-    public void test_noFormat() {
-        builder.format(null);
-
-        Assert.assertFalse(builder.isValid());
-    }
-
-    @Test
-    public void test_noMessage() {
-        builder.message(null);
-
-        Assert.assertFalse(builder.isValid());
-    }
-
-    @Test
-    public void test_emptyMessage() {
-        builder.message("");
-
-        Assert.assertFalse(builder.isValid());
-    }
-
-    @Test
-    public void test_noMessageEncoding() {
-        builder.messageEncoding((Charset) null);
-        Assert.assertFalse(builder.isValid());
-
-        builder.messageEncoding((String) null);
-        Assert.assertFalse(builder.isValid());
-    }
-
-    @Test
-    public void test_noAltText() {
-        builder.altText(null);
-
-        Assert.assertTrue(builder.isValid());
     }
 }

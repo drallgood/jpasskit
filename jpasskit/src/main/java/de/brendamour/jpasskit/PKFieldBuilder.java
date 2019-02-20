@@ -49,7 +49,11 @@ public class PKFieldBuilder implements IPKValidateable, IPKBuilder<PKField> {
     public PKFieldBuilder of(final PKField source) {
         if (source != null) {
             this.field = source.clone();
-            this.dataDetectorTypes = new CopyOnWriteArrayList<>(this.field.dataDetectorTypes);
+            if (this.field.dataDetectorTypes == null) {
+                this.dataDetectorTypes = new CopyOnWriteArrayList<>();
+            } else {
+                this.dataDetectorTypes = new CopyOnWriteArrayList<>(this.field.dataDetectorTypes);
+            }
         }
         return this;
     }
@@ -64,7 +68,37 @@ public class PKFieldBuilder implements IPKValidateable, IPKBuilder<PKField> {
         return this;
     }
 
-    public PKFieldBuilder value(Serializable value) {
+    public PKFieldBuilder value(String value) {
+        this.field.value = value;
+        return this;
+    }
+
+    public PKFieldBuilder value(Integer value) {
+        this.field.value = value;
+        return this;
+    }
+
+    public PKFieldBuilder value(Float value) {
+        this.field.value = value;
+        return this;
+    }
+
+    public PKFieldBuilder value(Long value) {
+        this.field.value = value;
+        return this;
+    }
+
+    public PKFieldBuilder value(Double value) {
+        this.field.value = value;
+        return this;
+    }
+
+    public PKFieldBuilder value(BigDecimal value) {
+        this.field.value = value;
+        return this;
+    }
+
+    public PKFieldBuilder value(Date value) {
         this.field.value = value;
         return this;
     }
@@ -136,7 +170,7 @@ public class PKFieldBuilder implements IPKValidateable, IPKBuilder<PKField> {
     @Override
     public List<String> getValidationErrors() {
 
-        List<String> validationErrors = new ArrayList<String>();
+        List<String> validationErrors = new ArrayList<>();
         checkRequiredFields(validationErrors);
         checkValueType(validationErrors);
         checkCurrencyCodeAndNumberStyleAreNotBothSet(validationErrors);
@@ -148,25 +182,29 @@ public class PKFieldBuilder implements IPKValidateable, IPKBuilder<PKField> {
 
     private void checkCurrencyValueIsNumeric(List<String> validationErrors) {
         if (this.field.currencyCode != null && !isNumeric(this.field.value)) {
-            validationErrors.add("When using currencies, the values have to be numbers");
+            validationErrors.add("Field 'currencyCode' must be set only for numeric types. When using currencies, the values have to be numbers");
         }
     }
 
     private void checkChangeMessageContainsPlaceholder(List<String> validationErrors) {
         if (this.field.changeMessage != null && !this.field.changeMessage.contains("%@")) {
-            validationErrors.add("ChangeMessage needs to contain %@ placeholder");
+            validationErrors.add("Field 'changeMessage' must contain %@ placeholder");
         }
     }
 
     private void checkNumberOrCurrencyAndDateNotSetAtTheSameTime(List<String> validationErrors) {
         if ((this.field.currencyCode != null || this.field.numberStyle != null) && (this.field.dateStyle != null || this.field.timeStyle != null)) {
-            validationErrors.add("Can't be number/currency and date at the same time");
+            validationErrors.add(
+                    "Either 'currencyCode' or 'numberStyle' are set along with 'dateStyle' and/or 'timeStyle'." +
+                            " PKField cannot be number/currency and date at the same time");
         }
     }
 
     private void checkCurrencyCodeAndNumberStyleAreNotBothSet(List<String> validationErrors) {
         if (this.field.currencyCode != null && this.field.numberStyle != null) {
-            validationErrors.add("CurrencyCode and numberStyle are both set");
+            validationErrors.add(
+                    "Fields currencyCode and numberStyle are both set." +
+                            " PKField cannot be number and currency at the same time");
         }
     }
 
@@ -179,7 +217,7 @@ public class PKFieldBuilder implements IPKValidateable, IPKBuilder<PKField> {
 
     private void checkRequiredFields(List<String> validationErrors) {
         if (this.field.value == null || isEmpty(this.field.key)) {
-            validationErrors.add("Not all required Fields are set. Key: " + this.field.key + " Value:" + this.field.value);
+            validationErrors.add("Not all required fields are set. Key: " + this.field.key + " Value: " + this.field.value);
         }
     }
 

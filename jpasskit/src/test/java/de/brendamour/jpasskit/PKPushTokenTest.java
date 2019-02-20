@@ -15,17 +15,24 @@
  */
 package de.brendamour.jpasskit;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class PKPushTokenTest {
 
     private static final String PUSHTOKEN = "abcdef49";
 
     @Test
-    public void test_getterSetter() {
+    public void test_getter() {
         PKPushToken pushToken = PKPushToken.of(PUSHTOKEN);
+        assertThat(pushToken.getPushToken()).isEqualTo(PUSHTOKEN);
+    }
 
-        Assert.assertEquals(pushToken.getPushToken(), PUSHTOKEN);
+    @Test
+    public void test_toString() {
+        PKPushToken pushToken = PKPushToken.of(PUSHTOKEN);
+        assertThat(pushToken.toString())
+                .contains(PUSHTOKEN);
     }
 }

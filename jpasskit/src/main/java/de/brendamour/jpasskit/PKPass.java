@@ -80,7 +80,7 @@ public class PKPass implements Cloneable, Serializable {
 
     // Expiration Keys
     protected Date expirationDate;
-    protected Boolean voided; // The key is optional, default value is false
+    protected boolean voided; // The key is optional, default value is false
 
     // Feature added in iOS 9.0. It is not applicable to older iOS
     protected PKNFC nfc;
@@ -124,7 +124,7 @@ public class PKPass implements Cloneable, Serializable {
         return teamIdentifier;
     }
 
-    public Boolean isVoided() {
+    public boolean isVoided() {
         return voided;
     }
 

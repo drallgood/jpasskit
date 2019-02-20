@@ -45,8 +45,12 @@ public class PKGenericPassBuilder implements IPKValidateable, IPKBuilder<PKGener
 
     private PKTransitType transitType;
 
-    private PKGenericPassBuilder() {
-        this.passType = PKPassType.PKGenericPass;
+    protected PKGenericPassBuilder() {
+        this(PKPassType.PKGenericPass);
+    }
+
+    protected PKGenericPassBuilder(PKPassType passType) {
+        passType(passType);
         this.headerFields = new CopyOnWriteArrayList<>();
         this.primaryFields = new CopyOnWriteArrayList<>();
         this.secondaryFields = new CopyOnWriteArrayList<>();
@@ -91,7 +95,7 @@ public class PKGenericPassBuilder implements IPKValidateable, IPKBuilder<PKGener
         if (source != null) {
             this.transitType = source.transitType;
         }
-        return of(source);
+        return of((PKGenericPass) source);
     }
 
     public PKPassType getPassType() {
@@ -233,6 +237,18 @@ public class PKGenericPassBuilder implements IPKValidateable, IPKBuilder<PKGener
 
     @Override
     public PKGenericPass build() {
+        if (this.passType != null) {
+            switch (this.passType) {
+                case PKBoardingPass:
+                    return buildBoardingPass();
+                case PKCoupon:
+                    return buildCoupon();
+                case PKEventTicket:
+                    return buildEventTicket();
+                case PKStoreCard:
+                    return buildStoreCard();
+            }
+        }
         return buildPass(new PKGenericPass());
     }
 
@@ -252,46 +268,6 @@ public class PKGenericPassBuilder implements IPKValidateable, IPKBuilder<PKGener
 
     public PKStoreCard buildStoreCard() {
         return buildPass(new PKStoreCard());
-    }
-
-    public static PKGenericPassBuilder builder() {
-        return new PKGenericPassBuilder();
-    }
-
-    public static PKGenericPassBuilder builder(PKGenericPass pass) {
-        PKGenericPassBuilder passBuilder = builder();
-        passBuilder.headerFields(pass.headerFields);
-        passBuilder.primaryFields(pass.primaryFields);
-        passBuilder.secondaryFields(pass.secondaryFields);
-        passBuilder.auxiliaryFields(pass.auxiliaryFields);
-        passBuilder.backFields(pass.backFields);
-        passBuilder.passType = PKPassType.PKGenericPass;
-        return passBuilder;
-    }
-
-    public static PKGenericPassBuilder builder(PKCoupon pass) {
-        PKGenericPassBuilder passBuilder = builder((PKGenericPass) pass);
-        passBuilder.passType(PKPassType.PKCoupon);
-        return passBuilder;
-    }
-
-    public static PKGenericPassBuilder builder(PKEventTicket pass) {
-        PKGenericPassBuilder passBuilder = builder((PKGenericPass) pass);
-        passBuilder.passType(PKPassType.PKEventTicket);
-        return passBuilder;
-    }
-
-    public static PKGenericPassBuilder builder(PKStoreCard pass) {
-        PKGenericPassBuilder passBuilder = builder((PKGenericPass) pass);
-        passBuilder.passType(PKPassType.PKStoreCard);
-        return passBuilder;
-    }
-
-    public static PKGenericPassBuilder builder(PKBoardingPass pass) {
-        PKGenericPassBuilder passBuilder = builder((PKGenericPass) pass);
-        passBuilder.transitType(pass.transitType);
-        passBuilder.passType(PKPassType.PKBoardingPass);
-        return passBuilder;
     }
 
     private static PKFieldBuilder toBuilder(PKField field) {

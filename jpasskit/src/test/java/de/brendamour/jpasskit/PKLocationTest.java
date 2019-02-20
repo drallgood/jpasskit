@@ -15,9 +15,10 @@
  */
 package de.brendamour.jpasskit;
 
-import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class PKLocationTest {
 
@@ -35,29 +36,54 @@ public class PKLocationTest {
     }
 
     @Test
-    public void test_getterSetter() {
-        Assert.assertTrue(builder.isValid());
+    public void test_getters() {
+        assertThat(builder.isValid()).isTrue();
 
         PKLocation location = builder.build();
-        Assert.assertEquals(location.getAltitude(), ALTITUDE);
-        Assert.assertEquals(location.getLatitude(), LATITUDE);
-        Assert.assertEquals(location.getLongitude(), LONGITUDE);
-        Assert.assertEquals(location.getRelevantText(), RELEVANT_TEXT);
 
+        assertThat(location.getAltitude()).isEqualTo(ALTITUDE);
+        assertThat(location.getLatitude()).isEqualTo(LATITUDE);
+        assertThat(location.getLongitude()).isEqualTo(LONGITUDE);
+        assertThat(location.getRelevantText()).isEqualTo(RELEVANT_TEXT);
     }
 
     @Test
-    public void test_getterSetter_NoLongitude() {
+    public void test_clone() {
+        PKLocation location = builder.build();
+        PKLocation copy = PKLocation.builder(location).build();
+
+        assertThat(copy)
+                .isNotSameAs(location)
+                .isEqualToComparingFieldByFieldRecursively(location);
+
+        assertThat(copy.getAltitude()).isEqualTo(ALTITUDE);
+        assertThat(copy.getLatitude()).isEqualTo(LATITUDE);
+        assertThat(copy.getLongitude()).isEqualTo(LONGITUDE);
+        assertThat(copy.getRelevantText()).isEqualTo(RELEVANT_TEXT);
+    }
+
+    @Test
+    public void test_validation_NoLongitude() {
         builder.longitude(0);
 
-        Assert.assertFalse(builder.isValid());
+        assertThat(builder.isValid()).isFalse();
     }
 
     @Test
-    public void test_getterSetter_NoLatitude() {
+    public void test_validation_NoLatitude() {
         builder.latitude(0);
 
-        Assert.assertFalse(builder.isValid());
+        assertThat(builder.isValid()).isFalse();
+    }
+
+    @Test
+    public void test_toString() {
+        PKLocation location = builder.build();
+        assertThat(location.toString())
+                .contains(String.valueOf(LONGITUDE))
+                .contains(String.valueOf(ALTITUDE))
+                .contains(String.valueOf(LONGITUDE))
+                .contains(RELEVANT_TEXT);
     }
 
     public void fillLocation() {
