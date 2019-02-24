@@ -18,8 +18,7 @@ package de.brendamour.jpasskit.passes;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import static de.brendamour.jpasskit.passes.PKGenericPassTest.SOME;
-import static de.brendamour.jpasskit.passes.PKGenericPassTest.field;
+import static de.brendamour.jpasskit.passes.PKGenericPassTest.fillDummy;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class PKStoreCardTest {
@@ -34,11 +33,7 @@ public class PKStoreCardTest {
     @Test
     public void test_builder() {
         assertThat(this.builder.isValid()).isTrue();
-        this.builder.headerField(field(SOME + 1));
-        this.builder.primaryField(field(SOME + 2));
-        this.builder.secondaryField(field(SOME + 3));
-        this.builder.auxiliaryField(field(SOME + 4));
-        this.builder.backField(field(SOME + 5));
+        fillDummy(this.builder);
         assertThat(this.builder.isValid()).isTrue();
 
         PKStoreCard pass = this.builder.buildStoreCard();
@@ -51,11 +46,7 @@ public class PKStoreCardTest {
     @Test
     public void test_clone() {
         assertThat(this.builder.isValid()).isTrue();
-        this.builder.headerField(field(SOME + 1));
-        this.builder.primaryField(field(SOME + 2));
-        this.builder.secondaryField(field(SOME + 3));
-        this.builder.auxiliaryField(field(SOME + 4));
-        this.builder.backField(field(SOME + 5));
+        fillDummy(this.builder);
 
         PKStoreCard pass = (PKStoreCard) this.builder.build();
         PKStoreCard clone = (PKStoreCard) PKStoreCard.builder(pass).build();

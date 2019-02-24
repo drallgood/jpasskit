@@ -17,7 +17,6 @@ package de.brendamour.jpasskit;
 
 import java.nio.charset.Charset;
 
-import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

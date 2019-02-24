@@ -124,4 +124,14 @@ public class PKGenericPassTest {
                 .value(prefix + VALUE)
                 .build();
     }
+
+    public static PKGenericPassBuilder fillDummy(PKGenericPassBuilder builder) {
+        int i = 0;
+        builder.headerField(field(SOME + ++i));
+        builder.primaryField(field(SOME + ++i));
+        builder.secondaryField(field(SOME + ++i));
+        builder.auxiliaryField(field(SOME + ++i));
+        builder.backField(field(SOME + ++i));
+        return builder;
+    }
 }

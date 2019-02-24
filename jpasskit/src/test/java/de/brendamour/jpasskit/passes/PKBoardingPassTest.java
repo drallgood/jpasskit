@@ -19,8 +19,7 @@ import de.brendamour.jpasskit.enums.PKTransitType;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import static de.brendamour.jpasskit.passes.PKGenericPassTest.SOME;
-import static de.brendamour.jpasskit.passes.PKGenericPassTest.field;
+import static de.brendamour.jpasskit.passes.PKGenericPassTest.fillDummy;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class PKBoardingPassTest {
@@ -35,11 +34,7 @@ public class PKBoardingPassTest {
     @Test
     public void test_builder() {
         assertThat(this.builder.isValid()).isFalse();
-        this.builder.headerField(field(SOME + 1));
-        this.builder.primaryField(field(SOME + 2));
-        this.builder.secondaryField(field(SOME + 3));
-        this.builder.auxiliaryField(field(SOME + 4));
-        this.builder.backField(field(SOME + 5));
+        fillDummy(this.builder);
         assertThat(this.builder.isValid()).isFalse();
 
         this.builder.transitType(PKTransitType.PKTransitTypeAir);
@@ -58,11 +53,7 @@ public class PKBoardingPassTest {
     public void test_clone() {
         this.builder.transitType(PKTransitType.PKTransitTypeBus);
         assertThat(this.builder.isValid()).isTrue();
-        this.builder.headerField(field(SOME + 1));
-        this.builder.primaryField(field(SOME + 2));
-        this.builder.secondaryField(field(SOME + 3));
-        this.builder.auxiliaryField(field(SOME + 4));
-        this.builder.backField(field(SOME + 5));
+        fillDummy(this.builder);
 
         PKBoardingPass pass = (PKBoardingPass) this.builder.build();
         assertThat(pass.getTransitType()).isEqualTo(PKTransitType.PKTransitTypeBus);
