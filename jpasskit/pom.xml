@@ -72,7 +72,7 @@
 		<commons-io.version>2.6</commons-io.version>
 		<commons-lang.version>3.8.1</commons-lang.version>
 		<guava.version>27.0.1-jre</guava.version>
-		<jackson.version>2.9.8</jackson.version>
+		<jackson.version>2.9.9</jackson.version>
 		<mockito.version>2.25.0</mockito.version>
 		<pushy.version>0.13.7</pushy.version>
 		<slf4j.version>1.7.26</slf4j.version>
