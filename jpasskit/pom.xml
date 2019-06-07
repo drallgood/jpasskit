@@ -67,7 +67,7 @@
 		<current.year>2019</current.year>
 		<!-- Dependency versions -->
 		<assertj.version>3.12.2</assertj.version>
-		<bouncy-castle.version>1.61</bouncy-castle.version>
+		<bouncy-castle.version>1.62</bouncy-castle.version>
 		<commons-codec.version>1.12</commons-codec.version>
 		<commons-io.version>2.6</commons-io.version>
 		<commons-lang.version>3.8.1</commons-lang.version>
