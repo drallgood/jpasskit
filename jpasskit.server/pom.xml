@@ -60,13 +60,13 @@
 	</distributionManagement>
 
 	<properties>
-		<java.version>1.8</java.version>
+		<java.version>8</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<current.year>2019</current.year>
 		<!-- Dependency versions -->
-		<jpasskit.version>0.1.1</jpasskit.version>
+		<jpasskit.version>0.2.0-SNAPSHOT</jpasskit.version>
 		<restlet.version>2.3.12</restlet.version>
 		<slf4j.version>1.7.26</slf4j.version>
 		<!-- Plugin versions -->

@@ -15,8 +15,16 @@
  */
 package de.brendamour.jpasskit.passes;
 
+import de.brendamour.jpasskit.enums.PKPassType;
+
 public class PKStoreCard extends PKGenericPass {
 
     private static final long serialVersionUID = 3610754069846200910L;
 
+    protected PKStoreCard() {
+    }
+
+    public static PKGenericPassBuilder builder() {
+        return new PKGenericPassBuilder(PKPassType.PKStoreCard);
+    }
 }

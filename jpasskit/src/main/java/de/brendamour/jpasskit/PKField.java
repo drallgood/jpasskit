@@ -16,12 +16,8 @@
 package de.brendamour.jpasskit;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import de.brendamour.jpasskit.enums.PKDataDetectorType;
@@ -29,216 +25,95 @@ import de.brendamour.jpasskit.enums.PKDateStyle;
 import de.brendamour.jpasskit.enums.PKNumberStyle;
 import de.brendamour.jpasskit.enums.PKTextAlignment;
 
-public class PKField implements IPKValidateable {
+public class PKField implements Cloneable, Serializable {
 
     private static final long serialVersionUID = -6362596567978565530L;
 
-    private String key;
-    private String label;
-    private Serializable value;
+    protected String key;
+    protected String label;
+    protected Serializable value;
     /**
      * @since iOS 7.0
      */
-    private Serializable attributedValue;
-    private String changeMessage;
-    private PKTextAlignment textAlignment;
+    protected Serializable attributedValue;
+    protected String changeMessage;
+    protected PKTextAlignment textAlignment;
 
     /**
      * @since iOS 7.0
      */
-    private List<PKDataDetectorType> dataDetectorTypes;
+    protected List<PKDataDetectorType> dataDetectorTypes;
 
     /*
      * Number Fields
      */
-    private String currencyCode;
-    private PKNumberStyle numberStyle;
+    protected String currencyCode;
+    protected PKNumberStyle numberStyle;
 
     /*
      * Date Fields
      */
-    private PKDateStyle dateStyle;
-    private PKDateStyle timeStyle;
-    private Boolean isRelative;
+    protected PKDateStyle dateStyle;
+    protected PKDateStyle timeStyle;
+    protected Boolean isRelative;
     /**
      * @since iOS 7.0 Has to be null by default, since if it's set, iOS will validate the field as a date even the API consumer didn't want that.
      */
-    private Boolean ignoresTimeZone; // The key is optional, default value is null
+    protected Boolean ignoresTimeZone; // The key is optional, default value is null
 
-    public PKField() {
-    }
-
-    public PKField(String key, String label, Serializable value) {
-        this.key = key;
-        this.label = label;
-        this.value = value;
+    protected PKField() {
     }
 
     public String getKey() {
         return key;
     }
 
-    public void setKey(final String key) {
-        this.key = key;
-    }
-
     public String getLabel() {
         return label;
-    }
-
-    public void setLabel(final String label) {
-        this.label = label;
     }
 
     public Serializable getValue() {
         return value;
     }
 
-    public void setValue(final Object value) {
-        if(value instanceof String || value instanceof Number || value instanceof Date) {
-            this.value = (Serializable) value;
-        } else {
-            this.value = null;
-        }
-    }
-
     public String getChangeMessage() {
         return changeMessage;
-    }
-
-    public void setChangeMessage(final String changeMessage) {
-        this.changeMessage = changeMessage;
     }
 
     public PKTextAlignment getTextAlignment() {
         return textAlignment;
     }
 
-    public void setTextAlignment(final PKTextAlignment textAlignment) {
-        this.textAlignment = textAlignment;
-    }
-
     public String getCurrencyCode() {
         return currencyCode;
-    }
-
-    public void setCurrencyCode(final String currencyCode) {
-        this.currencyCode = currencyCode;
     }
 
     public PKNumberStyle getNumberStyle() {
         return numberStyle;
     }
 
-    public void setNumberStyle(final PKNumberStyle numberStyle) {
-        this.numberStyle = numberStyle;
-    }
-
     public PKDateStyle getDateStyle() {
         return dateStyle;
-    }
-
-    public void setDateStyle(final PKDateStyle dateStyle) {
-        this.dateStyle = dateStyle;
     }
 
     public PKDateStyle getTimeStyle() {
         return timeStyle;
     }
 
-    public void setTimeStyle(final PKDateStyle timeStyle) {
-        this.timeStyle = timeStyle;
-    }
-
     public Boolean getIsRelative() {
         return isRelative;
-    }
-
-    public void setIsRelative(final Boolean isRelative) {
-        this.isRelative = isRelative;
     }
 
     public Serializable getAttributedValue() {
         return attributedValue;
     }
 
-    public void setAttributedValue(final Object attributedValue) {
-        if(attributedValue instanceof String || attributedValue instanceof Number || attributedValue instanceof Date) {
-            this.attributedValue = (Serializable) attributedValue;
-        } else {
-            this.attributedValue = null;
-        }
-    }
-
     public List<PKDataDetectorType> getDataDetectorTypes() {
         return dataDetectorTypes;
     }
 
-    public void setDataDetectorTypes(final List<PKDataDetectorType> dataDetectorTypes) {
-        this.dataDetectorTypes = dataDetectorTypes;
-    }
-
     public Boolean getIgnoresTimeZone() {
         return ignoresTimeZone;
-    }
-
-    public void setIgnoresTimeZone(final Boolean ignoresTimeZone) {
-        this.ignoresTimeZone = ignoresTimeZone;
-    }
-
-    public boolean isValid() {
-        return getValidationErrors().isEmpty();
-    }
-
-    public List<String> getValidationErrors() {
-
-        List<String> validationErrors = new ArrayList<String>();
-        checkRequiredFields(validationErrors);
-        checkValueType(validationErrors);
-        checkCurrencyCodeAndNumberStyleAreNotBothSet(validationErrors);
-        checkNumberOrCurrencyAndDateNotSetAtTheSameTime(validationErrors);
-        checkChangeMessageContainsPlaceholder(validationErrors);
-        checkCurrencyValueIsNumeric(validationErrors);
-        return validationErrors;
-    }
-
-    private void checkCurrencyValueIsNumeric(List<String> validationErrors) {
-        if (currencyCode != null && !(value instanceof Integer || value instanceof Float || value instanceof Long
-                || value instanceof Double || value instanceof BigDecimal)) {
-            validationErrors.add("When using currencies, the values have to be numbers");
-        }
-    }
-
-    private void checkChangeMessageContainsPlaceholder(List<String> validationErrors) {
-        if (changeMessage != null && !changeMessage.contains("%@")) {
-            validationErrors.add("ChangeMessage needs to contain %@ placeholder");
-        }
-    }
-
-    private void checkNumberOrCurrencyAndDateNotSetAtTheSameTime(List<String> validationErrors) {
-        if ((currencyCode != null || numberStyle != null) && (dateStyle != null || timeStyle != null)) {
-            validationErrors.add("Can't be number/currency and date at the same time");
-        }
-    }
-
-    private void checkCurrencyCodeAndNumberStyleAreNotBothSet(List<String> validationErrors) {
-        if (currencyCode != null && numberStyle != null) {
-            validationErrors.add("CurrencyCode and numberStyle are both set");
-        }
-    }
-
-    private void checkValueType(List<String> validationErrors) {
-        if (!(value instanceof String || value instanceof Integer || value instanceof Float || value instanceof Long
-                || value instanceof Double || value instanceof Date || value instanceof BigDecimal)) {
-            validationErrors.add(
-                    "Invalid value type. Allowed: String, Integer, Float, Long, Double, java.util.Date, BigDecimal");
-        }
-    }
-
-    private void checkRequiredFields(List<String> validationErrors) {
-        if (value == null || StringUtils.isEmpty(key)) {
-            validationErrors.add("Not all required Fields are set. Key: " + key + " Value:" + value);
-        }
     }
 
     @Override
@@ -246,4 +121,20 @@ public class PKField implements IPKValidateable {
         return ToStringBuilder.reflectionToString(this);
     }
 
+    @Override
+    protected PKField clone() {
+        try {
+            return (PKField) super.clone();
+        } catch (CloneNotSupportedException ex) {
+            throw new IllegalStateException("Failed to clone PKField instance", ex);
+        }
+    }
+
+    public static PKFieldBuilder builder() {
+        return new PKFieldBuilder();
+    }
+
+    public static PKFieldBuilder builder(PKField field) {
+        return builder().of(field);
+    }
 }

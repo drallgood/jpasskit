@@ -15,8 +15,7 @@
  */
 package de.brendamour.jpasskit.util;
 
-import static java.lang.String.format;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Implements basic validations, similar to {@code org.springframework.util.Assert}.
@@ -31,7 +30,7 @@ public class Assert {
     }
 
     public static void hasLength(CharSequence value, String comment, Object... params) {
-        isTrue(isNotEmpty(value), comment, params);
+        isTrue(StringUtils.isNotEmpty(value), comment, params);
     }
 
     public static void isTrue(boolean flag, String comment, Object... params) {
@@ -48,8 +47,8 @@ public class Assert {
 
     public static String message(String message, Object... params) {
         String result = message;
-        if (isNotEmpty(message)) {
-            result = format(message, params);
+        if (StringUtils.isNotEmpty(message)) {
+            result = String.format(message, params);
         }
         return result;
     }

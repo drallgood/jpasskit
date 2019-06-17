@@ -16,9 +16,9 @@
 package de.brendamour.jpasskit.enums;
 
 /**
- * See https://developer.apple.com/library/prerelease/content/documentation/UserExperience/Conceptual/PassKit_PG/PassPersonalization.html
+ * @see <a href="https://developer.apple.com/library/prerelease/content/documentation/UserExperience/Conceptual/PassKit_PG/PassPersonalization.html">Rewards Enrollment</a>
+ * @see de.brendamour.jpasskit.personalization.PKPersonalization
  * @author patrice
- *
  */
 public enum PKPassPersonalizationField {
     PKPassPersonalizationFieldName,
