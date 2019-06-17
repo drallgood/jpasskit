@@ -15,65 +15,85 @@
  */
 package de.brendamour.jpasskit.personalization;
 
-import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Lists;
-
 import de.brendamour.jpasskit.enums.PKPassPersonalizationField;
 
+import java.util.Collections;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class PKPersonalizationTest {
+
     private static final PKPassPersonalizationField PKPASSPERSONALIZATIONFIELD = PKPassPersonalizationField.PKPassPersonalizationFieldName;
     private static final PKPassPersonalizationField PKPASSPERSONALIZATIONFIELD2 = PKPassPersonalizationField.PKPassPersonalizationFieldEmailAddress;
     private static final String DESCRIPTION = "Fancy description";
     private static final String TERMS = "This is bullshit";
-    private PKPersonalization pkPersonalization;
+
+    private PKPersonalizationBuilder builder;
 
     @BeforeMethod
     public void prepareTest() {
-        pkPersonalization = new PKPersonalization();
+        builder = PKPersonalization.builder();
     }
 
     private void fillPkPersonalizationFields() {
-        pkPersonalization.setDescription(DESCRIPTION);
-        pkPersonalization.setTermsAndConditions(TERMS);
-        pkPersonalization.setRequiredPersonalizationFields(Lists.newArrayList(PKPASSPERSONALIZATIONFIELD));
-        pkPersonalization.addRequiredPersonalizationField(PKPASSPERSONALIZATIONFIELD2);
+        builder.description(DESCRIPTION)
+                .termsAndConditions(TERMS)
+                .requiredPersonalizationFields(Collections.singletonList(PKPASSPERSONALIZATIONFIELD))
+                .requiredPersonalizationField(PKPASSPERSONALIZATIONFIELD2);
 
     }
 
     @Test
-    public void test_getSet() {
+    public void test_clone() {
         fillPkPersonalizationFields();
 
-        Assert.assertEquals(pkPersonalization.getDescription(), DESCRIPTION);
-        Assert.assertEquals(pkPersonalization.getTermsAndConditions(), TERMS);
-        Assert.assertNotNull(pkPersonalization.getRequiredPersonalizationFields());
-        Assert.assertEquals(pkPersonalization.getRequiredPersonalizationFields().size(), 2);
-        Assert.assertEquals(pkPersonalization.getRequiredPersonalizationFields().get(0), PKPASSPERSONALIZATIONFIELD);
+        PKPersonalization pers = builder.build();
+        PKPersonalization copy = PKPersonalization.builder(pers).build();
+
+        assertThat(copy)
+                .isNotSameAs(pers)
+                .isEqualToComparingFieldByFieldRecursively(pers);
+
+        assertThat(copy.getDescription()).isEqualTo(DESCRIPTION);
+        assertThat(copy.getTermsAndConditions()).isEqualTo(TERMS);
+    }
+
+    @Test
+    public void test_getters() {
+        fillPkPersonalizationFields();
+
+        PKPersonalization personalization = builder.build();
+
+        assertThat(personalization.getDescription()).isEqualTo(DESCRIPTION);
+        assertThat(personalization.getTermsAndConditions()).isEqualTo(TERMS);
+        assertThat(personalization.getRequiredPersonalizationFields()).isNotNull();
+        assertThat(personalization.getRequiredPersonalizationFields()).hasSize(2)
+                .containsAnyOf(PKPASSPERSONALIZATIONFIELD);
     }
 
     @Test
     public void test_validation_valid() {
         fillPkPersonalizationFields();
 
-        Assert.assertTrue(pkPersonalization.isValid());
-        Assert.assertTrue(pkPersonalization.getValidationErrors().isEmpty());
+        assertThat(builder.isValid()).isTrue();
+        assertThat(builder.getValidationErrors()).isEmpty();
     }
 
     @Test
     public void test_validation_valid_optionalNotSet() {
         fillPkPersonalizationFields();
-        pkPersonalization.setTermsAndConditions(null);
+        builder.termsAndConditions(null);
 
-        Assert.assertTrue(pkPersonalization.isValid());
-        Assert.assertTrue(pkPersonalization.getValidationErrors().isEmpty());
+        assertThat(builder.isValid()).isTrue();
+        assertThat(builder.getValidationErrors()).isEmpty();
     }
 
     @Test
     public void test_validation_invalid() {
-        Assert.assertFalse(pkPersonalization.isValid());
-        Assert.assertTrue(pkPersonalization.getValidationErrors().size() == 2);
+        assertThat(builder.isValid()).isFalse();
+        assertThat(builder.getValidationErrors()).hasSize(2);
     }
 }

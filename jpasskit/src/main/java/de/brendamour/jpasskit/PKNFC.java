@@ -15,31 +15,47 @@
  */
 package de.brendamour.jpasskit;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.io.Serializable;
 
-public class PKNFC implements Serializable {
+public class PKNFC implements Cloneable, Serializable {
 
     private static final long serialVersionUID = -2017873167088954297L;
-    private String message;
-    private String encryptionPublicKey;
-    
-    public PKNFC() {
+
+    protected String message;
+    protected String encryptionPublicKey;
+
+    protected PKNFC() {
     }
 
     public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
     public String getEncryptionPublicKey() {
         return encryptionPublicKey;
     }
 
-    public void setEncryptionPublicKey(String encryptionPublicKey) {
-        this.encryptionPublicKey = encryptionPublicKey;
+    @Override
+    protected PKNFC clone() {
+        try {
+            return (PKNFC) super.clone();
+        } catch (CloneNotSupportedException ex) {
+            throw new IllegalStateException("Failed to clone PKNFC instance", ex);
+        }
     }
 
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
+
+    public static PKNFCBuilder builder() {
+        return new PKNFCBuilder();
+    }
+
+    public static PKNFCBuilder builder(PKNFC nfc) {
+        return builder().of(nfc);
+    }
 }

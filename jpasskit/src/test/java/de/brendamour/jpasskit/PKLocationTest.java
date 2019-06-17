@@ -15,53 +15,81 @@
  */
 package de.brendamour.jpasskit;
 
-import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class PKLocationTest {
+
     private static final double LONGITUDE = 1.0;
     private static final double LATITUDE = 2.0;
     private static final double ALTITUDE = 3.0;
     private static final String RELEVANT_TEXT = "Text";
-    private PKLocation pkLocation;
+
+    private PKLocationBuilder builder;
 
     @BeforeMethod
     public void prepareTest() {
-        pkLocation = new PKLocation();
+        builder = PKLocation.builder();
         fillLocation();
     }
 
     @Test
-    public void test_getterSetter() {
-        Assert.assertEquals(pkLocation.getAltitude(), ALTITUDE);
-        Assert.assertEquals(pkLocation.getLatitude(), LATITUDE);
-        Assert.assertEquals(pkLocation.getLongitude(), LONGITUDE);
-        Assert.assertEquals(pkLocation.getRelevantText(), RELEVANT_TEXT);
-        Assert.assertTrue(pkLocation.isValid());
+    public void test_getters() {
+        assertThat(builder.isValid()).isTrue();
 
+        PKLocation location = builder.build();
+
+        assertThat(location.getAltitude()).isEqualTo(ALTITUDE);
+        assertThat(location.getLatitude()).isEqualTo(LATITUDE);
+        assertThat(location.getLongitude()).isEqualTo(LONGITUDE);
+        assertThat(location.getRelevantText()).isEqualTo(RELEVANT_TEXT);
     }
 
     @Test
-    public void test_getterSetter_NoLongitude() {
-        pkLocation.setLongitude(0);
+    public void test_clone() {
+        PKLocation location = builder.build();
+        PKLocation copy = PKLocation.builder(location).build();
 
-        Assert.assertFalse(pkLocation.isValid());
+        assertThat(copy)
+                .isNotSameAs(location)
+                .isEqualToComparingFieldByFieldRecursively(location);
 
+        assertThat(copy.getAltitude()).isEqualTo(ALTITUDE);
+        assertThat(copy.getLatitude()).isEqualTo(LATITUDE);
+        assertThat(copy.getLongitude()).isEqualTo(LONGITUDE);
+        assertThat(copy.getRelevantText()).isEqualTo(RELEVANT_TEXT);
     }
 
     @Test
-    public void test_getterSetter_NoLatitude() {
-        pkLocation.setLatitude(0);
+    public void test_validation_NoLongitude() {
+        builder.longitude(0);
 
-        Assert.assertFalse(pkLocation.isValid());
+        assertThat(builder.isValid()).isFalse();
+    }
+
+    @Test
+    public void test_validation_NoLatitude() {
+        builder.latitude(0);
+
+        assertThat(builder.isValid()).isFalse();
+    }
+
+    @Test
+    public void test_toString() {
+        PKLocation location = builder.build();
+        assertThat(location.toString())
+                .contains(String.valueOf(LONGITUDE))
+                .contains(String.valueOf(ALTITUDE))
+                .contains(String.valueOf(LONGITUDE))
+                .contains(RELEVANT_TEXT);
     }
 
     public void fillLocation() {
-        pkLocation.setLongitude(LONGITUDE);
-        pkLocation.setLatitude(LATITUDE);
-        pkLocation.setAltitude(ALTITUDE);
-        pkLocation.setRelevantText(RELEVANT_TEXT);
+        builder.longitude(LONGITUDE)
+                .latitude(LATITUDE)
+                .altitude(ALTITUDE)
+                .relevantText(RELEVANT_TEXT);
     }
-
 }

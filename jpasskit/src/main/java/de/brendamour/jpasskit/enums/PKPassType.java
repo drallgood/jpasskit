@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.brendamour.jpasskit;
+package de.brendamour.jpasskit.enums;
 
-import java.util.List;
-
-public interface IPKValidateable {
-
-    boolean isValid();
-
-    List<String> getValidationErrors();
+public enum PKPassType {
+    PKGenericPass,
+    PKBoardingPass,
+    PKCoupon,
+    PKEventTicket,
+    PKStoreCard
 }
