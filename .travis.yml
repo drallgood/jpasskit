@@ -33,7 +33,7 @@ cache:
 
 before_install: cd $BUILD_NAME
 
-script: mvn install -B 
+# script: mvn install -B 
 
 deploy:
 # - provider: releases
