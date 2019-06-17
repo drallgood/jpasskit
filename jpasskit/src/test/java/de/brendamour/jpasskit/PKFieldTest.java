@@ -18,6 +18,7 @@ package de.brendamour.jpasskit;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
+import java.util.Date;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -31,6 +32,8 @@ import de.brendamour.jpasskit.enums.PKTextAlignment;
 public class PKFieldTest {
     private static final String KEY = "key";
     private static final String VALUE_TEXT = "some Text";
+    private static final Number VALUE_NUMBER = 43;
+    private static final Date VALUE_DATE = new Date();
     private static final String CHANGEMESSAGE = "Changed %@";
     private static final String LABEL = "Label";
     private static final BigDecimal VALUE_CURRENCY = new BigDecimal("25.20").setScale(2, RoundingMode.HALF_UP);
@@ -57,6 +60,36 @@ public class PKFieldTest {
 
         Assert.assertEquals(pkField.getKey(), KEY);
         Assert.assertEquals(pkField.getValue(), VALUE_TEXT);
+        Assert.assertEquals(pkField.getChangeMessage(), CHANGEMESSAGE);
+        Assert.assertEquals(pkField.getLabel(), LABEL);
+        Assert.assertEquals(pkField.getAttributedValue(), ATTRIBUTED_VALUE);
+        Assert.assertEquals(pkField.getDataDetectorTypes().size(), 1);
+        Assert.assertTrue(pkField.isValid());
+
+    }
+
+    @Test
+    public void test_GetterSetter_Number() {
+        fillFieldsText();
+        pkField.setValue(VALUE_NUMBER);
+
+        Assert.assertEquals(pkField.getKey(), KEY);
+        Assert.assertEquals(pkField.getValue(), VALUE_NUMBER);
+        Assert.assertEquals(pkField.getChangeMessage(), CHANGEMESSAGE);
+        Assert.assertEquals(pkField.getLabel(), LABEL);
+        Assert.assertEquals(pkField.getAttributedValue(), ATTRIBUTED_VALUE);
+        Assert.assertEquals(pkField.getDataDetectorTypes().size(), 1);
+        Assert.assertTrue(pkField.isValid());
+
+    }
+
+    @Test
+    public void test_GetterSetter_Date() {
+        fillFieldsText();
+        pkField.setValue(VALUE_DATE);
+
+        Assert.assertEquals(pkField.getKey(), KEY);
+        Assert.assertEquals(pkField.getValue(), VALUE_DATE);
         Assert.assertEquals(pkField.getChangeMessage(), CHANGEMESSAGE);
         Assert.assertEquals(pkField.getLabel(), LABEL);
         Assert.assertEquals(pkField.getAttributedValue(), ATTRIBUTED_VALUE);

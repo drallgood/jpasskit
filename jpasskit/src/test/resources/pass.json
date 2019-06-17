@@ -8,5 +8,23 @@
       "message": "abcdefg",
       "messageEncoding": "UTF-8"
     }
-  ]
+  ],
+  "storeCard": {
+    "headerFields": [],
+    "auxiliaryFields": [
+      {
+        "key": "Promo",
+        "label": "PROMO",
+        "value": "Promotion",
+        "textAlignment": "PKTextAlignmentLeft"
+      }
+    ],
+    "backFields": [
+      {
+        "key": "back-store",
+        "label": "STORE",
+        "value": "My Store"
+      }
+    ]
+  }
 }

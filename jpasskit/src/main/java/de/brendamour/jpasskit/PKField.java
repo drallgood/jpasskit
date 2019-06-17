@@ -94,8 +94,12 @@ public class PKField implements IPKValidateable {
         return value;
     }
 
-    public void setValue(final Serializable value) {
-        this.value = value;
+    public void setValue(final Object value) {
+        if(value instanceof String || value instanceof Number || value instanceof Date) {
+            this.value = (Serializable) value;
+        } else {
+            this.value = null;
+        }
     }
 
     public String getChangeMessage() {
@@ -158,8 +162,12 @@ public class PKField implements IPKValidateable {
         return attributedValue;
     }
 
-    public void setAttributedValue(final Serializable attributedValue) {
-        this.attributedValue = attributedValue;
+    public void setAttributedValue(final Object attributedValue) {
+        if(attributedValue instanceof String || attributedValue instanceof Number || attributedValue instanceof Date) {
+            this.attributedValue = (Serializable) attributedValue;
+        } else {
+            this.attributedValue = null;
+        }
     }
 
     public List<PKDataDetectorType> getDataDetectorTypes() {
