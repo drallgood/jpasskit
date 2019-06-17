@@ -33,6 +33,8 @@ cache:
 
 before_install: cd $BUILD_NAME
 
+script: mvn install -B 
+
 deploy:
 # - provider: releases
 #   api_key:

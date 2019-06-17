@@ -78,7 +78,7 @@ public class PKRestletServerResourceFactory implements IPKRestletServerResourceF
 			protected GetPKPassResponse handleGetLatestVersionOfPass(final String passTypeIdentifier, final String serialNumber, final String authString, final Date modifiedSince) {
 				PKPass pass;
 				try {
-					pass = jsonObjectMapper.readValue(new File("passes/coupons.raw/pass2.json"), PKPass.class);
+					pass = jsonObjectMapper.readValue(new File("passes/coupons.raw/pass.json"), PKPass.class);
 
 					float newAmount = getNewRandomAmount();
 					PKStoreCard storeCard = pass.getStoreCard();

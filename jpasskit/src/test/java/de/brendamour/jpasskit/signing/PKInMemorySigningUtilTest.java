@@ -51,7 +51,7 @@ public class PKInMemorySigningUtilTest {
     public void testWithFolderBasedTemplate() throws Exception {
         PKPassTemplateFolder pkPassTemplateFolder = new PKPassTemplateFolder(PASS_TEMPLATE_FOLDER);
 
-        PKPass pass = new ObjectMapper().readValue(new File(getPathFromClasspath("pass2.json")), PKPass.class);
+        PKPass pass = new ObjectMapper().readValue(new File(getPathFromClasspath("pass.json")), PKPass.class);
 
         createZipAndAssert(pkPassTemplateFolder, pass, "target/passInMemoryFolder.zip");
     }
@@ -67,7 +67,7 @@ public class PKInMemorySigningUtilTest {
         // icon for language
         pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, Locale.ENGLISH, iconFile);
 
-        PKPass pass = new ObjectMapper().readValue(new File(getPathFromClasspath("pass2.json")), PKPass.class);
+        PKPass pass = new ObjectMapper().readValue(new File(getPathFromClasspath("pass.json")), PKPass.class);
 
         createZipAndAssert(pkPassTemplateInMemory, pass, "target/passInMemoryStream.zip");
     }
@@ -83,7 +83,7 @@ public class PKInMemorySigningUtilTest {
         // icon for language
         pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, Locale.ENGLISH, iconFile);
 
-        PKPass pass = new ObjectMapper().readValue(new File(getPathFromClasspath("pass2.json")), PKPass.class);
+        PKPass pass = new ObjectMapper().readValue(new File(getPathFromClasspath("pass.json")), PKPass.class);
 
         PKPersonalization personalization = new PKPersonalization();
         personalization.setDescription("desc");

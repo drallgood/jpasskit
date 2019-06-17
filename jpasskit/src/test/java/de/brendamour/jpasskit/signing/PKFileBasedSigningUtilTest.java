@@ -51,7 +51,7 @@ public class PKFileBasedSigningUtilTest {
     public void testManifest() throws Exception {
 
         File temporaryPassDir = new File("target/");
-        File manifestJSONFile = new File(getPathFromClasspath("pass2.json"));
+        File manifestJSONFile = new File(getPathFromClasspath("pass.json"));
 
         PKSigningInformation pkSigningInformation = new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
                 KEYSTORE_PATH, KEYSTORE_PASSWORD, APPLE_WWDRCA);
@@ -61,7 +61,7 @@ public class PKFileBasedSigningUtilTest {
 
     @Test
     public void testFileBasedSigningWithLoadedPass() throws Exception {
-        PKPass pass = new ObjectMapper().readValue(new File(getPathFromClasspath("pass2.json")), PKPass.class);
+        PKPass pass = new ObjectMapper().readValue(new File(getPathFromClasspath("pass.json")), PKPass.class);
         pass.setRelevantDate(new Date());
         pass.getBarcodes().get(0).setMessageEncoding(Charset.forName("utf-8"));
         pass.setUserInfo(ImmutableMap.<String, Object> of("name", "John Doe"));
