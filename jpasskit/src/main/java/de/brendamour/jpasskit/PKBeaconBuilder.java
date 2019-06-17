@@ -20,11 +20,14 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Collections;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+
 /**
  * Allows constructing and validating {@link PKBeacon} entities.
  *
  * @author Igor Stepanov
  */
+@JsonPOJOBuilder(withPrefix = "")
 public class PKBeaconBuilder implements IPKValidateable, IPKBuilder<PKBeacon> {
 
     private PKBeacon beacon;

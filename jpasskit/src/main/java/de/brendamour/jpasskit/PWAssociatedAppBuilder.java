@@ -15,11 +15,14 @@
  */
 package de.brendamour.jpasskit;
 
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+
 /**
  * Allows constructing and validating {@link PWAssociatedApp} entities.
  *
  * @author Igor Stepanov
  */
+@JsonPOJOBuilder(withPrefix = "")
 public class PWAssociatedAppBuilder implements IPKBuilder<PWAssociatedApp> {
 
     private PWAssociatedApp associatedApp;

@@ -15,11 +15,14 @@
  */
 package de.brendamour.jpasskit;
 
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+
 /**
  * Allows constructing and validating {@link PKNFC} entities.
  *
  * @author Igor Stepanov
  */
+@JsonPOJOBuilder(withPrefix = "")
 public class PKNFCBuilder implements IPKBuilder<PKNFC> {
 
     private PKNFC nfc;

@@ -22,11 +22,14 @@ import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+
 /**
  * Allows constructing and validating {@link PKBarcode} entities.
  *
  * @author Igor Stepanov
  */
+@JsonPOJOBuilder(withPrefix = "")
 public class PKBarcodeBuilder implements IPKValidateable, IPKBuilder<PKBarcode> {
 
     private PKBarcode barcode;

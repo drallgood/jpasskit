@@ -19,6 +19,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 /**
  * There is powerful implementation of Apple Wallet API for Android, which is called PassWallet.
  * As of PassWallet v1.31, support for linking a pass to an Android app was added.
@@ -27,6 +29,7 @@ import java.io.Serializable;
  *
  * @author Igor Stepanov
  */
+@JsonDeserialize(builder = PWAssociatedAppBuilder.class)
 public class PWAssociatedApp implements Cloneable, Serializable {
 
     private static final long serialVersionUID = -9021012408747538251L;

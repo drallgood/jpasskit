@@ -28,6 +28,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
@@ -35,6 +37,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
  *
  * @author Igor Stepanov
  */
+@JsonPOJOBuilder(withPrefix = "")
 public class PKFieldBuilder implements IPKValidateable, IPKBuilder<PKField> {
 
     private PKField field;

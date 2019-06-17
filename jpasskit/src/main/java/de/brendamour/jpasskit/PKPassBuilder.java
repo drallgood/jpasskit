@@ -32,11 +32,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+
 /**
  * Allows constructing and validating {@link PKPass} entities.
  *
  * @author Igor Stepanov
  */
+@JsonPOJOBuilder(withPrefix = "")
 public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
 
     private static final int EXPECTED_AUTHTOKEN_LENGTH = 16;

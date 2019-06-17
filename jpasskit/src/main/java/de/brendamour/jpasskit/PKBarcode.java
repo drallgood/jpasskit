@@ -17,10 +17,13 @@ package de.brendamour.jpasskit;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import de.brendamour.jpasskit.enums.PKBarcodeFormat;
 
+@JsonDeserialize(builder = PKBarcodeBuilder.class)
 public class PKBarcode implements Cloneable, Serializable {
 
     private static final long serialVersionUID = -7661537217765974179L;

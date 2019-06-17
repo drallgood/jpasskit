@@ -46,6 +46,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.util.StdDateFormat;
 
 public abstract class PKAbstractSigningUtil implements IPKSigningUtil {
@@ -124,17 +125,6 @@ public abstract class PKAbstractSigningUtil implements IPKSigningUtil {
         jsonObjectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         jsonObjectMapper.setDateFormat(new StdDateFormat());
         jsonObjectMapper.configOverride(Date.class).setFormat(JsonFormat.Value.forPattern("yyyy-MM-dd'T'HH:mm:ssZ"));
-        filters.addFilter("charsetFilter", SimpleBeanPropertyFilter.filterOutAllExcept("name"));
-                SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors", "messageEncodingAsString", "validInIosVersionsBefore9"));
-                "backgroundColorAsObject", "labelColorAsObject", "passThatWasSet"));
-        filters.addFilter("barcodeFilter",
-        filters.addFilter("pkPassFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors", "foregroundColorAsObject",
-        filters.addFilter("validateFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors"));
-        // haven't found out, how to stack filters. Copying the validation one for now.
-
-        SimpleFilterProvider filters = new SimpleFilterProvider();
-
-
         jsonObjectMapper.setSerializationInclusion(Include.NON_NULL);
         return jsonObjectMapper.writer();
     }

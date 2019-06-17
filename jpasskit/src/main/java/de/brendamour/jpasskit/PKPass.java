@@ -21,6 +21,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import de.brendamour.jpasskit.passes.PKBoardingPass;

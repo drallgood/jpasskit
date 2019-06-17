@@ -20,11 +20,14 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.util.Collections;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+
 /**
  * Allows constructing and validating {@link PKLocation} entities.
  *
  * @author Igor Stepanov
  */
+@JsonPOJOBuilder(withPrefix = "")
 public class PKLocationBuilder implements IPKValidateable, IPKBuilder<PKLocation> {
 
     private PKLocation location;

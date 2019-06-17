@@ -17,8 +17,11 @@ package de.brendamour.jpasskit;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+@JsonDeserialize(builder = PKBeaconBuilder.class)
 public class PKBeacon implements Cloneable, Serializable {
 
     private static final long serialVersionUID = -2017884167088954297L;

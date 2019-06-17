@@ -19,6 +19,9 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+@JsonDeserialize(builder = PKNFCBuilder.class)
 public class PKNFC implements Cloneable, Serializable {
 
     private static final long serialVersionUID = -2017873167088954297L;

@@ -18,6 +18,8 @@ package de.brendamour.jpasskit;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import de.brendamour.jpasskit.enums.PKDataDetectorType;
@@ -25,6 +27,7 @@ import de.brendamour.jpasskit.enums.PKDateStyle;
 import de.brendamour.jpasskit.enums.PKNumberStyle;
 import de.brendamour.jpasskit.enums.PKTextAlignment;
 
+@JsonDeserialize(builder = PKFieldBuilder.class)
 public class PKField implements Cloneable, Serializable {
 
     private static final long serialVersionUID = -6362596567978565530L;
