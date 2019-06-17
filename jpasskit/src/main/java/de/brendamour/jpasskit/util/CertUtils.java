@@ -40,7 +40,6 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
@@ -173,11 +172,12 @@ public class CertUtils {
     public static Set<String> extractApnsTopics(X509Certificate certificate) throws IOException {
         Set<String> topics = new HashSet<>();
 
-        Arrays.stream(certificate.getSubjectX500Principal().getName().split(","))
-                .filter(p -> p.toLowerCase().startsWith(PREFIX_UID))
-                .findAny()
-                .map(p -> p.substring(PREFIX_UID.length()))
-                .ifPresent(topics::add);
+        for (String keyValuePair : certificate.getSubjectX500Principal().getName().split(",")) {
+            if (keyValuePair.toLowerCase().startsWith(PREFIX_UID)) {
+                topics.add(keyValuePair.substring(PREFIX_UID.length()));
+                break;
+            }
+        }
 
         byte[] topicExtensionData = certificate.getExtensionValue(TOPIC_OID);
 

@@ -16,6 +16,7 @@
 package de.brendamour.jpasskit.signing;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -46,7 +47,12 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.util.StdDateFormat;
+
+import de.brendamour.jpasskit.PKBarcode;
+import de.brendamour.jpasskit.PKPass;
 
 public abstract class PKAbstractSigningUtil implements IPKSigningUtil {
 
@@ -54,7 +60,6 @@ public abstract class PKAbstractSigningUtil implements IPKSigningUtil {
     protected static final String PASS_JSON_FILE_NAME = "pass.json";
     protected static final String PERSONALIZATION_JSON_FILE_NAME = "personalization.json";
     protected static final String SIGNATURE_FILE_NAME = "signature";
-
     protected ObjectWriter objectWriter;
 
     protected PKAbstractSigningUtil(ObjectMapper objectMapper) {
@@ -124,19 +129,23 @@ public abstract class PKAbstractSigningUtil implements IPKSigningUtil {
         jsonObjectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         jsonObjectMapper.setDateFormat(new StdDateFormat());
         jsonObjectMapper.configOverride(Date.class).setFormat(JsonFormat.Value.forPattern("yyyy-MM-dd'T'HH:mm:ssZ"));
-        filters.addFilter("charsetFilter", SimpleBeanPropertyFilter.filterOutAllExcept("name"));
-                SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors", "messageEncodingAsString", "validInIosVersionsBefore9"));
-                "backgroundColorAsObject", "labelColorAsObject", "passThatWasSet"));
-        filters.addFilter("barcodeFilter",
-        filters.addFilter("pkPassFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors", "foregroundColorAsObject",
-        filters.addFilter("validateFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors"));
-        // haven't found out, how to stack filters. Copying the validation one for now.
+
 
         SimpleFilterProvider filters = new SimpleFilterProvider();
 
-
+        // haven't found out, how to stack filters. Copying the validation one for now.
+        filters.addFilter("validateFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors"));
+        filters.addFilter("pkPassFilter", SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors", "foregroundColorAsObject",
+                "backgroundColorAsObject", "labelColorAsObject", "passThatWasSet"));
+        filters.addFilter("barcodeFilter",
+                SimpleBeanPropertyFilter.serializeAllExcept("valid", "validationErrors", "messageEncodingAsString", "validInIosVersionsBefore9"));
+        filters.addFilter("charsetFilter", SimpleBeanPropertyFilter.filterOutAllExcept("name"));
         jsonObjectMapper.setSerializationInclusion(Include.NON_NULL);
-        return jsonObjectMapper.writer();
+        jsonObjectMapper.addMixIn(Object.class, ValidateFilterMixIn.class);
+        jsonObjectMapper.addMixIn(PKPass.class, PkPassFilterMixIn.class);
+        jsonObjectMapper.addMixIn(PKBarcode.class, BarcodeFilterMixIn.class);
+        jsonObjectMapper.addMixIn(Charset.class, CharsetFilterMixIn.class);
+        return jsonObjectMapper.writer(filters);
     }
 
     protected String getRelativePathOfZipEntry(final String fileCanonicalPath, final String baseCanonicalPath) {
@@ -146,5 +155,21 @@ public abstract class PKAbstractSigningUtil implements IPKSigningUtil {
         }
 
         return relativePathOfFile;
+    }
+
+    protected @JsonFilter("pkPassFilter") class PkPassFilterMixIn {
+        // just a dummy
+    }
+
+    protected @JsonFilter("validateFilter") class ValidateFilterMixIn {
+        // just a dummy
+    }
+
+    protected @JsonFilter("barcodeFilter") class BarcodeFilterMixIn {
+        // just a dummy
+    }
+
+    protected @JsonFilter("charsetFilter") class CharsetFilterMixIn {
+        // just a dummy
     }
 }

@@ -15,107 +15,72 @@
  */
 package de.brendamour.jpasskit;
 
+import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author stipe
  * Date: 06.02.14
  */
 public class PKBeaconTest {
-
     private static final Integer MAJOR = 3;
     private static final Integer MINOR = 29;
     private static final String UUID = "123456789-abcdefghijklmnopqrstuwxyz";
     private static final String TEXT = "County of Zadar";
-
-    private PKBeaconBuilder builder;
+    private PKBeacon pkBeacon;
 
     private void fillBeacon() {
-        builder.major(MAJOR)
-                .minor(MINOR)
-                .proximityUUID(UUID)
-                .relevantText(TEXT);
+        pkBeacon.setMajor(MAJOR);
+        pkBeacon.setMinor(MINOR);
+        pkBeacon.setProximityUUID(UUID);
+        pkBeacon.setRelevantText(TEXT);
     }
 
     @BeforeMethod
     public void prepareTest() {
-        builder = PKBeacon.builder();
+        pkBeacon = new PKBeacon();
         fillBeacon();
     }
 
     @Test
-    public void test_getters() {
-        assertThat(builder.isValid()).isTrue();
+    public void test_getSet() {
+        fillBeacon();
 
-        PKBeacon beacon = builder.build();
-
-        assertThat(beacon.getMajor()).isEqualTo(MAJOR);
-        assertThat(beacon.getMinor()).isEqualTo(MINOR);
-        assertThat(beacon.getProximityUUID()).isEqualTo(UUID);
-        assertThat(beacon.getRelevantText()).isEqualTo(TEXT);
+        Assert.assertEquals(pkBeacon.getMajor(), MAJOR);
+        Assert.assertEquals(pkBeacon.getMinor(), MINOR);
+        Assert.assertEquals(pkBeacon.getProximityUUID(), UUID);
+        Assert.assertEquals(pkBeacon.getRelevantText(), TEXT);
+        Assert.assertTrue(pkBeacon.isValid());
     }
 
     @Test
-    public void test_clone() {
-        PKBeacon beacon = builder.build();
-        PKBeacon copy = PKBeacon.builder(beacon).build();
-
-        assertThat(copy)
-                .isNotSameAs(beacon)
-                .isEqualToComparingFieldByFieldRecursively(beacon);
-
-        assertThat(copy.getMajor()).isEqualTo(MAJOR);
-        assertThat(copy.getMinor()).isEqualTo(MINOR);
-        assertThat(copy.getProximityUUID()).isEqualTo(UUID);
-        assertThat(copy.getRelevantText()).isEqualTo(TEXT);
+    public void test_noProximityUUID() {
+        pkBeacon.setProximityUUID(null);
+        Assert.assertFalse(pkBeacon.isValid());
     }
 
     @Test
-    public void test_validation_noProximityUUID() {
-        builder.proximityUUID(null);
-
-        assertThat(builder.isValid()).isFalse();
+    public void test_emptyProximityUUID() {
+        pkBeacon.setProximityUUID("");
+        Assert.assertFalse(pkBeacon.isValid());
     }
 
     @Test
-    public void test_validation_emptyProximityUUID() {
-        builder.proximityUUID("");
-
-        assertThat(builder.isValid()).isFalse();
+    public void test_noRelevantText() {
+        pkBeacon.setRelevantText(null);
+        Assert.assertTrue(pkBeacon.isValid());
     }
 
     @Test
-    public void test_validation_noRelevantText() {
-        builder.relevantText(null);
-
-        assertThat(builder.isValid()).isTrue();
+    public void test_noMajor() {
+        pkBeacon.setMajor(null);
+        Assert.assertTrue(pkBeacon.isValid());
     }
 
     @Test
-    public void test_validation_noMajor() {
-        builder.major(null);
-
-        assertThat(builder.isValid()).isTrue();
-    }
-
-    @Test
-    public void test_validation_noMinor() {
-        builder.minor(null);
-
-        assertThat(builder.isValid()).isTrue();
-    }
-
-    @Test
-    public void test_toString() {
-        PKBeacon beacon = builder.build();
-
-        assertThat(beacon.toString())
-                .contains(String.valueOf(MAJOR))
-                .contains(String.valueOf(MINOR))
-                .contains(UUID)
-                .contains(TEXT);
+    public void test_noMinor() {
+        pkBeacon.setMinor(null);
+        Assert.assertTrue(pkBeacon.isValid());
     }
 }

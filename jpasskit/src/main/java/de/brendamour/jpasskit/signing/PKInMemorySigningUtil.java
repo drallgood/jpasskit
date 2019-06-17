@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.lang.invoke.MethodHandles;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.HashMap;
@@ -43,7 +42,7 @@ import java.util.zip.ZipOutputStream;
 
 public final class PKInMemorySigningUtil extends PKAbstractSigningUtil {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(PKInMemorySigningUtil.class);
 
     public PKInMemorySigningUtil() {
         super(new ObjectMapper());

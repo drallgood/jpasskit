@@ -15,57 +15,67 @@
  */
 package de.brendamour.jpasskit;
 
-import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class PKLocation implements Cloneable, Serializable {
+public class PKLocation implements IPKValidateable {
 
     private static final long serialVersionUID = -2017884967088954297L;
 
-    protected double latitude;
-    protected double longitude;
-    protected Double altitude;
-    protected String relevantText;
-
-    protected PKLocation() {
-    }
+    private double latitude;
+    private double longitude;
+    private Double altitude;
+    private String relevantText;
 
     public double getLatitude() {
         return latitude;
+    }
+
+    public void setLatitude(final double latitude) {
+        this.latitude = latitude;
     }
 
     public double getLongitude() {
         return longitude;
     }
 
+    public void setLongitude(final double longitude) {
+        this.longitude = longitude;
+    }
+
     public Double getAltitude() {
         return altitude;
+    }
+
+    public void setAltitude(final Double altitude) {
+        this.altitude = altitude;
     }
 
     public String getRelevantText() {
         return relevantText;
     }
 
-    @Override
-    protected PKLocation clone() {
-        try {
-            return (PKLocation) super.clone();
-        } catch (CloneNotSupportedException ex) {
-            throw new IllegalStateException("Failed to clone PKLocation instance", ex);
+    public void setRelevantText(final String relevantText) {
+        this.relevantText = relevantText;
+    }
+
+    public boolean isValid() {
+        return getValidationErrors().isEmpty();
+    }
+
+    public List<String> getValidationErrors() {
+
+        List<String> validationErrors = new ArrayList<String>();
+        if (longitude == 0 || latitude == 0) {
+            validationErrors.add("Not all required Fields are set: longitude, latitude");
         }
+        return validationErrors;
     }
 
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
-    }
-
-    public static PKLocationBuilder builder() {
-        return new PKLocationBuilder();
-    }
-
-    public static PKLocationBuilder builder(PKLocation location) {
-        return builder().of(location);
     }
 }

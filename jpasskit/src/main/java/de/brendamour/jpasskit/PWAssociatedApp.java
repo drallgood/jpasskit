@@ -15,60 +15,53 @@
  */
 package de.brendamour.jpasskit;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import java.io.Serializable;
-
-/**
- * There is powerful implementation of Apple Wallet API for Android, which is called PassWallet.
- * As of PassWallet v1.31, support for linking a pass to an Android app was added.
- * One or more apps can be associated with the pass.
- * Individual package names can be specified for Google Play and Amazon App Store to handle there being platform specific variations of the app.
- *
- * @author Igor Stepanov
- */
-public class PWAssociatedApp implements Cloneable, Serializable {
+public class PWAssociatedApp implements IPKValidateable {
 
     private static final long serialVersionUID = -9021012408747538251L;
 
-    protected String title;
-    protected String idGooglePlay;
-    protected String idAmazon;
-
-    protected PWAssociatedApp() {
-    }
+    private String title;
+    private String idGooglePlay;
+    private String idAmazon;
 
     public String getTitle() {
         return title;
+    }
+
+    public void setTitle(final String title) {
+        this.title = title;
     }
 
     public String getIdGooglePlay() {
         return idGooglePlay;
     }
 
+    public void setIdGooglePlay(final String idGooglePlay) {
+        this.idGooglePlay = idGooglePlay;
+    }
+
     public String getIdAmazon() {
         return idAmazon;
     }
 
-    @Override
-    protected PWAssociatedApp clone() {
-        try {
-            return (PWAssociatedApp) super.clone();
-        } catch (CloneNotSupportedException ex) {
-            throw new IllegalStateException("Failed to clone PWAssociatedApp instance", ex);
-        }
+    public void setIdAmazon(final String idAmazon) {
+        this.idAmazon = idAmazon;
+    }
+
+    public boolean isValid() {
+        return getValidationErrors().isEmpty();
+    }
+
+    public List<String> getValidationErrors() {
+        return Collections.emptyList();
     }
 
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
-    }
-
-    public static PWAssociatedAppBuilder builder() {
-        return new PWAssociatedAppBuilder();
-    }
-
-    public static PWAssociatedAppBuilder builder(PWAssociatedApp associatedApp) {
-        return builder().of(associatedApp);
     }
 }

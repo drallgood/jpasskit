@@ -17,7 +17,6 @@ package de.brendamour.jpasskit.signing;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.invoke.MethodHandles;
 import java.util.zip.ZipFile;
 
 import org.slf4j.Logger;
@@ -29,7 +28,7 @@ import org.testng.Assert;
  */
 public class AssertZip {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(AssertZip.class);
     private static final String ERROR_BAD_ZIP = "Failed to open zip file";
 
     public static void assertValid(final File file) {

@@ -16,15 +16,14 @@
 package de.brendamour.jpasskit.signing;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
 
 import de.brendamour.jpasskit.PKBarcode;
 import de.brendamour.jpasskit.PKPass;
-import de.brendamour.jpasskit.PKPassBuilder;
 import de.brendamour.jpasskit.enums.PKBarcodeFormat;
 import de.brendamour.jpasskit.enums.PKPassPersonalizationField;
 import de.brendamour.jpasskit.personalization.PKPersonalization;
 
-import de.brendamour.jpasskit.personalization.PKPersonalizationBuilder;
 import org.apache.commons.io.IOUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -39,7 +38,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 
 public class PKFileBasedSigningUtilTest {
@@ -64,70 +62,66 @@ public class PKFileBasedSigningUtilTest {
     @Test
     public void testFileBasedSigningWithLoadedPass() throws Exception {
         PKPass pass = new ObjectMapper().readValue(new File(getPathFromClasspath("pass.json")), PKPass.class);
-        PKPassBuilder passBuilder = PKPass.builder(pass)
-                .relevantDate(new Date())
-                .userInfo(Collections.<String, Object>singletonMap("name", "John Doe"));
+        pass.setRelevantDate(new Date());
+        pass.getBarcodes().get(0).setMessageEncoding(Charset.forName("utf-8"));
+        pass.setUserInfo(ImmutableMap.<String, Object> of("name", "John Doe"));
 
-        passBuilder.getBarcodeBuilders().get(0)
-                .messageEncoding(Charset.forName("utf-8"));
-
-        createZipAndAssert(passBuilder.build(), "target/passFileBasedLoaded.zip");
+        createZipAndAssert(pass, "target/passFileBasedLoaded.zip");
     }
 
     @Test
     public void testFileBasedSigningWithGeneratedPass() throws Exception {
-        PKPassBuilder passBuilder = PKPass.builder()
-                .barcodeBuilder(
-                        PKBarcode.builder()
-                                .format(PKBarcodeFormat.PKBarcodeFormatQR)
-                                .message("abcdefg")
-                                .messageEncoding(Charset.forName("UTF-8"))
-                )
-                .passTypeIdentifier("pti")
-                .teamIdentifier("ti");
+        PKBarcode barcode = new PKBarcode();
+        barcode.setFormat(PKBarcodeFormat.PKBarcodeFormatQR);
+        barcode.setMessage("abcdefg");
+        barcode.setMessageEncoding(Charset.forName("UTF-8"));
 
-        createZipAndAssert(passBuilder.build(), "target/passFileBasedGenerated.zip");
+        PKPass pass = new PKPass();
+        pass.setBarcodes(Arrays.asList(barcode));
+        pass.setPassTypeIdentifier("pti");
+        pass.setTeamIdentifier("ti");
+
+        createZipAndAssert(pass, "target/passFileBasedGenerated.zip");
     }
     
     @Test
     public void testFileBasedSigningWithGeneratedPass_andiOS8Fallback() throws Exception {
-        PKPassBuilder passBuilder = PKPass.builder()
-                .barcodes(Arrays.asList(
-                        PKBarcode.builder()
-                                .format(PKBarcodeFormat.PKBarcodeFormatCode128)
-                                .message("abcdefg")
-                                .messageEncoding(Charset.forName("UTF-8"))
-                                .build(),
-                        PKBarcode.builder()
-                                .format(PKBarcodeFormat.PKBarcodeFormatQR)
-                                .message("abcdefg")
-                                .messageEncoding(Charset.forName("UTF-8"))
-                                .build()
-                ))
-                .passTypeIdentifier("pti")
-                .teamIdentifier("ti");
+        PKBarcode barcode = new PKBarcode();
+        barcode.setFormat(PKBarcodeFormat.PKBarcodeFormatCode128);
+        barcode.setMessage("abcdefg");
+        barcode.setMessageEncoding(Charset.forName("UTF-8"));
         
-        createZipAndAssert(passBuilder.build(), "target/passFileBasedGenerated_andiOS8Fallback.zip");
+        PKBarcode barcode2 = new PKBarcode();
+        barcode2.setFormat(PKBarcodeFormat.PKBarcodeFormatQR);
+        barcode2.setMessage("abcdefg");
+        barcode2.setMessageEncoding(Charset.forName("UTF-8"));
+        
+        PKPass pass = new PKPass();
+        pass.setBarcodes(Arrays.asList(barcode, barcode2));
+        pass.setPassTypeIdentifier("pti");
+        pass.setTeamIdentifier("ti");
+        
+        createZipAndAssert(pass, "target/passFileBasedGenerated_andiOS8Fallback.zip");
     }
 
     @Test
     public void testFileBasedSigningWithGeneratedPassAndPersonalization() throws Exception {
-        PKPassBuilder passBuilder = PKPass.builder()
-                .barcodeBuilder(
-                        PKBarcode.builder()
-                                .format(PKBarcodeFormat.PKBarcodeFormatQR)
-                                .message("abcdefg")
-                                .messageEncoding(Charset.forName("UTF-8"))
-                )
-                .passTypeIdentifier("pti")
-                .teamIdentifier("ti");
+        PKBarcode barcode = new PKBarcode();
+        barcode.setFormat(PKBarcodeFormat.PKBarcodeFormatQR);
+        barcode.setMessage("abcdefg");
+        barcode.setMessageEncoding(Charset.forName("UTF-8"));
 
-        PKPersonalizationBuilder personalization = PKPersonalization.builder()
-                .description("desc")
-                .termsAndConditions("T&C")
-                .requiredPersonalizationField(PKPassPersonalizationField.PKPassPersonalizationFieldName);
+        PKPass pass = new PKPass();
+        pass.setBarcodes(Arrays.asList(barcode));
+        pass.setPassTypeIdentifier("pti");
+        pass.setTeamIdentifier("ti");
 
-        createZipAndAssert(passBuilder.build(), personalization.build(), "target/passFileBasedGenerated.zip");
+        PKPersonalization personalization = new PKPersonalization();
+        personalization.setDescription("desc");
+        personalization.setTermsAndConditions("T&C");
+        personalization.addRequiredPersonalizationField(PKPassPersonalizationField.PKPassPersonalizationFieldName);
+
+        createZipAndAssert(pass, personalization, "target/passFileBasedGenerated.zip");
     }
 
     private void createZipAndAssert(PKPass pkPass, String fileName) throws Exception {

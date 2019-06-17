@@ -15,57 +15,68 @@
  */
 package de.brendamour.jpasskit;
 
-import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class PKBeacon implements Cloneable, Serializable {
+public class PKBeacon implements IPKValidateable {
 
     private static final long serialVersionUID = -2017884167088954297L;
 
-    protected Integer major;
-    protected Integer minor;
-    protected String proximityUUID;
-    protected String relevantText;
-
-    protected PKBeacon() {
-    }
+    private Integer major;
+    private Integer minor;
+    private String proximityUUID;
+    private String relevantText;
 
     public Integer getMajor() {
         return major;
+    }
+
+    public void setMajor(final Integer major) {
+        this.major = major;
     }
 
     public Integer getMinor() {
         return minor;
     }
 
+    public void setMinor(final Integer minor) {
+        this.minor = minor;
+    }
+
     public String getProximityUUID() {
         return proximityUUID;
+    }
+
+    public void setProximityUUID(final String proximityUUID) {
+        this.proximityUUID = proximityUUID;
     }
 
     public String getRelevantText() {
         return relevantText;
     }
 
-    @Override
-    protected PKBeacon clone() {
-        try {
-            return (PKBeacon) super.clone();
-        } catch (CloneNotSupportedException ex) {
-            throw new IllegalStateException("Failed to clone PKBeacon instance", ex);
+    public void setRelevantText(final String relevantText) {
+        this.relevantText = relevantText;
+    }
+
+    public boolean isValid() {
+        return getValidationErrors().isEmpty();
+    }
+
+    public List<String> getValidationErrors() {
+
+        List<String> validationErrors = new ArrayList<String>();
+        if (StringUtils.isEmpty(proximityUUID)) {
+            validationErrors.add("Not all required Fields are set: proximityUUID");
         }
+        return validationErrors;
     }
 
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
-    }
-
-    public static PKBeaconBuilder builder() {
-        return new PKBeaconBuilder();
-    }
-
-    public static PKBeaconBuilder builder(PKBeacon beacon) {
-        return builder().of(beacon);
     }
 }

@@ -15,28 +15,35 @@
  */
 package de.brendamour.jpasskit.passes;
 
-import de.brendamour.jpasskit.enums.PKPassType;
+import java.util.List;
+
 import de.brendamour.jpasskit.enums.PKTransitType;
 
 public class PKBoardingPass extends PKGenericPass {
 
     private static final long serialVersionUID = 6099662826698064150L;
 
-    protected PKTransitType transitType;
-
-    protected PKBoardingPass() {
-    }
+    private PKTransitType transitType;
 
     public PKTransitType getTransitType() {
         return transitType;
     }
 
-    public static PKGenericPassBuilder builder() {
-        return new PKGenericPassBuilder(PKPassType.PKBoardingPass);
+    public void setTransitType(final PKTransitType transitType) {
+        this.transitType = transitType;
     }
 
-    public static PKGenericPassBuilder builder(PKBoardingPass pass) {
-        PKGenericPassBuilder passBuilder = builder();
-        return passBuilder.of(pass);
+    @Override
+    public boolean isValid() {
+        return getValidationErrors().isEmpty();
+    }
+
+    @Override
+    public List<String> getValidationErrors() {
+        List<String> validationErrors = super.getValidationErrors();
+        if (transitType == null) {
+            validationErrors.add("TransitType is not set");
+        }
+        return validationErrors;
     }
 }

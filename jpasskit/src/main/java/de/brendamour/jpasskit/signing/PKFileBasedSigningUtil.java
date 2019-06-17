@@ -36,7 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +44,7 @@ import java.util.zip.ZipOutputStream;
 
 public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(PKFileBasedSigningUtil.class);
 
     public PKFileBasedSigningUtil() {
         super(new ObjectMapper());
