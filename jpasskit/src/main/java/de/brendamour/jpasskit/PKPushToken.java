@@ -25,16 +25,21 @@ public class PKPushToken implements Serializable {
 
     private String pushToken;
 
-    public String getPushToken() {
-        return pushToken;
+    protected PKPushToken() {
     }
 
-    public void setPushToken(final String pushToken) {
-        this.pushToken = pushToken;
+    public String getPushToken() {
+        return pushToken;
     }
 
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+    public static PKPushToken of(String pushToken) {
+        PKPushToken pkPushToken = new PKPushToken();
+        pkPushToken.pushToken = pushToken;
+        return pkPushToken;
     }
 }

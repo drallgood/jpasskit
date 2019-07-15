@@ -15,11 +15,17 @@
  */
 package de.brendamour.jpasskit;
 
-import java.util.List;
+/**
+ * Defines common interface for constructing entities of Wallet API.
+ * Allows implementing generic utilities.
+ *
+ * @param <T> indicates type of entities, which this builder is intended for.
+ *
+ * @author Igor Stepanov
+ */
+public interface IPKBuilder<T> {
 
-public interface IPKValidateable {
+    T build();
 
-    boolean isValid();
-
-    List<String> getValidationErrors();
+    IPKBuilder of(T value);
 }

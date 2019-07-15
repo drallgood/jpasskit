@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.ByteBuffer;
@@ -34,7 +35,7 @@ import org.slf4j.LoggerFactory;
 
 public class PKPassTemplateFolder implements IPKPassTemplate {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PKPassTemplateFolder.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private File templateDir;
 
     public PKPassTemplateFolder(URL fileUrlOfTemplateDirectory) throws UnsupportedEncodingException {
