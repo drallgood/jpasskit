@@ -15,16 +15,8 @@
  */
 package de.brendamour.jpasskit.passes;
 
-import de.brendamour.jpasskit.enums.PKPassType;
-
 public class PKEventTicket extends PKGenericPass {
 
     private static final long serialVersionUID = -6952613912289269125L;
 
-    protected PKEventTicket() {
-    }
-
-    public static PKGenericPassBuilder builder() {
-        return new PKGenericPassBuilder(PKPassType.PKEventTicket);
-    }
 }

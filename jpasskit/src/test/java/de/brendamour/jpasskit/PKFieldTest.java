@@ -17,8 +17,10 @@ package de.brendamour.jpasskit;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.Date;
 
+import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -27,10 +29,7 @@ import de.brendamour.jpasskit.enums.PKDateStyle;
 import de.brendamour.jpasskit.enums.PKNumberStyle;
 import de.brendamour.jpasskit.enums.PKTextAlignment;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class PKFieldTest {
-
     private static final String KEY = "key";
     private static final String VALUE_TEXT = "some Text";
     private static final Number VALUE_NUMBER = 43;
@@ -40,201 +39,184 @@ public class PKFieldTest {
     private static final BigDecimal VALUE_CURRENCY = new BigDecimal("25.20").setScale(2, RoundingMode.HALF_UP);
     private static final String CURRENCYCODE = "EUR";
     private static final String ATTRIBUTED_VALUE = "<a href='http://example.com/customers/123'>Edit my profile</a>";
-
-    private PKFieldBuilder builder;
+    private PKField pkField;
 
     @BeforeMethod
     public void prepareTest() {
-        builder = PKField.builder();
+        pkField = new PKField();
     }
 
     @Test
-    public void test_clone() {
+    public void test_constructor() {
+        pkField = new PKField(KEY, LABEL, VALUE_TEXT);
+        Assert.assertEquals(pkField.getKey(), KEY);
+        Assert.assertEquals(pkField.getValue(), VALUE_TEXT);
+        Assert.assertEquals(pkField.getLabel(), LABEL);
+    }
+
+    @Test
+    public void test_GetterSetter_Text() {
         fillFieldsText();
-        PKField field = builder.build();
-        PKField copy = PKField.builder(field).build();
 
-        assertThat(copy)
-                .isNotSameAs(field)
-                .isEqualToComparingFieldByFieldRecursively(field);
+        Assert.assertEquals(pkField.getKey(), KEY);
+        Assert.assertEquals(pkField.getValue(), VALUE_TEXT);
+        Assert.assertEquals(pkField.getChangeMessage(), CHANGEMESSAGE);
+        Assert.assertEquals(pkField.getLabel(), LABEL);
+        Assert.assertEquals(pkField.getAttributedValue(), ATTRIBUTED_VALUE);
+        Assert.assertEquals(pkField.getDataDetectorTypes().size(), 1);
+        Assert.assertTrue(pkField.isValid());
 
-        assertThat(copy.getKey()).isEqualTo(KEY);
-        assertThat(copy.getValue()).isEqualTo(VALUE_TEXT);
-        assertThat(copy.getChangeMessage()).isEqualTo(CHANGEMESSAGE);
-        assertThat(copy.getLabel()).isEqualTo(LABEL);
-        assertThat(copy.getAttributedValue()).isEqualTo(ATTRIBUTED_VALUE);
-        assertThat(copy.getDataDetectorTypes())
-                .hasSize(1)
-                .containsExactly(PKDataDetectorType.PKDataDetectorTypeAddress);
     }
 
     @Test
-    public void test_getters_Text() {
+    public void test_GetterSetter_Number() {
         fillFieldsText();
-        assertThat(builder.isValid()).isTrue();
+        pkField.setValue(VALUE_NUMBER);
 
-        PKField field = builder.build();
-        assertThat(field.getKey()).isEqualTo(KEY);
-        assertThat(field.getValue()).isEqualTo(VALUE_TEXT);
-        assertThat(field.getChangeMessage()).isEqualTo(CHANGEMESSAGE);
-        assertThat(field.getLabel()).isEqualTo(LABEL);
-        assertThat(field.getAttributedValue()).isEqualTo(ATTRIBUTED_VALUE);
-        assertThat(field.getDataDetectorTypes())
-                .hasSize(1)
-                .containsExactly(PKDataDetectorType.PKDataDetectorTypeAddress);
+        Assert.assertEquals(pkField.getKey(), KEY);
+        Assert.assertEquals(pkField.getValue(), VALUE_NUMBER);
+        Assert.assertEquals(pkField.getChangeMessage(), CHANGEMESSAGE);
+        Assert.assertEquals(pkField.getLabel(), LABEL);
+        Assert.assertEquals(pkField.getAttributedValue(), ATTRIBUTED_VALUE);
+        Assert.assertEquals(pkField.getDataDetectorTypes().size(), 1);
+        Assert.assertTrue(pkField.isValid());
+
     }
 
     @Test
-    public void test_getters_Currency() {
+    public void test_GetterSetter_Date() {
+        fillFieldsText();
+        pkField.setValue(VALUE_DATE);
+
+        Assert.assertEquals(pkField.getKey(), KEY);
+        Assert.assertEquals(pkField.getValue(), VALUE_DATE);
+        Assert.assertEquals(pkField.getChangeMessage(), CHANGEMESSAGE);
+        Assert.assertEquals(pkField.getLabel(), LABEL);
+        Assert.assertEquals(pkField.getAttributedValue(), ATTRIBUTED_VALUE);
+        Assert.assertEquals(pkField.getDataDetectorTypes().size(), 1);
+        Assert.assertTrue(pkField.isValid());
+
+    }
+
+    @Test
+    public void test_GetterSetter_NoKey() {
+        fillFieldsText();
+        pkField.setKey(null);
+
+        Assert.assertFalse(pkField.isValid());
+
+    }
+
+    @Test
+    public void test_GetterSetter_EmptyKey() {
+        fillFieldsText();
+        pkField.setKey("");
+
+        Assert.assertFalse(pkField.isValid());
+
+    }
+
+    @Test
+    public void test_GetterSetter_NoValue() {
+        fillFieldsText();
+        pkField.setValue(null);
+
+        Assert.assertFalse(pkField.isValid());
+
+    }
+
+    @Test
+    public void test_GetterSetter_InvalidValueType() {
+        fillFieldsText();
+        pkField.setValue(new PKField());
+
+        Assert.assertFalse(pkField.isValid());
+
+    }
+
+    @Test
+    public void test_GetterSetter_Currency() {
         fillFieldsCurrency();
 
-        assertThat(builder.isValid()).isTrue();
-        assertThat(builder.build().getValue()).isEqualTo(VALUE_CURRENCY);
+        Assert.assertEquals(pkField.getValue(), VALUE_CURRENCY);
+        Assert.assertTrue(pkField.isValid());
+
     }
 
     @Test
-    public void test_getters_Number() {
+    public void test_GetterSetter_CurrencyAndNumberFormatSet() {
+        fillFieldsCurrency();
+        pkField.setNumberStyle(PKNumberStyle.PKNumberStyleDecimal);
+
+        Assert.assertFalse(pkField.isValid());
+
+    }
+
+    @Test
+    public void test_GetterSetter_CurrencyAndDateStyleSet() {
+        fillFieldsCurrency();
+        pkField.setDateStyle(PKDateStyle.PKDateStyleFull);
+
+        Assert.assertFalse(pkField.isValid());
+
+    }
+
+    @Test
+    public void test_GetterSetter_CurrencyAndTimeStyleSet() {
+        fillFieldsCurrency();
+        pkField.setTimeStyle(PKDateStyle.PKDateStyleFull);
+
+        Assert.assertFalse(pkField.isValid());
+
+    }
+
+    @Test
+    public void test_GetterSetter_CurrencyAndValueNotANumber() {
+        fillFieldsCurrency();
+        pkField.setValue("2.20");
+
+        Assert.assertFalse(pkField.isValid());
+
+    }
+
+    @Test
+    public void test_GetterSetter_NumberAndDateStyleSet() {
         fillBasisFields();
-        PKField field = builder.numberStyle(PKNumberStyle.PKNumberStyleDecimal)
-                .textAlignment(PKTextAlignment.PKTextAlignmentCenter)
-                .currencyCode("GBP")
-                .isRelative(true)
-                .build();
 
-        assertThat(field.getDateStyle()).isNull();
-        assertThat(field.getTimeStyle()).isNull();
-        assertThat(field.getIgnoresTimeZone()).isNull();
+        pkField.setNumberStyle(PKNumberStyle.PKNumberStyleDecimal);
+        pkField.setDateStyle(PKDateStyle.PKDateStyleFull);
 
-        assertThat(field.getNumberStyle()).isEqualTo(PKNumberStyle.PKNumberStyleDecimal);
-        assertThat(field.getTextAlignment()).isEqualTo(PKTextAlignment.PKTextAlignmentCenter);
-        assertThat(field.getCurrencyCode()).isEqualTo("GBP");
-        assertThat(field.getIsRelative()).isTrue();
+        Assert.assertFalse(pkField.isValid());
+
     }
 
     @Test
-    public void test_getters_DateTime() {
+    public void test_GetterSetter_ChangeMessageWithNoPlaceholder() {
         fillBasisFields();
-        PKField field = builder.dateStyle(PKDateStyle.PKDateStyleMedium)
-                .timeStyle(PKDateStyle.PKDateStyleFull)
-                .ignoresTimeZone(true)
-                .build();
 
-        assertThat(field.getDateStyle()).isEqualTo(PKDateStyle.PKDateStyleMedium);
-        assertThat(field.getTimeStyle()).isEqualTo(PKDateStyle.PKDateStyleFull);
-        assertThat(field.getIgnoresTimeZone()).isTrue();
+        pkField.setChangeMessage("Change");
 
-        assertThat(field.getNumberStyle()).isNull();
-        assertThat(field.getTextAlignment()).isNull();
-        assertThat(field.getCurrencyCode()).isNull();
-        assertThat(field.getIsRelative()).isNull();
-    }
+        Assert.assertFalse(pkField.isValid());
 
-    @Test
-    public void test_validation_NoKey() {
-        fillFieldsText();
-        builder.key(null);
-
-        assertThat(builder.isValid()).isFalse();
-    }
-
-    @Test
-    public void test_validation_EmptyKey() {
-        fillFieldsText();
-        builder.key("");
-
-        assertThat(builder.isValid()).isFalse();
-    }
-
-    @Test
-    public void test_validation_NoValue() {
-        fillFieldsText();
-
-        assertThat(builder.value((String) null).isValid()).isFalse();
-        assertThat(builder.value((Integer) null).isValid()).isFalse();
-        assertThat(builder.value((Float) null).isValid()).isFalse();
-        assertThat(builder.value((Long) null).isValid()).isFalse();
-        assertThat(builder.value((Double) null).isValid()).isFalse();
-        assertThat(builder.value((BigDecimal) null).isValid()).isFalse();
-        assertThat(builder.value((Date) null).isValid()).isFalse();
-    }
-
-    @Test
-    public void test_validation_CurrencyAndNumberFormatSet() {
-        fillFieldsCurrency();
-        builder.numberStyle(PKNumberStyle.PKNumberStyleDecimal);
-
-        assertThat(builder.isValid()).isFalse();
-    }
-
-    @Test
-    public void test_validation_CurrencyAndDateStyleSet() {
-        fillFieldsCurrency();
-        builder.dateStyle(PKDateStyle.PKDateStyleFull);
-
-        assertThat(builder.isValid()).isFalse();
-    }
-
-    @Test
-    public void test_validation_CurrencyAndTimeStyleSet() {
-        fillFieldsCurrency();
-        builder.timeStyle(PKDateStyle.PKDateStyleFull);
-
-        assertThat(builder.isValid()).isFalse();
-    }
-
-    @Test
-    public void test_validation_CurrencyAndValueNotANumber() {
-        fillFieldsCurrency();
-        builder.value("2.20");
-
-        assertThat(builder.isValid()).isFalse();
-    }
-
-    @Test
-    public void test_validation_NumberAndDateStyleSet() {
-        fillBasisFields();
-        builder.numberStyle(PKNumberStyle.PKNumberStyleDecimal)
-                .dateStyle(PKDateStyle.PKDateStyleFull);
-
-        assertThat(builder.isValid()).isFalse();
-    }
-
-    @Test
-    public void test_validation_ChangeMessageWithNoPlaceholder() {
-        fillBasisFields();
-        builder.changeMessage("Change");
-
-        assertThat(builder.isValid()).isFalse();
-    }
-
-    @Test
-    public void test_toString() {
-        fillFieldsText();
-        PKField field = builder.build();
-        assertThat(field.toString())
-                .contains(KEY)
-                .contains(CHANGEMESSAGE)
-                .contains(LABEL)
-                .contains(VALUE_TEXT)
-                .contains(ATTRIBUTED_VALUE);
     }
 
     private void fillFieldsText() {
+        pkField.setValue(VALUE_TEXT);
         fillBasisFields();
-        builder.value(VALUE_TEXT)
-                .dataDetectorType(PKDataDetectorType.PKDataDetectorTypeAddress);
     }
 
     private void fillBasisFields() {
-        builder.key(KEY)
-                .changeMessage(CHANGEMESSAGE)
-                .label(LABEL)
-                .attributedValue(ATTRIBUTED_VALUE);
+        pkField.setKey(KEY);
+        pkField.setChangeMessage(CHANGEMESSAGE);
+        pkField.setLabel(LABEL);
+        pkField.setTextAlignment(PKTextAlignment.PKTextAlignmentCenter);
+        pkField.setAttributedValue(ATTRIBUTED_VALUE);
+        pkField.setDataDetectorTypes(Arrays.asList(PKDataDetectorType.PKDataDetectorTypeAddress));
     }
 
     private void fillFieldsCurrency() {
+        pkField.setValue(VALUE_CURRENCY);
+        pkField.setCurrencyCode(CURRENCYCODE);
         fillBasisFields();
-        builder.value(VALUE_CURRENCY)
-                .currencyCode(CURRENCYCODE);
     }
 }

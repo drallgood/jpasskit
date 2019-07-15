@@ -23,17 +23,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-import de.brendamour.jpasskit.PKFieldBuilder;
-import de.brendamour.jpasskit.PKPassBuilder;
-import de.brendamour.jpasskit.passes.PKGenericPassBuilder;
 import org.restlet.data.ChallengeResponse;
 import org.restlet.data.Status;
 import org.restlet.representation.Representation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import de.brendamour.jpasskit.PKField;
 import de.brendamour.jpasskit.PKPass;
 import de.brendamour.jpasskit.PKPushToken;
+import de.brendamour.jpasskit.passes.PKStoreCard;
 import de.brendamour.jpasskit.signing.PKSigningInformation;
 import de.brendamour.jpasskit.signing.PKSigningInformationUtil;
 
@@ -77,26 +76,25 @@ public class PKRestletServerResourceFactory implements IPKRestletServerResourceF
 
 			@Override
 			protected GetPKPassResponse handleGetLatestVersionOfPass(final String passTypeIdentifier, final String serialNumber, final String authString, final Date modifiedSince) {
-				PKPassBuilder builder = PKPass.builder();
+				PKPass pass;
 				try {
-					PKPass pass = jsonObjectMapper.readValue(new File("passes/coupons.raw/pass2.json"), PKPass.class);
+					pass = jsonObjectMapper.readValue(new File("passes/coupons.raw/pass.json"), PKPass.class);
 
 					float newAmount = getNewRandomAmount();
-					builder.of(pass);
-					PKGenericPassBuilder storeCard = builder.getPassBuilder();
-					List<PKFieldBuilder> primaryFields = storeCard.getPrimaryFieldBuilders();
-					for (PKFieldBuilder field : primaryFields) {
-						if ("balance".equals(field.build().getKey())) {
-							field.value(newAmount);
-							field.changeMessage("Amount changed to %@");
+					PKStoreCard storeCard = pass.getStoreCard();
+					List<PKField> primaryFields = storeCard.getPrimaryFields();
+					for (PKField field : primaryFields) {
+						if ("balance".equals(field.getKey())) {
+							field.setValue(newAmount);
+							field.setChangeMessage("Amount changed to %@");
 							break;
 						}
 
 					}
-					List<PKFieldBuilder> headerFields = storeCard.getHeaderFieldBuilders();
-					for (PKFieldBuilder field : headerFields) {
-						if ("balanceHeader".equals(field.build().getKey())) {
-							field.value(newAmount);
+					List<PKField> headerFields = storeCard.getHeaderFields();
+					for (PKField field : headerFields) {
+						if ("balanceHeader".equals(field.getKey())) {
+							field.setValue(newAmount);
 							break;
 						}
 
@@ -105,7 +103,7 @@ public class PKRestletServerResourceFactory implements IPKRestletServerResourceF
 				} catch (IOException e) {
 					throw new IllegalStateException("Failed to read pass from JSON file", e);
 				}
-				GetPKPassResponse getPKPassResponse = new GetPKPassResponse(builder.build(), new Date());
+				GetPKPassResponse getPKPassResponse = new GetPKPassResponse(pass, new Date());
 
 				return getPKPassResponse;
 			}
