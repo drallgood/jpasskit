@@ -73,7 +73,7 @@
 		<commons-lang.version>3.9</commons-lang.version>
 		<guava.version>28.0-jre</guava.version>
 		<jackson.version>2.9.9</jackson.version>
-		<mockito.version>2.28.2</mockito.version>
+		<mockito.version>3.0.0</mockito.version>
 		<pushy.version>0.13.9</pushy.version>
 		<slf4j.version>1.7.26</slf4j.version>
 		<testng.version>6.14.3</testng.version>
@@ -81,7 +81,7 @@
 		<license-maven-plugin.version>3.0</license-maven-plugin.version>
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
 		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
-		<maven-javadoc-plugin.version>3.1.0</maven-javadoc-plugin.version>
+		<maven-javadoc-plugin.version>3.1.1</maven-javadoc-plugin.version>
 		<maven-release-plugin.version>2.5.3</maven-release-plugin.version>
 		<maven-source-plugin.version>3.1.0</maven-source-plugin.version>
 		<maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
