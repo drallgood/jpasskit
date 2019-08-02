@@ -135,6 +135,7 @@ The PKSigningUtil contains all necessary methods to:
 
 
 Example to do it all in one step: 
+
 	PKSigningInformation pkSigningInformation = new  PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(keyStorePath,  keyStorePassword, appleWWDRCA);
 	PKPassTemplateFolder passTemplate = new PKPassTemplateFolder(template_path);
 	PKFileBasedSigningUtil pkSigningUtil = new PKFileBasedSigningUtil();
