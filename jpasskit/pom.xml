@@ -66,9 +66,9 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<current.year>2019</current.year>
 		<!-- Dependency versions -->
-		<assertj.version>3.13.1</assertj.version>
+		<assertj.version>3.13.2</assertj.version>
 		<bouncy-castle.version>1.62</bouncy-castle.version>
-		<commons-codec.version>1.12</commons-codec.version>
+		<commons-codec.version>1.13</commons-codec.version>
 		<commons-io.version>2.6</commons-io.version>
 		<commons-lang.version>3.9</commons-lang.version>
 		<guava.version>28.0-jre</guava.version>
