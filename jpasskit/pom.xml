@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.brendamour</groupId>
 	<artifactId>jpasskit</artifactId>
-	<version>0.1.1</version>
+	<version>0.1.2-SNAPSHOT</version>
 	<name>jPasskit</name>
 	<description>Java Library for Apple PassBook Web Service API</description>
 	<url>https://github.com/drallgood/jpasskit</url>
@@ -17,7 +17,6 @@
 		<url>scm:git:git@github.com:drallgood/jpasskit.git</url>
 		<connection>scm:git:git@github.com:drallgood/jpasskit.git</connection>
 		<developerConnection>scm:git:git@github.com:drallgood/jpasskit.git</developerConnection>
-		<tag>jpasskit-0.1.1</tag>
 	</scm>
 
 	<developers>
@@ -64,7 +63,7 @@
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<current.year>2019</current.year>
+		<current.year>2020</current.year>
 		<!-- Dependency versions -->
 		<assertj.version>3.11.1</assertj.version>
 		<bouncy-castle.version>1.60</bouncy-castle.version>

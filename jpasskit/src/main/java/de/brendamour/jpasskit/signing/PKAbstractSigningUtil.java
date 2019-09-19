@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2019 Patrice Brend'amour <patrice@brendamour.net>
+ * Copyright (C) 2020 Patrice Brend'amour <patrice@brendamour.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import de.brendamour.jpasskit.util.Assert;
 import de.brendamour.jpasskit.util.CertUtils;
 import org.bouncycastle.asn1.ASN1EncodableVector;
@@ -127,6 +128,8 @@ public abstract class PKAbstractSigningUtil implements IPKSigningUtil {
     protected ObjectWriter configureObjectMapper(final ObjectMapper jsonObjectMapper) {
         jsonObjectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         jsonObjectMapper.setDateFormat(new StdDateFormat());
+        jsonObjectMapper.configOverride(Date.class).setFormat(JsonFormat.Value.forPattern("yyyy-MM-dd'T'HH:mm:ssXXX"));
+        jsonObjectMapper.setSerializationInclusion(Include.NON_NULL);
 
         SimpleFilterProvider filters = new SimpleFilterProvider();
 
