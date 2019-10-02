@@ -122,7 +122,7 @@ public abstract class PKAbstractSigningUtil implements IPKSigningUtil {
     protected ObjectWriter configureObjectMapper(final ObjectMapper jsonObjectMapper) {
         jsonObjectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         jsonObjectMapper.setDateFormat(new StdDateFormat());
-        jsonObjectMapper.configOverride(Date.class).setFormat(JsonFormat.Value.forPattern("yyyy-MM-dd'T'HH:mm:ssZ"));
+        jsonObjectMapper.configOverride(Date.class).setFormat(JsonFormat.Value.forPattern("yyyy-MM-dd'T'HH:mm:ssXXX"));
         jsonObjectMapper.setSerializationInclusion(Include.NON_NULL);
         return jsonObjectMapper.writer();
     }

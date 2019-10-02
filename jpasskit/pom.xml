@@ -67,15 +67,15 @@
 		<current.year>2019</current.year>
 		<!-- Dependency versions -->
 		<assertj.version>3.13.2</assertj.version>
-		<bouncy-castle.version>1.62</bouncy-castle.version>
+		<bouncy-castle.version>1.63</bouncy-castle.version>
 		<commons-codec.version>1.13</commons-codec.version>
 		<commons-io.version>2.6</commons-io.version>
 		<commons-lang.version>3.9</commons-lang.version>
-		<guava.version>28.0-jre</guava.version>
+		<guava.version>28.1-jre</guava.version>
 		<jackson.version>2.9.9</jackson.version>
-		<mockito.version>3.0.0</mockito.version>
+		<mockito.version>3.1.0</mockito.version>
 		<pushy.version>0.13.9</pushy.version>
-		<slf4j.version>1.7.27</slf4j.version>
+		<slf4j.version>1.7.28</slf4j.version>
 		<testng.version>6.14.3</testng.version>
 		<!-- Plugin versions -->
 		<license-maven-plugin.version>3.0</license-maven-plugin.version>

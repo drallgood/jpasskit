@@ -115,6 +115,7 @@ For convenience, we provide methods to add several additional data types to the 
 As you can see, we're also providing static variables for the most common file names.
 
 You can also add an optional locale parameter to the call, in which case the file will automatically be added only for the given language:
+
 	pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, Locale.ENGLISH, url); 
 	//content from URL will be placed in "en.lproj/icon@2x.png"
 
