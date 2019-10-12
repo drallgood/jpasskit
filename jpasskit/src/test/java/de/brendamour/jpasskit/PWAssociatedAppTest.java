@@ -15,34 +15,67 @@
  */
 package de.brendamour.jpasskit;
 
-import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class PWAssociatedAppTest {
+
     private static final String TITLE = "PassWallet - Test";
     private static final String ID_GOOGLE_PLAY = "com.attidomobile.passwallet.test.google";
     private static final String ID_AMAZON = "com.attidomobile.passwallet.test.amazon";
-    private PWAssociatedApp pwAssociatedApp;
+
+    private PWAssociatedAppBuilder builder;
 
     private void fillAssociatedApp() {
-        pwAssociatedApp.setTitle(TITLE);
-        pwAssociatedApp.setIdGooglePlay(ID_GOOGLE_PLAY);
-        pwAssociatedApp.setIdAmazon(ID_AMAZON);
+        builder.title(TITLE)
+                .idGooglePlay(ID_GOOGLE_PLAY)
+                .idAmazon(ID_AMAZON);
     }
 
     @BeforeMethod
     public void prepareTest() {
-        pwAssociatedApp = new PWAssociatedApp();
+        builder = PWAssociatedApp.builder();
         fillAssociatedApp();
     }
 
     @Test
-    public void test_getSet() {
+    public void test_builder() {
+        assertThat(builder.build())
+                .hasFieldOrPropertyWithValue("title", TITLE)
+                .hasFieldOrPropertyWithValue("idGooglePlay", ID_GOOGLE_PLAY)
+                .hasFieldOrPropertyWithValue("idAmazon", ID_AMAZON);
+    }
 
-        Assert.assertEquals(pwAssociatedApp.getTitle(), TITLE);
-        Assert.assertEquals(pwAssociatedApp.getIdGooglePlay(), ID_GOOGLE_PLAY);
-        Assert.assertEquals(pwAssociatedApp.getIdAmazon(), ID_AMAZON);
-        Assert.assertTrue(pwAssociatedApp.isValid());
+    @Test
+    public void test_clone() {
+        PWAssociatedApp associatedApp = builder.build();
+        PWAssociatedApp copy = PWAssociatedApp.builder(associatedApp).build();
+
+        assertThat(copy)
+                .isNotSameAs(associatedApp)
+                .isEqualToComparingFieldByFieldRecursively(associatedApp);
+
+        assertThat(copy.getTitle()).isEqualTo(TITLE);
+        assertThat(copy.getIdGooglePlay()).isEqualTo(ID_GOOGLE_PLAY);
+        assertThat(copy.getIdAmazon()).isEqualTo(ID_AMAZON);
+    }
+
+    @Test
+    public void test_getters() {
+        PWAssociatedApp associatedApp = builder.build();
+        assertThat(associatedApp.getTitle()).isEqualTo(TITLE);
+        assertThat(associatedApp.getIdGooglePlay()).isEqualTo(ID_GOOGLE_PLAY);
+        assertThat(associatedApp.getIdAmazon()).isEqualTo(ID_AMAZON);
+    }
+
+    @Test
+    public void test_toString() {
+        PWAssociatedApp associatedApp = builder.build();
+        assertThat(associatedApp.toString())
+                .contains(TITLE)
+                .contains(ID_GOOGLE_PLAY)
+                .contains(ID_AMAZON);
     }
 }

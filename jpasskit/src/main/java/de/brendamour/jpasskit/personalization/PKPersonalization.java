@@ -15,80 +15,62 @@
  */
 package de.brendamour.jpasskit.personalization;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import de.brendamour.jpasskit.IPKValidateable;
 import de.brendamour.jpasskit.enums.PKPassPersonalizationField;
 
 /**
- * See https://developer.apple.com/library/prerelease/content/documentation/UserExperience/Conceptual/PassKit_PG/PassPersonalization.html
- * @author patrice
+ * Rewards enrollment lets you create a pass that prompts the user to sign up for a rewards program.
+ * These passes are referred to as personalizable passes, because the user provides personal information during signup that is used to update the pass.
  *
+ * @see <a href="https://developer.apple.com/library/prerelease/content/documentation/UserExperience/Conceptual/PassKit_PG/PassPersonalization.html">Rewards Enrollment</a>
+ *
+ * @author patrice
+ * @author Igor Stepanov
  */
-public class PKPersonalization implements IPKValidateable {
+public class PKPersonalization implements Cloneable, Serializable {
+
     private static final long serialVersionUID = -7580722464940378982L;
 
-    private List<PKPassPersonalizationField> requiredPersonalizationFields;
+    protected List<PKPassPersonalizationField> requiredPersonalizationFields;
 
-    private String description;
-    
-    private String termsAndConditions;
-    
+    protected String description;
+    protected String termsAndConditions;
+
     public List<PKPassPersonalizationField> getRequiredPersonalizationFields() {
         return requiredPersonalizationFields;
-    }
-
-    public void setRequiredPersonalizationFields(List<PKPassPersonalizationField> requiredPersonalizationFields) {
-        this.requiredPersonalizationFields = requiredPersonalizationFields;
-    }
-    
-    public void addRequiredPersonalizationField(PKPassPersonalizationField requiredPersonalizationField) {
-        if(this.requiredPersonalizationFields == null) {
-            this.requiredPersonalizationFields = new ArrayList<PKPassPersonalizationField>();
-        }
-        this.requiredPersonalizationFields.add(requiredPersonalizationField);
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public String getTermsAndConditions() {
         return termsAndConditions;
     }
 
-    public void setTermsAndConditions(String termsAndConditions) {
-        this.termsAndConditions = termsAndConditions;
-    }
-
     @Override
-    public boolean isValid() {
-        return getValidationErrors().isEmpty();
+    protected PKPersonalization clone() {
+        try {
+            return (PKPersonalization) super.clone();
+        } catch (CloneNotSupportedException ex) {
+            throw new IllegalStateException("Failed to clone PKPersonalization instance", ex);
+        }
     }
 
-    @Override
-    public List<String> getValidationErrors() {
-        List<String> validationErrors = new ArrayList<String>();
-
-        if(requiredPersonalizationFields == null || requiredPersonalizationFields.isEmpty()) {
-            validationErrors.add("You need to provide at least one requiredPersonalizationField");
-        }
-        if (StringUtils.isEmpty(description)) {
-            validationErrors.add("You need to provide a description");
-        }
-        return validationErrors;
-    }
-    
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+    public static PKPersonalizationBuilder builder() {
+        return new PKPersonalizationBuilder();
+    }
+
+    public static PKPersonalizationBuilder builder(PKPersonalization barcode) {
+        return builder().of(barcode);
     }
 }
