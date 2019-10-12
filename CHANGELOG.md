@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- none
+- Builder pattern for main PK* classes (POJOs). BREAKING CHANGE!
 
 ### Deprecated
 
@@ -12,7 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Removed
 
-- none
+- Main PK* classes (POJOs) no longer include verification and setter code
 
 ### Fixed
 
