@@ -74,7 +74,7 @@
 		<guava.version>28.1-jre</guava.version>
 		<jackson.version>2.10.0</jackson.version>
 		<mockito.version>3.1.0</mockito.version>
-		<pushy.version>0.13.9</pushy.version>
+		<pushy.version>0.13.10</pushy.version>
 		<slf4j.version>1.7.28</slf4j.version>
 		<testng.version>6.14.3</testng.version>
 		<!-- Plugin versions -->
