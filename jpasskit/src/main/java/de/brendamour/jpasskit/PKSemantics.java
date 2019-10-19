@@ -16,6 +16,7 @@
 package de.brendamour.jpasskit;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -48,7 +49,7 @@ public class PKSemantics implements Cloneable, Serializable {
     protected PKSemanticLocation destinationLocation;
 
     protected String destinationLocationDescription;
-    
+
     protected String transitProvider;
 
     protected String vehicleName;
@@ -56,6 +57,18 @@ public class PKSemantics implements Cloneable, Serializable {
     protected String vehicleNumber;
 
     protected String vehicleType;
+
+    protected Date originalDepartureDate;
+
+    protected Date currentDepartureDate;
+
+    protected Date originalArrivalDate;
+
+    protected Date currentArrivalDate;
+
+    protected Date originalBoardingDate;
+
+    protected Date currentBoardingDate;
 
     public PKCurrencyAmount getTotalPrice() {
         return totalPrice;
@@ -65,7 +78,7 @@ public class PKSemantics implements Cloneable, Serializable {
         return duration;
     }
 
-     public List<PKSeat> getSeats() {
+    public List<PKSeat> getSeats() {
         return seats;
     }
 
@@ -104,9 +117,32 @@ public class PKSemantics implements Cloneable, Serializable {
     public String getVehicleType() {
         return vehicleType;
     }
-    
 
-@Override
+    public Date getCurrentArrivalDate() {
+        return currentArrivalDate;
+    }
+
+    public Date getCurrentBoardingDate() {
+        return currentBoardingDate;
+    }
+
+    public Date getCurrentDepartureDate() {
+        return currentDepartureDate;
+    }
+
+    public Date getOriginalArrivalDate() {
+        return originalArrivalDate;
+    }
+
+    public Date getOriginalBoardingDate() {
+        return originalBoardingDate;
+    }
+
+    public Date getOriginalDepartureDate() {
+        return originalDepartureDate;
+    }
+
+    @Override
     protected PKSemantics clone() {
         try {
             return (PKSemantics) super.clone();

@@ -16,6 +16,7 @@
 package de.brendamour.jpasskit;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
@@ -103,6 +104,36 @@ public class PKSemanticsBuilder implements IPKValidateable, IPKBuilder<PKSemanti
 
     public PKSemanticsBuilder vehicleType(String vehicleType) {
         this.semantics.vehicleType = vehicleType;
+        return this;
+    }
+
+    public PKSemanticsBuilder originalDepartureDate(Date originalDepartureDate) {
+        this.semantics.originalDepartureDate = originalDepartureDate;
+        return this;
+    }
+
+    public PKSemanticsBuilder currentDepartureDate(Date currentDepartureDate) {
+        this.semantics.currentDepartureDate = currentDepartureDate;
+        return this;
+    }
+
+    public PKSemanticsBuilder originalArrivalDate(Date originalArrivalDate) {
+        this.semantics.originalArrivalDate = originalArrivalDate;
+        return this;
+    }
+
+    public PKSemanticsBuilder currentArrivalDate(Date currentArrivalDate) {
+        this.semantics.currentArrivalDate = currentArrivalDate;
+        return this;
+    }
+
+    public PKSemanticsBuilder originalBoardingDate(Date originalBoardingDate) {
+        this.semantics.originalBoardingDate = originalBoardingDate;
+        return this;
+    }
+
+    public PKSemanticsBuilder currentBoardingDate(Date currentBoardingDate) {
+        this.semantics.currentBoardingDate = currentBoardingDate;
         return this;
     }
 
