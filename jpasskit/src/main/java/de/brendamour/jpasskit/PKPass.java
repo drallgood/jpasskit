@@ -88,6 +88,9 @@ public class PKPass implements Cloneable, Serializable {
     // Added 2018-06-07
     protected boolean sharingProhibited;
 
+    // Feature added in iOS 12.0. It is not applicable to older iOS
+    protected PKSemantics semantics;
+
     protected PKPass() {
         this.formatVersion = 1;
     }
