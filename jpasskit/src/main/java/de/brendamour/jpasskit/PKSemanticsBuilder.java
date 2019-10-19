@@ -71,7 +71,7 @@ public class PKSemanticsBuilder implements IPKValidateable, IPKBuilder<PKSemanti
         return this;
     }
 
-public PKSemanticsBuilder departureLocationDescription(String departureLocationDescription) {
+    public PKSemanticsBuilder departureLocationDescription(String departureLocationDescription) {
         this.semantics.departureLocationDescription = departureLocationDescription;
         return this;
     }
@@ -85,7 +85,27 @@ public PKSemanticsBuilder departureLocationDescription(String departureLocationD
         this.semantics.destinationLocationDescription = destinationLocationDescription;
         return this;
     }
-    
+
+    public PKSemanticsBuilder transitProvider(String transitProvider) {
+        this.semantics.transitProvider = transitProvider;
+        return this;
+    }
+
+    public PKSemanticsBuilder vehicleName(String vehicleName) {
+        this.semantics.vehicleName = vehicleName;
+        return this;
+    }
+
+    public PKSemanticsBuilder vehicleNumber(String vehicleNumber) {
+        this.semantics.vehicleNumber = vehicleNumber;
+        return this;
+    }
+
+    public PKSemanticsBuilder vehicleType(String vehicleType) {
+        this.semantics.vehicleType = vehicleType;
+        return this;
+    }
+
     @Override
     public boolean isValid() {
         return getValidationErrors().isEmpty();

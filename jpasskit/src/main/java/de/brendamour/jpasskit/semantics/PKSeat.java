@@ -71,11 +71,11 @@ public class PKSeat implements Cloneable, Serializable {
         return ToStringBuilder.reflectionToString(this);
     }
 
-    public static PKCurrencyAmountBuilder builder() {
-        return new PKCurrencyAmountBuilder();
+    public static PKSeatBuilder builder() {
+        return new PKSeatBuilder();
     }
 
-    public static PKCurrencyAmountBuilder builder(PKSeat seat) {
+    public static PKSeatBuilder builder(PKSeat seat) {
         return builder().of(seat);
     }
 }

@@ -49,6 +49,13 @@ public class PKSemantics implements Cloneable, Serializable {
 
     protected String destinationLocationDescription;
     
+    protected String transitProvider;
+
+    protected String vehicleName;
+
+    protected String vehicleNumber;
+
+    protected String vehicleType;
 
     public PKCurrencyAmount getTotalPrice() {
         return totalPrice;
@@ -58,9 +65,46 @@ public class PKSemantics implements Cloneable, Serializable {
         return duration;
     }
 
+     public List<PKSeat> getSeats() {
+        return seats;
+    }
+
     public Boolean getSilenceRequested() {
         return silenceRequested;
     }
+
+    public PKSemanticLocation getDepartureLocation() {
+        return departureLocation;
+    }
+
+    public String getDepartureLocationDescription() {
+        return departureLocationDescription;
+    }
+
+    public PKSemanticLocation getDestinationLocation() {
+        return destinationLocation;
+    }
+
+    public String getDestinationLocationDescription() {
+        return destinationLocationDescription;
+    }
+
+    public String getTransitProvider() {
+        return transitProvider;
+    }
+
+    public String getVehicleName() {
+        return vehicleName;
+    }
+
+    public String getVehicleNumber() {
+        return vehicleNumber;
+    }
+
+    public String getVehicleType() {
+        return vehicleType;
+    }
+    
 
 @Override
     protected PKSemantics clone() {
