@@ -401,6 +401,10 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
 
     private void checkSemanticsIfSet(List<String> validationErrors) {
         // TODO: figure out how to do efficient validation
+        if (this.pkPass.semantics != null) {
+            PKSemanticsBuilder semanticsBuilder = new PKSemanticsBuilder().of(this.pkPass.semantics);
+            validationErrors.addAll(semanticsBuilder.getValidationErrors()); 
+        }
     }
 
     @Override
