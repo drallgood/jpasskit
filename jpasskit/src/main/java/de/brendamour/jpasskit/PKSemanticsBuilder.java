@@ -22,6 +22,7 @@ import java.util.List;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
 import de.brendamour.jpasskit.semantics.PKCurrencyAmount;
+import de.brendamour.jpasskit.semantics.PKPersonNameComponents;
 import de.brendamour.jpasskit.semantics.PKSeat;
 import de.brendamour.jpasskit.semantics.PKSemanticLocation;
 
@@ -134,6 +135,56 @@ public class PKSemanticsBuilder implements IPKValidateable, IPKBuilder<PKSemanti
 
     public PKSemanticsBuilder currentBoardingDate(Date currentBoardingDate) {
         this.semantics.currentBoardingDate = currentBoardingDate;
+        return this;
+    }
+
+    public PKSemanticsBuilder boardingGroup(String boardingGroup) {
+        this.semantics.boardingGroup = boardingGroup;
+        return this;
+    }
+
+    public PKSemanticsBuilder boardingSequenceNumber(String boardingSequenceNumber) {
+        this.semantics.boardingSequenceNumber = boardingSequenceNumber;
+        return this;
+    }
+
+    public PKSemanticsBuilder confirmationNumber(String confirmationNumber) {
+        this.semantics.confirmationNumber = confirmationNumber;
+        return this;
+    }
+
+    public PKSemanticsBuilder transitStatus(String transitStatus) {
+        this.semantics.transitStatus = transitStatus;
+        return this;
+    }
+
+    public PKSemanticsBuilder transitStatusReason(String transitStatusReason) {
+        this.semantics.transitStatusReason = transitStatusReason;
+        return this;
+    }
+
+    public PKSemanticsBuilder passengerName(PKPersonNameComponents passengerName) {
+        this.semantics.passengerName = passengerName;
+        return this;
+    }
+
+    public PKSemanticsBuilder membershipProgramName(String membershipProgramName) {
+        this.semantics.membershipProgramName = membershipProgramName;
+        return this;
+    }
+
+    public PKSemanticsBuilder membershipProgramNumber(String membershipProgramNumber) {
+        this.semantics.membershipProgramNumber = membershipProgramNumber;
+        return this;
+    }
+
+    public PKSemanticsBuilder priorityStatus(String priorityStatus) {
+        this.semantics.priorityStatus = priorityStatus;
+        return this;
+    }
+
+    public PKSemanticsBuilder securityScreening(String securityScreening) {
+        this.semantics.securityScreening = securityScreening;
         return this;
     }
 

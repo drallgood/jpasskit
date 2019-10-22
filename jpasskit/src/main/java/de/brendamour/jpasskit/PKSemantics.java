@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import de.brendamour.jpasskit.semantics.PKCurrencyAmount;
+import de.brendamour.jpasskit.semantics.PKPersonNameComponents;
 import de.brendamour.jpasskit.semantics.PKSeat;
 import de.brendamour.jpasskit.semantics.PKSemanticLocation;
 
@@ -69,6 +70,26 @@ public class PKSemantics implements Cloneable, Serializable {
     protected Date originalBoardingDate;
 
     protected Date currentBoardingDate;
+
+    protected String boardingGroup;
+
+    protected String boardingSequenceNumber;
+
+    protected String confirmationNumber;
+
+    protected String transitStatus;
+
+    protected String transitStatusReason;
+
+    protected PKPersonNameComponents passengerName;
+
+    protected String membershipProgramName;
+
+    protected String membershipProgramNumber;
+
+    protected String priorityStatus;
+
+    protected String securityScreening;
 
     public PKCurrencyAmount getTotalPrice() {
         return totalPrice;
@@ -140,6 +161,46 @@ public class PKSemantics implements Cloneable, Serializable {
 
     public Date getOriginalDepartureDate() {
         return originalDepartureDate;
+    }
+    
+    public String getBoardingGroup() {
+        return boardingGroup;
+    }
+    
+    public String getBoardingSequenceNumber() {
+        return boardingSequenceNumber;
+    }
+    
+    public String getConfirmationNumber() {
+        return confirmationNumber;
+    }
+    
+    public String getMembershipProgramName() {
+        return membershipProgramName;
+    }
+    
+    public String getMembershipProgramNumber() {
+        return membershipProgramNumber;
+    }
+    
+    public PKPersonNameComponents getPassengerName() {
+        return passengerName;
+    }
+    
+    public String getPriorityStatus() {
+        return priorityStatus;
+    }
+    
+    public String getSecurityScreening() {
+        return securityScreening;
+    }
+    
+    public String getTransitStatus() {
+        return transitStatus;
+    }
+    
+    public String getTransitStatusReason() {
+        return transitStatusReason;
     }
 
     @Override
