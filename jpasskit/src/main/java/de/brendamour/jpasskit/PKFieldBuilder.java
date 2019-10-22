@@ -15,10 +15,7 @@
  */
 package de.brendamour.jpasskit;
 
-import de.brendamour.jpasskit.enums.PKDataDetectorType;
-import de.brendamour.jpasskit.enums.PKDateStyle;
-import de.brendamour.jpasskit.enums.PKNumberStyle;
-import de.brendamour.jpasskit.enums.PKTextAlignment;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -28,9 +25,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
-import static org.apache.commons.lang3.StringUtils.isEmpty;
+import de.brendamour.jpasskit.enums.PKDataDetectorType;
+import de.brendamour.jpasskit.enums.PKDateStyle;
+import de.brendamour.jpasskit.enums.PKNumberStyle;
+import de.brendamour.jpasskit.enums.PKTextAlignment;
 
 /**
  * Allows constructing and validating {@link PKField} entities.
@@ -102,6 +103,12 @@ public class PKFieldBuilder implements IPKValidateable, IPKBuilder<PKField> {
     }
 
     public PKFieldBuilder value(Date value) {
+        this.field.value = value;
+        return this;
+    }
+
+    @JsonProperty("value")
+    protected PKFieldBuilder value(Serializable value) {
         this.field.value = value;
         return this;
     }
