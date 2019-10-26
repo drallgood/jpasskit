@@ -172,6 +172,11 @@ public class PKFieldBuilder implements IPKValidateable, IPKBuilder<PKField> {
         return this;
     }
 
+    public PKFieldBuilder semantics(final PKSemantics semantics) {
+        this.field.semantics = semantics;
+        return this;
+    }
+
     @Override
     public boolean isValid() {
         return getValidationErrors().isEmpty();
