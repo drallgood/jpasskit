@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import de.brendamour.jpasskit.enums.PKEventType;
 import de.brendamour.jpasskit.semantics.PKCurrencyAmount;
 import de.brendamour.jpasskit.semantics.PKPersonNameComponents;
 import de.brendamour.jpasskit.semantics.PKSeat;
@@ -116,10 +117,39 @@ public class PKSemantics implements Cloneable, Serializable {
 
     /* Train and Other Rail Boarding Passes */
     protected String departurePlatform;
+
     protected String departureStationName;
+
     protected String destinationPlatform;
+
     protected String destinationStationName;
+
     protected String carNumber;
+
+    /* Event Tickets */
+    protected String eventName;
+
+    protected String venueName;
+
+    protected PKSemanticLocation venueLocation;
+
+    protected String venueEntrance;
+
+    protected String venuePhoneNumber;
+
+    protected String venueRoom;
+
+    protected PKEventType eventType;
+
+    protected Date eventStartDate;
+
+    protected Date eventEndDate;
+
+    protected List<String> artistIDs;
+
+    protected List<String> performerNames;
+
+    protected String genre;
 
     public PKCurrencyAmount getTotalPrice() {
         return totalPrice;
@@ -276,25 +306,73 @@ public class PKSemantics implements Cloneable, Serializable {
     public Number getFlightNumber() {
         return flightNumber;
     }
-    
+
     public String getCarNumber() {
         return carNumber;
     }
-    
+
     public String getDeparturePlatform() {
         return departurePlatform;
     }
-    
+
     public String getDepartureStationName() {
         return departureStationName;
     }
-    
+
     public String getDestinationPlatform() {
         return destinationPlatform;
     }
 
     public String getDestinationStationName() {
         return destinationStationName;
+    }
+
+    public List<String> getArtistIDs() {
+        return artistIDs;
+    }
+
+    public Date getEventEndDate() {
+        return eventEndDate;
+    }
+
+    public String getEventName() {
+        return eventName;
+    }
+
+    public Date getEventStartDate() {
+        return eventStartDate;
+    }
+
+    public PKEventType getEventType() {
+        return eventType;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public List<String> getPerformerNames() {
+        return performerNames;
+    }
+
+    public String getVenueEntrance() {
+        return venueEntrance;
+    }
+
+    public PKSemanticLocation getVenueLocation() {
+        return venueLocation;
+    }
+
+    public String getVenueName() {
+        return venueName;
+    }
+
+    public String getVenuePhoneNumber() {
+        return venuePhoneNumber;
+    }
+
+    public String getVenueRoom() {
+        return venueRoom;
     }
 
     @Override

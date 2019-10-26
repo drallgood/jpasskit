@@ -21,6 +21,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
+import de.brendamour.jpasskit.enums.PKEventType;
 import de.brendamour.jpasskit.semantics.PKCurrencyAmount;
 import de.brendamour.jpasskit.semantics.PKPersonNameComponents;
 import de.brendamour.jpasskit.semantics.PKSeat;
@@ -268,6 +269,65 @@ public class PKSemanticsBuilder implements IPKValidateable, IPKBuilder<PKSemanti
         return this;
     }
 
+    public PKSemanticsBuilder eventName(String eventName) {
+        this.semantics.eventName = eventName;
+        return this;
+    }
+
+    public PKSemanticsBuilder venueName(String venueName) {
+        this.semantics.venueName = venueName;
+        return this;
+    }
+
+    public PKSemanticsBuilder venueLocation(PKSemanticLocation venueLocation) {
+        this.semantics.venueLocation = venueLocation;
+        return this;
+    }
+
+    public PKSemanticsBuilder venueEntrance(String venueEntrance) {
+        this.semantics.venueEntrance = venueEntrance;
+        return this;
+    }
+
+    public PKSemanticsBuilder venuePhoneNumber(String venuePhoneNumber) {
+        this.semantics.venuePhoneNumber = venuePhoneNumber;
+        return this;
+    }
+
+    public PKSemanticsBuilder venueRoom(String venueRoom) {
+        this.semantics.venueRoom = venueRoom;
+        return this;
+    }
+
+    public PKSemanticsBuilder eventType(PKEventType eventType) {
+        this.semantics.eventType = eventType;
+        return this;
+    }
+
+    public PKSemanticsBuilder eventStartDate(Date eventStartDate) {
+        this.semantics.eventStartDate = eventStartDate;
+        return this;
+    }
+
+    public PKSemanticsBuilder eventEndDate(Date eventEndDate) {
+        this.semantics.eventEndDate = eventEndDate;
+        return this;
+    }
+
+    public PKSemanticsBuilder artistIDs(List<String> artistIDs) {
+        this.semantics.artistIDs = artistIDs;
+        return this;
+    }
+
+    public PKSemanticsBuilder performerNames(List<String> performerNames) {
+        this.semantics.performerNames = performerNames;
+        return this;
+    }
+
+    public PKSemanticsBuilder genre(String genre) {
+        this.semantics.genre = genre;
+        return this;
+    }
 
     @Override
     public boolean isValid() {
