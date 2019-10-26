@@ -114,6 +114,13 @@ public class PKSemantics implements Cloneable, Serializable {
 
     protected String destinationGate;
 
+    /* Train and Other Rail Boarding Passes */
+    protected String departurePlatform;
+    protected String departureStationName;
+    protected String destinationPlatform;
+    protected String destinationStationName;
+    protected String carNumber;
+
     public PKCurrencyAmount getTotalPrice() {
         return totalPrice;
     }
@@ -268,6 +275,26 @@ public class PKSemantics implements Cloneable, Serializable {
 
     public Number getFlightNumber() {
         return flightNumber;
+    }
+    
+    public String getCarNumber() {
+        return carNumber;
+    }
+    
+    public String getDeparturePlatform() {
+        return departurePlatform;
+    }
+    
+    public String getDepartureStationName() {
+        return departureStationName;
+    }
+    
+    public String getDestinationPlatform() {
+        return destinationPlatform;
+    }
+
+    public String getDestinationStationName() {
+        return destinationStationName;
     }
 
     @Override

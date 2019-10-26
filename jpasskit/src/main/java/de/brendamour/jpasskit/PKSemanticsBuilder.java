@@ -243,6 +243,32 @@ public class PKSemanticsBuilder implements IPKValidateable, IPKBuilder<PKSemanti
         return this;
     }
 
+    public PKSemanticsBuilder departurePlatform(String departurePlatform) {
+        this.semantics.departurePlatform = departurePlatform;
+        return this;
+    }
+
+    public PKSemanticsBuilder departureStationName(String departureStationName) {
+        this.semantics.departureStationName = departureStationName;
+        return this;
+    }
+
+    public PKSemanticsBuilder destinationPlatform(String destinationPlatform) {
+        this.semantics.destinationPlatform = destinationPlatform;
+        return this;
+    }
+
+    public PKSemanticsBuilder destinationStationName(String destinationStationName) {
+        this.semantics.destinationStationName = destinationStationName;
+        return this;
+    }
+
+    public PKSemanticsBuilder carNumber(String carNumber) {
+        this.semantics.carNumber = carNumber;
+        return this;
+    }
+
+
     @Override
     public boolean isValid() {
         return getValidationErrors().isEmpty();
