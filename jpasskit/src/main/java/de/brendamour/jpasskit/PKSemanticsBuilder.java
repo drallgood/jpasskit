@@ -188,6 +188,61 @@ public class PKSemanticsBuilder implements IPKValidateable, IPKBuilder<PKSemanti
         return this;
     }
 
+    public PKSemanticsBuilder flightCode(String flightCode) {
+        this.semantics.flightCode = flightCode;
+        return this;
+    }
+
+    public PKSemanticsBuilder airlineCode(String airlineCode) {
+        this.semantics.airlineCode = airlineCode;
+        return this;
+    }
+
+    public PKSemanticsBuilder flightNumber(Number flightNumber) {
+        this.semantics.flightNumber = flightNumber;
+        return this;
+    }
+
+    public PKSemanticsBuilder departureAirportCode(String departureAirportCode) {
+        this.semantics.departureAirportCode = departureAirportCode;
+        return this;
+    }
+
+    public PKSemanticsBuilder departureAirportName(String departureAirportName) {
+        this.semantics.departureAirportName = departureAirportName;
+        return this;
+    }
+
+    public PKSemanticsBuilder departureTerminal(String departureTerminal) {
+        this.semantics.departureTerminal = departureTerminal;
+        return this;
+    }
+
+    public PKSemanticsBuilder departureGate(String departureGate) {
+        this.semantics.departureGate = departureGate;
+        return this;
+    }
+
+    public PKSemanticsBuilder destinationAirportCode(String destinationAirportCode) {
+        this.semantics.destinationAirportCode = destinationAirportCode;
+        return this;
+    }
+
+    public PKSemanticsBuilder destinationAirportName(String destinationAirportName) {
+        this.semantics.destinationAirportName = destinationAirportName;
+        return this;
+    }
+
+    public PKSemanticsBuilder destinationTerminal(String destinationTerminal) {
+        this.semantics.destinationTerminal = destinationTerminal;
+        return this;
+    }
+
+    public PKSemanticsBuilder destinationGate(String destinationGate) {
+        this.semantics.destinationGate = destinationGate;
+        return this;
+    }
+
     @Override
     public boolean isValid() {
         return getValidationErrors().isEmpty();

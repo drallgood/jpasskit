@@ -91,6 +91,29 @@ public class PKSemantics implements Cloneable, Serializable {
 
     protected String securityScreening;
 
+    /* Airline Boarding Passes */
+    protected String flightCode;
+
+    protected String airlineCode;
+
+    protected Number flightNumber;
+
+    protected String departureAirportCode;
+
+    protected String departureAirportName;
+
+    protected String departureTerminal;
+
+    protected String departureGate;
+
+    protected String destinationAirportCode;
+
+    protected String destinationAirportName;
+
+    protected String destinationTerminal;
+
+    protected String destinationGate;
+
     public PKCurrencyAmount getTotalPrice() {
         return totalPrice;
     }
@@ -162,45 +185,89 @@ public class PKSemantics implements Cloneable, Serializable {
     public Date getOriginalDepartureDate() {
         return originalDepartureDate;
     }
-    
+
     public String getBoardingGroup() {
         return boardingGroup;
     }
-    
+
     public String getBoardingSequenceNumber() {
         return boardingSequenceNumber;
     }
-    
+
     public String getConfirmationNumber() {
         return confirmationNumber;
     }
-    
+
     public String getMembershipProgramName() {
         return membershipProgramName;
     }
-    
+
     public String getMembershipProgramNumber() {
         return membershipProgramNumber;
     }
-    
+
     public PKPersonNameComponents getPassengerName() {
         return passengerName;
     }
-    
+
     public String getPriorityStatus() {
         return priorityStatus;
     }
-    
+
     public String getSecurityScreening() {
         return securityScreening;
     }
-    
+
     public String getTransitStatus() {
         return transitStatus;
     }
-    
+
     public String getTransitStatusReason() {
         return transitStatusReason;
+    }
+
+    public String getAirlineCode() {
+        return airlineCode;
+    }
+
+    public String getDepartureAirportCode() {
+        return departureAirportCode;
+    }
+
+    public String getDepartureAirportName() {
+        return departureAirportName;
+    }
+
+    public String getDepartureGate() {
+        return departureGate;
+    }
+
+    public String getDepartureTerminal() {
+        return departureTerminal;
+    }
+
+    public String getDestinationAirportCode() {
+        return destinationAirportCode;
+    }
+
+    public String getDestinationAirportName() {
+        return destinationAirportName;
+    }
+
+    public String getDestinationGate() {
+        return destinationGate;
+    }
+
+    public String getDestinationTerminal() {
+        return destinationTerminal;
+    }
+
+    public String getFlightCode() {
+        return flightCode;
+    }
+
+    public Number getFlightNumber() {
+        return flightNumber;
     }
 
     @Override
