@@ -151,6 +151,28 @@ public class PKSemantics implements Cloneable, Serializable {
 
     protected String genre;
 
+    /* Sports Event Tickets */
+    protected String leagueName;
+
+    protected String leagueAbbreviation;
+
+    protected String homeTeamLocation;
+
+    protected String homeTeamName;
+
+    protected String homeTeamAbbreviation;
+
+    protected String awayTeamLocation;
+
+    protected String awayTeamName;
+
+    protected String awayTeamAbbreviation;
+
+    protected String sportName;
+
+    /* Store Card Passes */
+    protected PKCurrencyAmount balance;
+
     public PKCurrencyAmount getTotalPrice() {
         return totalPrice;
     }
@@ -373,6 +395,46 @@ public class PKSemantics implements Cloneable, Serializable {
 
     public String getVenueRoom() {
         return venueRoom;
+    }
+
+    public String getAwayTeamAbbreviation() {
+        return awayTeamAbbreviation;
+    }
+
+    public String getAwayTeamLocation() {
+        return awayTeamLocation;
+    }
+
+    public String getAwayTeamName() {
+        return awayTeamName;
+    }
+
+    public PKCurrencyAmount getBalance() {
+        return balance;
+    }
+
+    public String getHomeTeamAbbreviation() {
+        return homeTeamAbbreviation;
+    }
+
+    public String getHomeTeamLocation() {
+        return homeTeamLocation;
+    }
+
+    public String getHomeTeamName() {
+        return homeTeamName;
+    }
+
+    public String getLeagueAbbreviation() {
+        return leagueAbbreviation;
+    }
+
+    public String getLeagueName() {
+        return leagueName;
+    }
+
+    public String getSportName() {
+        return sportName;
     }
 
     @Override

@@ -329,6 +329,56 @@ public class PKSemanticsBuilder implements IPKValidateable, IPKBuilder<PKSemanti
         return this;
     }
 
+    public PKSemanticsBuilder leagueName(String leagueName) {
+        this.semantics.leagueName = leagueName;
+        return this;
+    }
+
+    public PKSemanticsBuilder leagueAbbreviation(String leagueAbbreviation) {
+        this.semantics.leagueAbbreviation = leagueAbbreviation;
+        return this;
+    }
+
+    public PKSemanticsBuilder homeTeamLocation(String homeTeamLocation) {
+        this.semantics.homeTeamLocation = homeTeamLocation;
+        return this;
+    }
+
+    public PKSemanticsBuilder homeTeamName(String homeTeamName) {
+        this.semantics.homeTeamName = homeTeamName;
+        return this;
+    }
+
+    public PKSemanticsBuilder homeTeamAbbreviation(String homeTeamAbbreviation) {
+        this.semantics.homeTeamAbbreviation = homeTeamAbbreviation;
+        return this;
+    }
+
+    public PKSemanticsBuilder awayTeamLocation(String awayTeamLocation) {
+        this.semantics.awayTeamLocation = awayTeamLocation;
+        return this;
+    }
+
+    public PKSemanticsBuilder awayTeamName(String awayTeamName) {
+        this.semantics.awayTeamName = awayTeamName;
+        return this;
+    }
+
+    public PKSemanticsBuilder awayTeamAbbreviation(String awayTeamAbbreviation) {
+        this.semantics.awayTeamAbbreviation = awayTeamAbbreviation;
+        return this;
+    }
+
+    public PKSemanticsBuilder sportName(String sportName) {
+        this.semantics.sportName = sportName;
+        return this;
+    }
+
+    public PKSemanticsBuilder balance(PKCurrencyAmount balance) {
+        this.semantics.balance = balance;
+        return this;
+    }
+
     @Override
     public boolean isValid() {
         return getValidationErrors().isEmpty();
