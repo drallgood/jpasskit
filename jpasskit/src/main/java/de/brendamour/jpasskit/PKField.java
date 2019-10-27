@@ -64,6 +64,9 @@ public class PKField implements Cloneable, Serializable {
      */
     protected Boolean ignoresTimeZone; // The key is optional, default value is null
 
+    // Feature added in iOS 12.0. It is not applicable to older iOS
+    protected PKSemantics semantics;
+
     protected PKField() {
     }
 
@@ -117,6 +120,10 @@ public class PKField implements Cloneable, Serializable {
 
     public Boolean getIgnoresTimeZone() {
         return ignoresTimeZone;
+    }
+
+    public PKSemantics getSemantics() {
+        return semantics;
     }
 
     @Override

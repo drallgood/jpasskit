@@ -15,14 +15,6 @@
  */
 package de.brendamour.jpasskit;
 
-import de.brendamour.jpasskit.enums.PKPassType;
-import de.brendamour.jpasskit.passes.PKBoardingPass;
-import de.brendamour.jpasskit.passes.PKGenericPass;
-import de.brendamour.jpasskit.passes.PKGenericPassBuilder;
-import de.brendamour.jpasskit.util.BuilderUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import java.awt.Color;
 import java.net.URL;
 import java.util.ArrayList;
@@ -33,6 +25,15 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import de.brendamour.jpasskit.enums.PKPassType;
+import de.brendamour.jpasskit.passes.PKBoardingPass;
+import de.brendamour.jpasskit.passes.PKGenericPass;
+import de.brendamour.jpasskit.passes.PKGenericPassBuilder;
+import de.brendamour.jpasskit.util.BuilderUtils;
 
 /**
  * Allows constructing and validating {@link PKPass} entities.
@@ -212,9 +213,7 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
             this.beacons.clear();
             return this;
         }
-        beacons.stream()
-                .map(PKBeacon::builder)
-                .forEach(this::beaconsBuilder);
+        beacons.stream().map(PKBeacon::builder).forEach(this::beaconsBuilder);
         return this;
     }
 
@@ -235,9 +234,7 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
             this.locations.clear();
             return this;
         }
-        locations.stream()
-                .map(PKLocation::builder)
-                .forEach(this::locationBuilder);
+        locations.stream().map(PKLocation::builder).forEach(this::locationBuilder);
         return this;
     }
 
@@ -253,9 +250,7 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
             this.barcodes.clear();
             return this;
         }
-        barcodes.stream()
-                .map(PKBarcode::builder)
-                .forEach(this::barcodeBuilder);
+        barcodes.stream().map(PKBarcode::builder).forEach(this::barcodeBuilder);
         return this;
     }
 
@@ -314,9 +309,7 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
             this.associatedApps.clear();
             return this;
         }
-        associatedApps.stream()
-                .map(PWAssociatedApp::builder)
-                .forEach(this::associatedAppBuilder);
+        associatedApps.stream().map(PWAssociatedApp::builder).forEach(this::associatedAppBuilder);
         return this;
     }
 
@@ -340,6 +333,11 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
         return this;
     }
 
+    public PKPassBuilder semantics(PKSemantics semantics) {
+        this.pkPass.semantics = semantics;
+        return this;
+    }
+
     public boolean isValid() {
         return getValidationErrors().isEmpty();
     }
@@ -352,20 +350,24 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
         checkPass(validationErrors);
         checkAssociatedAppIfSet(validationErrors);
         checkGroupingIdentifierIsOnlySetWhenAllowed(validationErrors);
+        checkSemanticsIfSet(validationErrors);
         return validationErrors;
     }
 
     private void checkGroupingIdentifierIsOnlySetWhenAllowed(List<String> validationErrors) {
-        // groupingIdentifier key is optional for event tickets and boarding passes; otherwise not allowed
+        // groupingIdentifier key is optional for event tickets and boarding passes;
+        // otherwise not allowed
         if (StringUtils.isNotEmpty(this.pkPass.groupingIdentifier)
                 && this.pass.getPassType() == PKPassType.PKEventTicket
                 && this.pass.getPassType() == PKPassType.PKBoardingPass) {
-            validationErrors.add("The groupingIdentifier is optional for event tickets and boarding passes, otherwise not allowed");
+            validationErrors.add(
+                    "The groupingIdentifier is optional for event tickets and boarding passes, otherwise not allowed");
         }
     }
 
     private void checkAssociatedAppIfSet(List<String> validationErrors) {
-        // If appLaunchURL key is present, the associatedStoreIdentifiers key must also be present
+        // If appLaunchURL key is present, the associatedStoreIdentifiers key must also
+        // be present
         if (this.pkPass.appLaunchURL != null && BuilderUtils.isEmpty(this.pkPass.associatedStoreIdentifiers)) {
             validationErrors.add("The appLaunchURL requires associatedStoreIdentifiers to be specified");
         }
@@ -380,7 +382,8 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
     }
 
     private void checkAuthToken(List<String> validationErrors) {
-        if (this.pkPass.authenticationToken != null && this.pkPass.authenticationToken.length() < EXPECTED_AUTHTOKEN_LENGTH) {
+        if (this.pkPass.authenticationToken != null
+                && this.pkPass.authenticationToken.length() < EXPECTED_AUTHTOKEN_LENGTH) {
             validationErrors.add("The authenticationToken needs to be at least " + EXPECTED_AUTHTOKEN_LENGTH + " long");
         }
     }
@@ -390,9 +393,17 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
                 || StringUtils.isEmpty(this.pkPass.teamIdentifier) || StringUtils.isEmpty(this.pkPass.description)
                 || this.pkPass.formatVersion == 0 || StringUtils.isEmpty(this.pkPass.organizationName)) {
             validationErrors.add("Not all required Fields are set. SerialNumber" + this.pkPass.serialNumber
-                    + " PassTypeIdentifier: " + this.pkPass.passTypeIdentifier
-                    + " teamIdentifier" + this.pkPass.teamIdentifier + " Description: " + this.pkPass.description
-                    + " FormatVersion: " + this.pkPass.formatVersion + " OrganizationName: " + this.pkPass.organizationName);
+                    + " PassTypeIdentifier: " + this.pkPass.passTypeIdentifier + " teamIdentifier"
+                    + this.pkPass.teamIdentifier + " Description: " + this.pkPass.description + " FormatVersion: "
+                    + this.pkPass.formatVersion + " OrganizationName: " + this.pkPass.organizationName);
+        }
+    }
+
+    private void checkSemanticsIfSet(List<String> validationErrors) {
+        // TODO: figure out how to do efficient validation
+        if (this.pkPass.semantics != null) {
+            PKSemanticsBuilder semanticsBuilder = new PKSemanticsBuilder().of(this.pkPass.semantics);
+            validationErrors.addAll(semanticsBuilder.getValidationErrors()); 
         }
     }
 
@@ -414,21 +425,21 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
             this.pkPass.generic = this.pass.build();
         } else {
             switch (pass.getPassType()) {
-                case PKBoardingPass:
-                    this.pkPass.boardingPass = this.pass.buildBoardingPass();
-                    break;
-                case PKCoupon:
-                    this.pkPass.coupon = this.pass.buildCoupon();
-                    break;
-                case PKEventTicket:
-                    this.pkPass.eventTicket = this.pass.buildEventTicket();
-                    break;
-                case PKStoreCard:
-                    this.pkPass.storeCard = this.pass.buildStoreCard();
-                    break;
-                default:
-                    this.pkPass.generic = this.pass.build();
-                    break;
+            case PKBoardingPass:
+                this.pkPass.boardingPass = this.pass.buildBoardingPass();
+                break;
+            case PKCoupon:
+                this.pkPass.coupon = this.pass.buildCoupon();
+                break;
+            case PKEventTicket:
+                this.pkPass.eventTicket = this.pass.buildEventTicket();
+                break;
+            case PKStoreCard:
+                this.pkPass.storeCard = this.pass.buildStoreCard();
+                break;
+            default:
+                this.pkPass.generic = this.pass.build();
+                break;
             }
         }
         this.pkPass.beacons = BuilderUtils.buildAll(this.beacons);
