@@ -17,6 +17,14 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+## 0.1.2 - 2020-03-05
+
+### Added
+### Deprecated
+### Removed
+### Fixed
+- Fixed issue with date format
+
 ## 0.1.1 - 2019-02-04
 
 ### Added
