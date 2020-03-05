@@ -19,9 +19,18 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import de.brendamour.jpasskit.PKBarcode;
+import de.brendamour.jpasskit.PKPassBuilder;
+import de.brendamour.jpasskit.enums.PKBarcodeFormat;
 import de.brendamour.jpasskit.personalization.PKPersonalizationBuilder;
 import org.apache.commons.io.IOUtils;
 import org.testng.Assert;
@@ -92,6 +101,28 @@ public class PKInMemorySigningUtilTest {
                 .requiredPersonalizationField(PKPassPersonalizationField.PKPassPersonalizationFieldName);
 
         createZipAndAssert(pkPassTemplateInMemory, pass, personalization.build(), "target/passInMemoryStream.zip");
+    }
+
+    @Test
+    public void testJSONCreation() throws Exception {
+        Date expirationDate = Date.from(LocalDate.of(2020, 3, 5).atStartOfDay(ZoneId.of("America/Phoenix"))
+                .toInstant());
+        PKPassBuilder passBuilder = PKPass.builder()
+                .barcodeBuilder(
+                        PKBarcode.builder()
+                                .format(PKBarcodeFormat.PKBarcodeFormatQR)
+                                .message("abcdefg")
+                                .messageEncoding(Charset.forName("UTF-8"))
+                )
+                .passTypeIdentifier("pti")
+                .teamIdentifier("ti")
+                .expirationDate(expirationDate);
+
+        String passJsonString = pkInMemorySigningUtil.objectWriter.writeValueAsString(passBuilder.build());
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode passJsonNode = mapper.readTree(passJsonString);
+        Assert.assertEquals(passJsonNode.at("/expirationDate").asText(), "2020-03-05T07:00:00Z");
+
     }
 
     private void createZipAndAssert(IPKPassTemplate pkPassTemplate, PKPass pkPass, String fileName) throws Exception {
