@@ -172,6 +172,11 @@ public class PKFieldBuilder implements IPKValidateable, IPKBuilder<PKField> {
         return this;
     }
 
+    public PKFieldBuilder row(final Integer row) {
+        this.field.row = row;
+        return this;
+    }
+
     public PKFieldBuilder semantics(final PKSemantics semantics) {
         this.field.semantics = semantics;
         return this;

@@ -37,6 +37,7 @@ public class PKFieldTest {
     private static final Date VALUE_DATE = new Date();
     private static final String CHANGEMESSAGE = "Changed %@";
     private static final String LABEL = "Label";
+    private static final Integer ROW = 1;
     private static final BigDecimal VALUE_CURRENCY = new BigDecimal("25.20").setScale(2, RoundingMode.HALF_UP);
     private static final String CURRENCYCODE = "EUR";
     private static final String ATTRIBUTED_VALUE = "<a href='http://example.com/customers/123'>Edit my profile</a>";
@@ -62,6 +63,7 @@ public class PKFieldTest {
         assertThat(copy.getValue()).isEqualTo(VALUE_TEXT);
         assertThat(copy.getChangeMessage()).isEqualTo(CHANGEMESSAGE);
         assertThat(copy.getLabel()).isEqualTo(LABEL);
+        assertThat(copy.getRow()).isEqualTo(ROW);
         assertThat(copy.getAttributedValue()).isEqualTo(ATTRIBUTED_VALUE);
         assertThat(copy.getDataDetectorTypes())
                 .hasSize(1)
@@ -78,6 +80,7 @@ public class PKFieldTest {
         assertThat(field.getValue()).isEqualTo(VALUE_TEXT);
         assertThat(field.getChangeMessage()).isEqualTo(CHANGEMESSAGE);
         assertThat(field.getLabel()).isEqualTo(LABEL);
+        assertThat(field.getRow()).isEqualTo(ROW);
         assertThat(field.getAttributedValue()).isEqualTo(ATTRIBUTED_VALUE);
         assertThat(field.getDataDetectorTypes())
                 .hasSize(1)
@@ -104,6 +107,7 @@ public class PKFieldTest {
         assertThat(field.getDateStyle()).isNull();
         assertThat(field.getTimeStyle()).isNull();
         assertThat(field.getIgnoresTimeZone()).isNull();
+        assertThat(field.getRow()).isNull();
 
         assertThat(field.getNumberStyle()).isEqualTo(PKNumberStyle.PKNumberStyleDecimal);
         assertThat(field.getTextAlignment()).isEqualTo(PKTextAlignment.PKTextAlignmentCenter);
@@ -215,6 +219,7 @@ public class PKFieldTest {
                 .contains(KEY)
                 .contains(CHANGEMESSAGE)
                 .contains(LABEL)
+                .contains(ROW.toString())
                 .contains(VALUE_TEXT)
                 .contains(ATTRIBUTED_VALUE);
     }
@@ -229,6 +234,7 @@ public class PKFieldTest {
         builder.key(KEY)
                 .changeMessage(CHANGEMESSAGE)
                 .label(LABEL)
+                .row(ROW)
                 .attributedValue(ATTRIBUTED_VALUE);
     }
 

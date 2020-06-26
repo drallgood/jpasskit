@@ -66,6 +66,7 @@ public class PKField implements Cloneable, Serializable {
 
     // Feature added in iOS 12.0. It is not applicable to older iOS
     protected PKSemantics semantics;
+    protected Integer row;
 
     protected PKField() {
     }
@@ -124,6 +125,10 @@ public class PKField implements Cloneable, Serializable {
 
     public PKSemantics getSemantics() {
         return semantics;
+    }
+
+    public Integer getRow() {
+        return row;
     }
 
     @Override
