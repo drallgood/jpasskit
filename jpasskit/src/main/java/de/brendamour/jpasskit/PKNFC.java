@@ -28,6 +28,7 @@ public class PKNFC implements Cloneable, Serializable {
 
     protected String message;
     protected String encryptionPublicKey;
+    protected Boolean requiresAuthentication;
 
     protected PKNFC() {
     }
@@ -38,6 +39,10 @@ public class PKNFC implements Cloneable, Serializable {
 
     public String getEncryptionPublicKey() {
         return encryptionPublicKey;
+    }
+
+    public Boolean getRequiresAuthentication() {
+        return requiresAuthentication;
     }
 
     @Override

@@ -107,7 +107,6 @@ public class PKFieldTest {
         assertThat(field.getDateStyle()).isNull();
         assertThat(field.getTimeStyle()).isNull();
         assertThat(field.getIgnoresTimeZone()).isNull();
-        assertThat(field.getRow()).isNull();
 
         assertThat(field.getNumberStyle()).isEqualTo(PKNumberStyle.PKNumberStyleDecimal);
         assertThat(field.getTextAlignment()).isEqualTo(PKTextAlignment.PKTextAlignmentCenter);
