@@ -49,6 +49,11 @@ public class PKNFCBuilder implements IPKBuilder<PKNFC> {
         return this;
     }
 
+    public PKNFCBuilder requiresAuthentication(Boolean requiresAuthentication) {
+        this.nfc.requiresAuthentication = requiresAuthentication;
+        return this;
+    }
+
     @Override
     public PKNFC build() {
         return this.nfc;

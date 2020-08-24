@@ -24,12 +24,14 @@ public class PKNFCTest {
 
     private static final String MESSAGE = "Dummy NFC message";
     private static final String ENCRYPTION_PUBLIC_KEY = "AFEFEFEAKHFBKAFVGSFJFDJFKDABFFLSB";
+    private static final Boolean REQUIRES_AUTHENTICATION = true;
 
     private PKNFCBuilder builder;
 
     private void fillProperties() {
         builder.message(MESSAGE)
-                .encryptionPublicKey(ENCRYPTION_PUBLIC_KEY);
+                .encryptionPublicKey(ENCRYPTION_PUBLIC_KEY)
+                .requiresAuthentication(REQUIRES_AUTHENTICATION);
     }
 
     @BeforeMethod
@@ -42,7 +44,8 @@ public class PKNFCTest {
     public void test_builder() {
         assertThat(builder.build())
                 .hasFieldOrPropertyWithValue("message", MESSAGE)
-                .hasFieldOrPropertyWithValue("encryptionPublicKey", ENCRYPTION_PUBLIC_KEY);
+                .hasFieldOrPropertyWithValue("encryptionPublicKey", ENCRYPTION_PUBLIC_KEY)
+                .hasFieldOrPropertyWithValue("requiresAuthentication", REQUIRES_AUTHENTICATION);
     }
 
     @Test
@@ -51,6 +54,7 @@ public class PKNFCTest {
 
         assertThat(nfc.getMessage()).isEqualTo(MESSAGE);
         assertThat(nfc.getEncryptionPublicKey()).isEqualTo(ENCRYPTION_PUBLIC_KEY);
+        assertThat(nfc.getRequiresAuthentication()).isEqualTo(REQUIRES_AUTHENTICATION);
     }
 
     @Test
@@ -64,6 +68,7 @@ public class PKNFCTest {
 
         assertThat(copy.getMessage()).isEqualTo(MESSAGE);
         assertThat(copy.getEncryptionPublicKey()).isEqualTo(ENCRYPTION_PUBLIC_KEY);
+        assertThat(copy.getRequiresAuthentication()).isEqualTo(REQUIRES_AUTHENTICATION);
     }
 
     @Test
@@ -71,6 +76,7 @@ public class PKNFCTest {
         PKNFC nfc = builder.build();
         assertThat(nfc.toString())
                 .contains(MESSAGE)
-                .contains(ENCRYPTION_PUBLIC_KEY);
+                .contains(ENCRYPTION_PUBLIC_KEY)
+                .contains(REQUIRES_AUTHENTICATION.toString());
     }
 }
