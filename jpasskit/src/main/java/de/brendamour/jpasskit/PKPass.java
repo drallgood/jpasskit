@@ -17,6 +17,7 @@ package de.brendamour.jpasskit;
 
 import java.io.Serializable;
 import java.net.URL;
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -76,10 +77,10 @@ public class PKPass implements Cloneable, Serializable {
 
     // Relevance Keys
     protected Long maxDistance;
-    protected Date relevantDate;
+    protected Instant relevantDate;
 
     // Expiration Keys
-    protected Date expirationDate;
+    protected Instant expirationDate;
     protected boolean voided; // The key is optional, default value is false
 
     // Feature added in iOS 9.0. It is not applicable to older iOS
@@ -203,11 +204,11 @@ public class PKPass implements Cloneable, Serializable {
         return associatedApps;
     }
 
-    public Date getRelevantDate() {
+    public Instant getRelevantDate() {
         return relevantDate;
     }
 
-    public Date getExpirationDate() {
+    public Instant getExpirationDate() {
         return expirationDate;
     }
 

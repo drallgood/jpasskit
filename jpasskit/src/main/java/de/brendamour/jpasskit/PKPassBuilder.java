@@ -17,6 +17,7 @@ package de.brendamour.jpasskit;
 
 import java.awt.Color;
 import java.net.URL;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -313,13 +314,25 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
         return this;
     }
 
+    @Deprecated
     public PKPassBuilder relevantDate(Date relevantDate) {
-        this.pkPass.relevantDate = relevantDate;
+        this.pkPass.relevantDate = relevantDate.toInstant();
         return this;
     }
 
+    @Deprecated
     public PKPassBuilder expirationDate(Date expirationDate) {
-        this.pkPass.expirationDate = expirationDate;
+        this.pkPass.expirationDate = expirationDate.toInstant();
+        return this;
+    }
+
+    public PKPassBuilder relevantDate(Instant relevantInstant) {
+        this.pkPass.relevantDate = relevantInstant;
+        return this;
+    }
+
+    public PKPassBuilder expirationDate(Instant expirationInstant) {
+        this.pkPass.expirationDate = expirationInstant;
         return this;
     }
 
