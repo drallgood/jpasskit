@@ -15,6 +15,7 @@
  */
 package de.brendamour.jpasskit.signing;
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.File;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -124,6 +125,7 @@ public abstract class PKAbstractSigningUtil implements IPKSigningUtil {
         jsonObjectMapper.setDateFormat(new StdDateFormat());
         jsonObjectMapper.configOverride(Date.class).setFormat(JsonFormat.Value.forPattern("yyyy-MM-dd'T'HH:mm:ssXXX"));
         jsonObjectMapper.setSerializationInclusion(Include.NON_NULL);
+        jsonObjectMapper.registerModule(new JavaTimeModule());
         return jsonObjectMapper.writer();
     }
 

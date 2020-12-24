@@ -17,6 +17,7 @@ package de.brendamour.jpasskit;
 
 import static de.brendamour.jpasskit.passes.PKGenericPassTest.SOME;
 import static de.brendamour.jpasskit.passes.PKGenericPassTest.field;
+import java.time.Instant;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -65,7 +66,7 @@ public class PKPassTest {
     private static final String GROUPING_ID = "group-1234";
     private static final Long MAX_DISTANCE = 99999L;
     private static final Map<String, Object> USER_INFO = ImmutableMap.<String, Object> of("name", "John Doe");
-    private static final Date EXPIRATION_DATE = new Date();
+    private static final Instant EXPIRATION_DATE = Instant.now();
 
     private PKPassBuilder builder;
 

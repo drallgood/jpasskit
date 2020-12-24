@@ -15,6 +15,7 @@
  */
 package de.brendamour.jpasskit;
 
+import java.time.Instant;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 import java.io.Serializable;
@@ -102,7 +103,13 @@ public class PKFieldBuilder implements IPKValidateable, IPKBuilder<PKField> {
         return this;
     }
 
+    @Deprecated
     public PKFieldBuilder value(Date value) {
+        this.field.value = value;
+        return this;
+    }
+
+    public PKFieldBuilder value(Instant value) {
         this.field.value = value;
         return this;
     }
@@ -229,9 +236,9 @@ public class PKFieldBuilder implements IPKValidateable, IPKBuilder<PKField> {
     }
 
     private void checkValueType(List<String> validationErrors) {
-        if (!(this.field.value instanceof String || isNumeric(this.field.value) || this.field.value instanceof Date)) {
+        if (!(this.field.value instanceof String || isNumeric(this.field.value) || this.field.value instanceof Date || this.field.value instanceof Instant)) {
             validationErrors.add(
-                    "Invalid value type. Allowed: String, Integer, Float, Long, Double, java.util.Date, BigDecimal");
+                    "Invalid value type. Allowed: String, Integer, Float, Long, Double, java.util.Date, Instant, BigDecimal");
         }
     }
 

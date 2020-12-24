@@ -25,6 +25,7 @@ import de.brendamour.jpasskit.enums.PKPassPersonalizationField;
 import de.brendamour.jpasskit.personalization.PKPersonalization;
 
 import de.brendamour.jpasskit.personalization.PKPersonalizationBuilder;
+import java.time.Instant;
 import org.apache.commons.io.IOUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -65,7 +66,7 @@ public class PKFileBasedSigningUtilTest {
     public void testFileBasedSigningWithLoadedPass() throws Exception {
         PKPass pass = new ObjectMapper().readValue(new File(getPathFromClasspath("pass.json")), PKPass.class);
         PKPassBuilder passBuilder = PKPass.builder(pass)
-                .relevantDate(new Date())
+                .relevantDate(Instant.now())
                 .userInfo(Collections.<String, Object>singletonMap("name", "John Doe"));
 
         passBuilder.getBarcodeBuilders().get(0)

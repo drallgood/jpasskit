@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
@@ -104,8 +105,8 @@ public class PKInMemorySigningUtilTest {
 
     @Test
     public void testJSONCreation() throws Exception {
-        Date expirationDate = Date.from(LocalDate.of(2020, 3, 5).atStartOfDay(ZoneId.of("America/Phoenix"))
-                .toInstant());
+        Instant expirationDate = LocalDate.of(2020, 3, 5).atStartOfDay(ZoneId.of("America/Phoenix"))
+                .toInstant();
         PKPassBuilder passBuilder = PKPass.builder()
                 .barcodeBuilder(
                         PKBarcode.builder()
