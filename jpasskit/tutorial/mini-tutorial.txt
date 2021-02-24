@@ -89,11 +89,13 @@ Checkout Jpasskit from github with this command "git clone https://github.com/dr
             pass.setDescription("some description");
             pass.setLogoText("some logo text");
 
-            PKBarcode barcode = new PKBarcode();
-            barcode.setFormat(PKBarcodeFormat.PKBarcodeFormatPDF417);
-            barcode.setMessageEncoding(Charset.forName("iso-8859-1"));
-            barcode.setMessage("123456789");
-            pass.setBarcode(barcode);
+            pass.setBarcodes(Arrays.asList(
+                PKBarcode.builder()
+                .format(PKBarcodeFormat.PKBarcodeFormatQR)
+                .message("123456789")
+                .messageEncoding(Charset.forName("iso-8859-1"))
+                .build()
+            ));
 
             PKGenericPass generic = new PKGenericPass();
             List<PKField> primaryFields = new ArrayList<PKField>();
