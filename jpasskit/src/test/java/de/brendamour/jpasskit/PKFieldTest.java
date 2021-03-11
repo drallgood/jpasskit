@@ -203,14 +203,6 @@ public class PKFieldTest {
     }
 
     @Test
-    public void test_validation_ChangeMessageWithNoPlaceholder() {
-        fillBasisFields();
-        builder.changeMessage("Change");
-
-        assertThat(builder.isValid()).isFalse();
-    }
-
-    @Test
     public void test_toString() {
         fillFieldsText();
         PKField field = builder.build();
