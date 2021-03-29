@@ -5,7 +5,7 @@ sudo: required
 services:
 - docker
 
-jdk: openjdk11
+jdk: openjdk8
 
 env:
   matrix:
