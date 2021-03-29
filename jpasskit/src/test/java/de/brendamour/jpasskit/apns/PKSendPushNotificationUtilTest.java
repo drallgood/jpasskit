@@ -15,20 +15,19 @@
  */
 package de.brendamour.jpasskit.apns;
 
-import java.io.InputStream;
-
-import com.turo.pushy.apns.ApnsClient;
-import com.turo.pushy.apns.ApnsClientBuilder;
-import com.turo.pushy.apns.PushNotificationResponse;
-import com.turo.pushy.apns.server.AcceptAllPushNotificationHandlerFactory;
-import com.turo.pushy.apns.server.MockApnsServer;
-import com.turo.pushy.apns.server.MockApnsServerBuilder;
-import com.turo.pushy.apns.util.SimpleApnsPushNotification;
-
+import com.eatthepath.pushy.apns.ApnsClient;
+import com.eatthepath.pushy.apns.ApnsClientBuilder;
+import com.eatthepath.pushy.apns.PushNotificationResponse;
+import com.eatthepath.pushy.apns.server.AcceptAllPushNotificationHandlerFactory;
+import com.eatthepath.pushy.apns.server.MockApnsServer;
+import com.eatthepath.pushy.apns.server.MockApnsServerBuilder;
+import com.eatthepath.pushy.apns.util.SimpleApnsPushNotification;
 import org.assertj.core.api.ThrowableAssert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.io.InputStream;
 
 import static de.brendamour.jpasskit.util.CertUtils.toInputStream;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,9 +36,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class PKSendPushNotificationUtilTest {
 
     private static final String keyStorePathNoTopics = "passbook/jpasskittest.p12";
-    private static final char [] keyStorePasswordNoTopics = "password".toCharArray();
+    private static final char[] keyStorePasswordNoTopics = "password".toCharArray();
     private static final String keyStorePath = "passbook/expired_cert.p12";
-    private static final char [] keyStorePassword = "cert".toCharArray();
+    private static final char[] keyStorePassword = "cert".toCharArray();
     private static final String CA_CERTIFICATE_FILENAME = "/ca.pem";
     private static final String SERVER_CERTIFICATES_FILENAME = "/server-certs.pem";
     private static final String SERVER_KEY_FILENAME = "/server-key.pem";
@@ -65,7 +64,7 @@ public class PKSendPushNotificationUtilTest {
                 .setHandlerFactory(new AcceptAllPushNotificationHandlerFactory())
                 .setServerCredentials(getClass().getResourceAsStream(SERVER_CERTIFICATES_FILENAME), getClass().getResourceAsStream(SERVER_KEY_FILENAME), null)
                 .build();
-        apnsServer.start(PORT).await();
+        apnsServer.start(PORT).get();
     }
 
     @Test

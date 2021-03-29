@@ -74,7 +74,7 @@
 		<guava.version>29.0-jre</guava.version>
 		<jackson.version>2.12.1</jackson.version>
 		<mockito.version>3.8.0</mockito.version>
-		<pushy.version>0.13.10</pushy.version>
+		<pushy.version>0.14.2</pushy.version>
 		<slf4j.version>1.7.30</slf4j.version>
 		<testng.version>7.4.0</testng.version>
 		<!-- Plugin versions -->
@@ -103,7 +103,7 @@
 				<version>${guava.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.turo</groupId>
+				<groupId>com.eatthepath</groupId>
 				<artifactId>pushy</artifactId>
 				<version>${pushy.version}</version>
 			</dependency>
@@ -169,7 +169,7 @@
 			<artifactId>guava</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.turo</groupId>
+			<groupId>com.eatthepath</groupId>
 			<artifactId>pushy</artifactId>
 		</dependency>
 		<dependency>
