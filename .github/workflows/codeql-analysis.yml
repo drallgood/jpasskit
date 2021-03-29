@@ -63,8 +63,8 @@ jobs:
     #   make bootstrap
     #   make release
     - run: |
-        cd jpasskit && mvn test -B && cd -
-        cd jpasskit.server && mvn test -B && cd -
+        cd jpasskit && mvn clean install && cd -
+        cd jpasskit.server && mvn clean install && cd -
         
 
     - name: Perform CodeQL Analysis
