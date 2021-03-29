@@ -202,7 +202,6 @@ public class PKFieldBuilder implements IPKValidateable, IPKBuilder<PKField> {
         checkValueType(validationErrors);
         checkCurrencyCodeAndNumberStyleAreNotBothSet(validationErrors);
         checkNumberOrCurrencyAndDateNotSetAtTheSameTime(validationErrors);
-        checkChangeMessageContainsPlaceholder(validationErrors);
         checkCurrencyValueIsNumeric(validationErrors);
         return validationErrors;
     }
@@ -210,12 +209,6 @@ public class PKFieldBuilder implements IPKValidateable, IPKBuilder<PKField> {
     private void checkCurrencyValueIsNumeric(List<String> validationErrors) {
         if (this.field.currencyCode != null && !isNumeric(this.field.value)) {
             validationErrors.add("Field 'currencyCode' must be set only for numeric types. When using currencies, the values have to be numbers");
-        }
-    }
-
-    private void checkChangeMessageContainsPlaceholder(List<String> validationErrors) {
-        if (this.field.changeMessage != null && !this.field.changeMessage.contains("%@")) {
-            validationErrors.add("Field 'changeMessage' must contain %@ placeholder");
         }
     }
 
