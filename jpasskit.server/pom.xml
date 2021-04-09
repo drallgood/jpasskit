@@ -70,7 +70,7 @@
 		<restlet.version>2.4.3</restlet.version>
 		<slf4j.version>1.7.30</slf4j.version>
 		<!-- Plugin versions -->
-		<license-maven-plugin.version>3.0</license-maven-plugin.version>
+		<license-maven-plugin.version>4.0</license-maven-plugin.version>
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
 		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
 		<maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
