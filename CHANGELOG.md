@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 - Builder pattern for main PK* classes (POJOs). BREAKING CHANGE!
 - Support for semantic structures, both at the root and in fields. For more information see https://developer.apple.com/documentation/passkit/wallet/supporting_semantic_tags_in_wallet_passes#3080207
+- Updated pushy to latest version
 
 ### Deprecated
 
