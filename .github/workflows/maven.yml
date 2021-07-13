@@ -12,7 +12,9 @@ on:
 jobs:
   build-jpasskit:
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        working-directory: jpasskit
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 8
@@ -20,11 +22,21 @@ jobs:
       with:
         java-version: '8'
         distribution: 'adopt'
+    - name: Cache Maven packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
     - name: Build with Maven
-      run: cd jpasskit && mvn -B package --file pom.xml
+      run: mvn --batch-mode --update-snapshots install
+    
   build-jpasskitServer:
     runs-on: ubuntu-latest
     needs: build-jpasskit
+        defaults:
+      run:
+        working-directory: jpasskit.server
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 8
@@ -32,5 +44,11 @@ jobs:
       with:
         java-version: '8'
         distribution: 'adopt'
+    - name: Cache Maven packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
     - name: Build with Maven
-      run: cd jpasskit.server &&  mvn -B package --file pom.xml
+      run: mvn --batch-mode --update-snapshots install
