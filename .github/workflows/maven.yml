@@ -26,7 +26,7 @@ jobs:
         server-username: MAVEN_USERNAME
         server-password: MAVEN_PASSWORD
         gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }} # Value of the GPG private key to import
-        gpg-passphrase: MAVEN_GPG_PASSPHRASE # env variable for GPG private key passphrase
+        gpg-passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }} # value for GPG private key passphrase
     - name: Cache Maven packages
       uses: actions/cache@v2
       with:
@@ -36,11 +36,10 @@ jobs:
     - name: Build with Maven
       run: mvn --batch-mode --update-snapshots install
     - name: Publish Snapshot package
-      run: mvn --batch-mode -Psigngpg deploy
+      run: cat $HOME/.m2/settings.xml && mvn --batch-mode -Psigngpg deploy
       env:
        MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
        MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
-       MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
     
   build-jpasskitServer:
     runs-on: ubuntu-latest
