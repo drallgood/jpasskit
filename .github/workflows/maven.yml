@@ -36,7 +36,7 @@ jobs:
     - name: Build with Maven
       run: mvn --batch-mode --update-snapshots install
     - name: Publish Snapshot package
-      run: mvn --batch-mode -P signgpg deploy
+      run: mvn --batch-mode -Psigngpg deploy
       env:
        MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
        MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
