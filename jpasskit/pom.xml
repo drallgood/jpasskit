@@ -75,7 +75,7 @@
 		<jackson.version>2.12.4</jackson.version>
 		<mockito.version>3.11.1</mockito.version>
 		<pushy.version>0.14.2</pushy.version>
-		<slf4j.version>1.7.30</slf4j.version>
+		<slf4j.version>1.7.31</slf4j.version>
 		<testng.version>7.4.0</testng.version>
 		<!-- Plugin versions -->
 		<license-maven-plugin.version>4.1</license-maven-plugin.version>
