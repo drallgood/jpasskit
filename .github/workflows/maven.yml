@@ -39,12 +39,13 @@ jobs:
         server-username: MAVEN_USERNAME
         server-password: MAVEN_PASSWORD
         gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }} # Value of the GPG private key to import
-        gpg-passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }} # value for GPG private key passphrase
+        gpg-passphrase: MAVEN_GPG_PASSPHRASE # env variable for GPG private key passphrase
     - name: Publish Snapshot package
       run: ls $HOME/.m2 && cat $HOME/.m2/settings* && mvn --batch-mode -D skipTests --activate-profiles signgpg --no-transfer-progress deploy
       env:
        MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
        MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+       MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
     
   build-jpasskitServer:
     runs-on: ubuntu-latest
