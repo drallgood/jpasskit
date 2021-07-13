@@ -159,7 +159,7 @@ public class PKFileBasedSigningUtilTest {
         AssertZip.assertValid(passZipFile);
         
         Path pkpassFile = Paths.get(fileName);
-        FileSystem fs = FileSystems.newFileSystem(pkpassFile, null);
+        FileSystem fs = FileSystems.newFileSystem(pkpassFile, (ClassLoader) null);
         Path bgFilePath = fs.getPath(PKPassTemplateInMemory.PK_ICON);
         Assert.assertTrue(Files.exists(bgFilePath));
         Path ignoredFilePath = fs.getPath(".ignored_file");
