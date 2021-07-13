@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.brendamour</groupId>
 	<artifactId>jpasskit</artifactId>
-	<version>0.2.0-SNAPSHOT</version>
+	<version>0.2.0</version>
 	<name>jPasskit</name>
 	<description>Java Library for Apple PassBook Web Service API</description>
 	<url>https://github.com/drallgood/jpasskit</url>
@@ -17,7 +17,7 @@
 		<url>scm:git:git@github.com:drallgood/jpasskit.git</url>
 		<connection>scm:git:git@github.com:drallgood/jpasskit.git</connection>
 		<developerConnection>scm:git:git@github.com:drallgood/jpasskit.git</developerConnection>
-		<tag>HEAD</tag>
+		<tag>jpasskit-0.2.0</tag>
 	</scm>
 
 	<developers>
