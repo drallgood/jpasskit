@@ -36,11 +36,11 @@ jobs:
     - name: Build with Maven
       run: mvn --batch-mode --update-snapshots install
     - name: Publish Snapshot package
-        run: mvn --batch-mode deploy
-        env:
-         MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-         MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
-         MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+      run: mvn --batch-mode deploy
+      env:
+       MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+       MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+       MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
     
   build-jpasskitServer:
     runs-on: ubuntu-latest
