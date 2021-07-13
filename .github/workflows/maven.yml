@@ -34,7 +34,7 @@ jobs:
   build-jpasskitServer:
     runs-on: ubuntu-latest
     needs: build-jpasskit
-        defaults:
+    defaults:
       run:
         working-directory: jpasskit.server
     steps:
