@@ -66,7 +66,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<current.year>2019</current.year>
 		<!-- Dependency versions -->
-		<jpasskit.version>0.2.0-SNAPSHOT</jpasskit.version>
+		<jpasskit.version>0.2.0</jpasskit.version>
 		<restlet.version>2.4.3</restlet.version>
 		<slf4j.version>1.7.31</slf4j.version>
 		<!-- Plugin versions -->
