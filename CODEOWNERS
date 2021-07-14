@@ -1,1 +1,8 @@
-@drallgood
+# Each line is a file pattern followed by one or more owners.
+
+# These owners will be the default owners for everything in
+# the repo. Unless a later match takes precedence.
+*   @drallgood @stepio
+
+# Workflows can only be changed with permission of drallgood
+.github/workflows @drallgood
