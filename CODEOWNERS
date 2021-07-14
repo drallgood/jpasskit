@@ -2,7 +2,7 @@
 
 # These owners will be the default owners for everything in
 # the repo. Unless a later match takes precedence.
-*   @drallgood @stepio
+*   @drallgood
 
 # Workflows can only be changed with permission of drallgood
 .github/workflows @drallgood
