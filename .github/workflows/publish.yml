@@ -11,11 +11,6 @@ on:
         required: true
         default: "X.Y.Z-SNAPSHOT"
 jobs:
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-
-jobs:
   release:
     runs-on: ubuntu-latest
     defaults:
