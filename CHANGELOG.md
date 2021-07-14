@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
-## 0.2.0 - xxx
+
+## 0.2.1 - xxx
+
+### Added
+### Deprecated
+### Removed
+### Fixed
+
+## 0.2.0 - 2021-07-14
 
 ### Added
 
