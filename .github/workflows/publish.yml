@@ -13,9 +13,6 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: jpasskit
     steps:
     - uses: actions/checkout@v2
     - name: Set up Apache Maven Central
