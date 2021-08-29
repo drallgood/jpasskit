@@ -31,7 +31,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     if:  ${{ github.ref == 'refs/heads/master' }}
-    needs: build-jpasskit
+    needs: build
     steps:
     - uses: actions/checkout@v2
     - name: Set up Apache Maven Central
