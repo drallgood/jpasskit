@@ -115,7 +115,7 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>default</id>
+                        <id>default-perform</id>
                         <goals>
                             <goal>perform</goal>
                         </goals>

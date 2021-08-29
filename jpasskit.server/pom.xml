@@ -86,19 +86,17 @@
                             <goal>perform</goal>
                         </goals>
                         <configuration>
-                            <pomFileName>jpasskit/pom.xml</pomFileName>
                             <useReleaseProfile>false</useReleaseProfile>
                             <releaseProfiles>release</releaseProfiles>
                             <goals>deploy</goals>
                         </configuration>
                     </execution>
                     <execution>
-                        <id>default</id>
+                        <id>default-prepare</id>
                         <goals>
                             <goal>prepare</goal>
                         </goals>
                         <configuration>
-                            <pomFileName>jpasskit/pom.xml</pomFileName>
                             <autoVersionSubmodules>true</autoVersionSubmodules>
                         </configuration>
                     </execution>
