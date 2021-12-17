@@ -78,7 +78,7 @@
         <commons-lang.version>3.12.0</commons-lang.version>
         <guava.version>31.0.1-jre</guava.version>
         <jackson.version>2.13.0</jackson.version>
-        <mockito.version>4.1.0</mockito.version>
+        <mockito.version>4.2.0</mockito.version>
         <pushy.version>0.15.0</pushy.version>
         <slf4j.version>1.7.32</slf4j.version>
         <testng.version>7.4.0</testng.version>
