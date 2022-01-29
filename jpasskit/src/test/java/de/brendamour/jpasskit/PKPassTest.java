@@ -27,7 +27,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -67,6 +66,7 @@ public class PKPassTest {
     private static final Long MAX_DISTANCE = 99999L;
     private static final Map<String, Object> USER_INFO = ImmutableMap.<String, Object> of("name", "John Doe");
     private static final Instant EXPIRATION_DATE = Instant.now();
+    private static final long ASSOCIATED_STORE_IDENTIFIER = 1L;
 
     private PKPassBuilder builder;
 
@@ -102,6 +102,15 @@ public class PKPassTest {
                                 .format(PKBarcodeFormat.PKBarcodeFormatCode128)
                                 .build()
                 ));
+    }
+
+    @Test
+    public void test_isValidAfterFillingInAppLaunchURLAndAssociatedStoreIdentifiers() {
+        fillBasicFields();
+        this.builder.appLaunchURL(APP_LAUNCH_URL);
+        this.builder.associatedStoreIdentifier(ASSOCIATED_STORE_IDENTIFIER);
+
+        assertThat(this.builder.isValid()).isTrue();
     }
 
     @Test

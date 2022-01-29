@@ -381,7 +381,7 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
     private void checkAssociatedAppIfSet(List<String> validationErrors) {
         // If appLaunchURL key is present, the associatedStoreIdentifiers key must also
         // be present
-        if (this.pkPass.appLaunchURL != null && BuilderUtils.isEmpty(this.pkPass.associatedStoreIdentifiers)) {
+        if (this.pkPass.appLaunchURL != null && BuilderUtils.isEmpty(this.associatedStoreIdentifiers)) {
             validationErrors.add("The appLaunchURL requires associatedStoreIdentifiers to be specified");
         }
     }
