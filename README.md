@@ -47,7 +47,7 @@ Example:
 
 	PKPass pass = PKPass.builder()
 			.pass(
-					PKGenericPassBuilder.builder()
+					PKGenericPass.builder()
 							.passType(PKPassType.PKStoreCard)
 							.primaryFieldBuilder(
 									PKField.builder()
