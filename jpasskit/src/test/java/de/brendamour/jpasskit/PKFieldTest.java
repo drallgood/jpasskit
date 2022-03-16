@@ -17,6 +17,7 @@ package de.brendamour.jpasskit;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Collections;
 import java.util.Date;
 
 import org.testng.annotations.BeforeMethod;
@@ -203,6 +204,27 @@ public class PKFieldTest {
     }
 
     @Test
+    public void test_validation_DataDetectorTypesNull() {
+        fillBasisFields();
+        builder.dataDetectorTypes(null);
+
+        assertThat(builder.isValid()).isTrue();
+        PKField field = builder.build();
+        assertThat(field.dataDetectorTypes).isNull();
+    }
+
+    @Test
+    public void test_validation_DataDetectorTypesEmpty() {
+        fillBasisFields();
+        builder.dataDetectorTypes(Collections.emptyList());
+
+        assertThat(builder.isValid()).isTrue();
+        PKField field = builder.build();
+        assertThat(field.dataDetectorTypes).isNotNull();
+        assertThat(field.dataDetectorTypes.isEmpty()).isTrue();
+    }
+
+    @Test
     public void test_toString() {
         fillFieldsText();
         PKField field = builder.build();
@@ -226,6 +248,7 @@ public class PKFieldTest {
                 .changeMessage(CHANGEMESSAGE)
                 .label(LABEL)
                 .row(ROW)
+                .value(VALUE_TEXT)
                 .attributedValue(ATTRIBUTED_VALUE);
     }
 

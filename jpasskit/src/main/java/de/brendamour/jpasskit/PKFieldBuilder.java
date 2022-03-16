@@ -15,24 +15,23 @@
  */
 package de.brendamour.jpasskit;
 
-import java.time.Instant;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import de.brendamour.jpasskit.enums.PKDataDetectorType;
+import de.brendamour.jpasskit.enums.PKDateStyle;
+import de.brendamour.jpasskit.enums.PKNumberStyle;
+import de.brendamour.jpasskit.enums.PKTextAlignment;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-
-import de.brendamour.jpasskit.enums.PKDataDetectorType;
-import de.brendamour.jpasskit.enums.PKDateStyle;
-import de.brendamour.jpasskit.enums.PKNumberStyle;
-import de.brendamour.jpasskit.enums.PKTextAlignment;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * Allows constructing and validating {@link PKField} entities.
@@ -43,20 +42,17 @@ import de.brendamour.jpasskit.enums.PKTextAlignment;
 public class PKFieldBuilder implements IPKValidateable, IPKBuilder<PKField> {
 
     private PKField field;
-    private List<PKDataDetectorType> dataDetectorTypes;
+    private List<PKDataDetectorType> dataDetectorTypes = null;
 
     protected PKFieldBuilder() {
         this.field = new PKField();
-        this.dataDetectorTypes = new CopyOnWriteArrayList<>();
     }
 
     @Override
     public PKFieldBuilder of(final PKField source) {
         if (source != null) {
             this.field = source.clone();
-            if (this.field.dataDetectorTypes == null) {
-                this.dataDetectorTypes = new CopyOnWriteArrayList<>();
-            } else {
+            if (this.field.dataDetectorTypes != null) {
                 this.dataDetectorTypes = new CopyOnWriteArrayList<>(this.field.dataDetectorTypes);
             }
         }
@@ -161,16 +157,24 @@ public class PKFieldBuilder implements IPKValidateable, IPKBuilder<PKField> {
     }
 
     public PKFieldBuilder dataDetectorType(PKDataDetectorType dataDetectorType) {
+        if (this.dataDetectorTypes == null) {
+            this.dataDetectorTypes = new CopyOnWriteArrayList<>();
+        }
         this.dataDetectorTypes.add(dataDetectorType);
         return this;
     }
 
-    public PKFieldBuilder dataDetectorTypes(final List<PKDataDetectorType> dataDetectorTypes) {
-        if (dataDetectorTypes == null || dataDetectorTypes.isEmpty()) {
-            this.dataDetectorTypes.clear();
+    public PKFieldBuilder dataDetectorTypes(final List<PKDataDetectorType> providedDataDetectorTypes) {
+        if (providedDataDetectorTypes == null) {
+            this.dataDetectorTypes = null;
             return this;
         }
-        this.dataDetectorTypes.addAll(dataDetectorTypes);
+
+        if (this.dataDetectorTypes == null) {
+            this.dataDetectorTypes = new CopyOnWriteArrayList<>();
+        }
+
+        this.dataDetectorTypes.addAll(providedDataDetectorTypes);
         return this;
     }
 
@@ -208,7 +212,8 @@ public class PKFieldBuilder implements IPKValidateable, IPKBuilder<PKField> {
 
     private void checkCurrencyValueIsNumeric(List<String> validationErrors) {
         if (this.field.currencyCode != null && !isNumeric(this.field.value)) {
-            validationErrors.add("Field 'currencyCode' must be set only for numeric types. When using currencies, the values have to be numbers");
+            validationErrors.add("Field 'currencyCode' must be set only for numeric types. When using currencies, the" +
+                    " values have to be numbers");
         }
     }
 
@@ -231,7 +236,8 @@ public class PKFieldBuilder implements IPKValidateable, IPKBuilder<PKField> {
     private void checkValueType(List<String> validationErrors) {
         if (!(this.field.value instanceof String || isNumeric(this.field.value) || this.field.value instanceof Date || this.field.value instanceof Instant)) {
             validationErrors.add(
-                    "Invalid value type. Allowed: String, Integer, Float, Long, Double, java.util.Date, Instant, BigDecimal");
+                    "Invalid value type. Allowed: String, Integer, Float, Long, Double, java.util.Date, Instant, " +
+                            "BigDecimal");
         }
     }
 
@@ -243,7 +249,7 @@ public class PKFieldBuilder implements IPKValidateable, IPKBuilder<PKField> {
 
     @Override
     public PKField build() {
-        if (!this.dataDetectorTypes.isEmpty()) {
+        if (this.dataDetectorTypes != null) {
             this.field.dataDetectorTypes = Collections.unmodifiableList(this.dataDetectorTypes);
         }
         return this.field;
