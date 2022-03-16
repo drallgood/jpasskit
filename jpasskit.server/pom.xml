@@ -27,11 +27,6 @@
             <groupId>org.restlet.jse</groupId>
             <artifactId>org.restlet.ext.simple</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 
     <repositories>

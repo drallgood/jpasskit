@@ -57,10 +57,16 @@ public class PKPassTemplateFolder implements IPKPassTemplate {
         Map<String, ByteBuffer> allFiles = new HashMap<>();
         String base = templateDir.getCanonicalPath();
         for (File file : FileUtils.listFiles(templateDir, new RegexFileFilter("^(?!\\.).*"), TrueFileFilter.TRUE)) {
-            byte[] byteArray = IOUtils.toByteArray(new FileInputStream(file));
-            String filePath = file.getCanonicalPath().substring(base.length() + 1);
-            LOGGER.debug("File's own path: {}", filePath);
-            allFiles.put(filePath, ByteBuffer.wrap(byteArray));
+            FileInputStream fileInputStream = null;
+            try {
+                fileInputStream = new FileInputStream(file);
+                byte[] byteArray = IOUtils.toByteArray(fileInputStream);
+                String filePath = file.getCanonicalPath().substring(base.length() + 1);
+                LOGGER.debug("File's own path: {}", filePath);
+                allFiles.put(filePath, ByteBuffer.wrap(byteArray));
+            } finally {
+                IOUtils.closeQuietly(fileInputStream);
+            }
         }
         return allFiles;
     }
