@@ -16,16 +16,13 @@
 package de.brendamour.jpasskit.signing;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import de.brendamour.jpasskit.PKBarcode;
 import de.brendamour.jpasskit.PKPass;
 import de.brendamour.jpasskit.PKPassBuilder;
 import de.brendamour.jpasskit.enums.PKBarcodeFormat;
 import de.brendamour.jpasskit.enums.PKPassPersonalizationField;
 import de.brendamour.jpasskit.personalization.PKPersonalization;
-
 import de.brendamour.jpasskit.personalization.PKPersonalizationBuilder;
-import java.time.Instant;
 import org.apache.commons.io.IOUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -34,14 +31,10 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.charset.Charset;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 
 public class PKFileBasedSigningUtilTest {
 
@@ -56,7 +49,8 @@ public class PKFileBasedSigningUtilTest {
         File temporaryPassDir = new File("target/");
         File manifestJSONFile = new File(getPathFromClasspath("pass.json"));
 
-        PKSigningInformation pkSigningInformation = new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
+        PKSigningInformation pkSigningInformation =
+                new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
                 KEYSTORE_PATH, KEYSTORE_PASSWORD, APPLE_WWDRCA);
         PKFileBasedSigningUtil pkSigningUtil = new PKFileBasedSigningUtil();
         pkSigningUtil.signManifestFileAndWriteToDirectory(temporaryPassDir, manifestJSONFile, pkSigningInformation);
@@ -89,7 +83,7 @@ public class PKFileBasedSigningUtilTest {
 
         createZipAndAssert(passBuilder.build(), "target/passFileBasedGenerated.zip");
     }
-    
+
     @Test
     public void testFileBasedSigningWithGeneratedPass_andiOS8Fallback() throws Exception {
         PKPassBuilder passBuilder = PKPass.builder()
@@ -107,7 +101,7 @@ public class PKFileBasedSigningUtilTest {
                 ))
                 .passTypeIdentifier("pti")
                 .teamIdentifier("ti");
-        
+
         createZipAndAssert(passBuilder.build(), "target/passFileBasedGenerated_andiOS8Fallback.zip");
     }
 
@@ -136,16 +130,19 @@ public class PKFileBasedSigningUtilTest {
     }
 
     private void createZipAndAssert(PKPass pkPass, PKPersonalization personalization, String fileName) throws Exception {
-        PKSigningInformation pkSigningInformation = new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
+        PKSigningInformation pkSigningInformation =
+                new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
                 KEYSTORE_PATH, KEYSTORE_PASSWORD, APPLE_WWDRCA);
         PKPassTemplateFolder pkPassTemplate = new PKPassTemplateFolder(getPathFromClasspath(PASS_TEMPLATE_FOLDER));
         IPKSigningUtil pkSigningUtil = new PKFileBasedSigningUtil();
         byte[] signedAndZippedPkPassArchive;
         if (personalization != null) {
-            signedAndZippedPkPassArchive = pkSigningUtil.createSignedAndZippedPersonalizedPkPassArchive(pkPass, personalization, pkPassTemplate,
+            signedAndZippedPkPassArchive = pkSigningUtil.createSignedAndZippedPersonalizedPkPassArchive(pkPass,
+                    personalization, pkPassTemplate,
                     pkSigningInformation);
         } else {
-            signedAndZippedPkPassArchive = pkSigningUtil.createSignedAndZippedPkPassArchive(pkPass, pkPassTemplate, pkSigningInformation);
+            signedAndZippedPkPassArchive = pkSigningUtil.createSignedAndZippedPkPassArchive(pkPass, pkPassTemplate,
+                    pkSigningInformation);
         }
         ByteArrayInputStream inputStream = new ByteArrayInputStream(signedAndZippedPkPassArchive);
 
@@ -157,7 +154,7 @@ public class PKFileBasedSigningUtilTest {
         Assert.assertTrue(passZipFile.exists());
         Assert.assertTrue(passZipFile.length() > 0);
         AssertZip.assertValid(passZipFile);
-        
+
         Path pkpassFile = Paths.get(fileName);
         FileSystem fs = FileSystems.newFileSystem(pkpassFile, (ClassLoader) null);
         Path bgFilePath = fs.getPath(PKPassTemplateInMemory.PK_ICON);

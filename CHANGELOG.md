@@ -8,6 +8,9 @@ All notable changes to this project will be documented in this file.
 ### Removed
 ### Fixed
 
+- Fixed a memory leak in file-based pass templates (#389)
+- Fixed an issue where data detectors couldn't be disabled (#394)
+
 ## 0.2.0 - 2021-07-14
 
 ### Added
