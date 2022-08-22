@@ -70,7 +70,7 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <current.year>2021</current.year>
+        <current.year>2022</current.year>
         <!-- Dependency versions -->
         <assertj.version>3.23.1</assertj.version>
         <bouncy-castle.version>1.70</bouncy-castle.version>
@@ -95,6 +95,7 @@
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <maven-wrapper-plugin.version>3.1.1</maven-wrapper-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
+        <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
     </properties>
 
     <modules>
@@ -237,6 +238,11 @@
                     <artifactId>maven-wrapper-plugin</artifactId>
                     <version>${maven-wrapper-plugin.version}</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>${build-helper-maven-plugin.version}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -244,6 +250,24 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-wrapper-plugin</artifactId>
+            </plugin>
+            <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>build-helper-maven-plugin</artifactId>
+              
+              <executions>
+                <execution>
+                  <id>timestamp-property</id>
+                  <goals>
+                    <goal>timestamp-property</goal>
+                  </goals>
+                  <phase>validate</phase>
+                  <configuration>
+                    <name>current.year</name>
+                    <pattern>yyyy</pattern>
+                  </configuration>
+                </execution>
+              </executions>
             </plugin>
         </plugins>
         <extensions>

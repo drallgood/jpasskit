@@ -101,6 +101,7 @@
                         <exclude>**/*.cer</exclude>
                         <exclude>**/*.pem</exclude>
                         <exclude>**/*.p12</exclude>
+                        <exclude>**/*.ignored_file</exclude>
                     </excludes>
                 </configuration>
                 <executions>
