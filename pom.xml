@@ -8,6 +8,7 @@
 
     <url>https://github.com/drallgood/jpasskit</url>
     <inceptionYear>2012</inceptionYear>
+    <description>Parent POM for jPasskit. Mainly for dependency management</description>
 
     <licenses>
         <license>
@@ -249,6 +250,16 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-wrapper-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
             </plugin>
             <plugin>
               <groupId>org.codehaus.mojo</groupId>
