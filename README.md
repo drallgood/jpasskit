@@ -164,7 +164,7 @@ The IPKRestletServerResourceFactory is used to create instances of three classes
 
 *PKPassResource* is used to fetch the latest version of a pass.
 
-_PKPersonalizePassResource_ is used to store the signup information for a rewards program (see https://developer.apple.com/library/prerelease/content/documentation/UserExperience/Conceptual/PassKit\_PG/PassPersonalization.html)
+_PKPersonalizePassResource_ is used to store the signup information for a rewards program (see https://developer.apple.com/library/prerelease/content/documentation/UserExperience/Conceptual/PassKit_PG/PassPersonalization.html)
 
 *PKLogResource* is used for the log messages, that the devices send in case of an error.
 
