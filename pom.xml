@@ -80,7 +80,7 @@
         <guava.version>31.1-jre</guava.version>
         <jackson.version>2.14.1</jackson.version>
         <mockito.version>4.8.0</mockito.version>
-        <pushy.version>0.15.1</pushy.version>
+        <pushy.version>0.15.2</pushy.version>
         <slf4j.version>2.0.3</slf4j.version>
         <log4j.version>2.19.0</log4j.version>
         <testng.version>7.5</testng.version>
