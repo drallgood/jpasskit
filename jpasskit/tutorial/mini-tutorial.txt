@@ -113,18 +113,15 @@ Checkout Jpasskit from github with this command "git clone https://github.com/dr
             locations.add(location);
             pass.setLocations(locations);
            
-            if (pass.isValid()) {
-                String pathToTemplateDirectory = "./mypass.raw"; // replace with your folder with the icons
-                byte[] passZipAsByteArray = PKSigningUtil.
-                        createSignedAndZippedPkPassArchive(pass, pathToTemplateDirectory, pkSigningInformation);
-               
-                String outputFile = "./mypass.pkpass"; // change the name of the pass
-                ByteArrayInputStream inputStream = new ByteArrayInputStream(passZipAsByteArray);
-                IOUtils.copy(inputStream, new FileOutputStream(outputFile));
-                System.out.println("Done!");
-            } else {
-                System.out.println("the pass is NOT Valid man!!!");
-            }
+            String pathToTemplateDirectory = "./mypass.raw"; // replace with your folder with the icons
+            PKPassTemplateFolder pkPassTemplate = new PKPassTemplateFolder(pathToTemplateDirectory);
+            byte[] passZipAsByteArray = PKSigningUtil.
+                    createSignedAndZippedPkPassArchive(pass, pathToTemplateDirectory, pkSigningInformation);
+
+            String outputFile = "./mypass.pkpass"; // change the name of the pass
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(passZipAsByteArray);
+            IOUtils.copy(inputStream, new FileOutputStream(outputFile));
+            
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("failed!");
