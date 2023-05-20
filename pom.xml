@@ -1,14 +1,14 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.brendamour</groupId>
     <artifactId>jpasskit-parent</artifactId>
-    <version>0.3.1-SNAPSHOT</version>
+    <version>0.2.1-SNAPSHOT</version>
     <name>jPasskit Parent</name>
     <packaging>pom</packaging>
 
     <url>https://github.com/drallgood/jpasskit</url>
     <inceptionYear>2012</inceptionYear>
-    <description>Parent POM for jPasskit. Mainly for dependency management</description>
 
     <licenses>
         <license>
@@ -72,28 +72,28 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <current.year>2022</current.year>
         <!-- Dependency versions -->
-        <assertj.version>3.24.2</assertj.version>
+        <assertj.version>3.23.1</assertj.version>
         <bouncy-castle.version>1.70</bouncy-castle.version>
         <commons-codec.version>1.15</commons-codec.version>
         <commons-io.version>2.11.0</commons-io.version>
         <commons-lang.version>3.12.0</commons-lang.version>
         <guava.version>31.1-jre</guava.version>
-        <jackson.version>2.15.1</jackson.version>
-        <mockito.version>4.8.0</mockito.version>
-        <pushy.version>0.15.2</pushy.version>
-        <slf4j.version>2.0.7</slf4j.version>
-        <log4j.version>2.20.0</log4j.version>
-        <testng.version>7.5.1</testng.version>
+        <jackson.version>2.13.3</jackson.version>
+        <mockito.version>4.7.0</mockito.version>
+        <pushy.version>0.15.1</pushy.version>
+        <slf4j.version>2.0.0</slf4j.version>
+        <log4j.version>2.18.0</log4j.version>
+        <testng.version>7.5</testng.version>
         <restlet.version>2.4.3</restlet.version>
         <!-- Plugin versions -->
-        <license-maven-plugin.version>4.2</license-maven-plugin.version>
-        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+        <license-maven-plugin.version>4.1</license-maven-plugin.version>
+        <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
-        <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
-        <maven-release-plugin.version>3.0.0</maven-release-plugin.version>
+        <maven-javadoc-plugin.version>3.4.1</maven-javadoc-plugin.version>
+        <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-        <maven-surefire-plugin.version>3.1.0</maven-surefire-plugin.version>
-        <maven-wrapper-plugin.version>3.2.0</maven-wrapper-plugin.version>
+        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+        <maven-wrapper-plugin.version>3.1.1</maven-wrapper-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
         <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
     </properties>
@@ -250,16 +250,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-wrapper-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
             </plugin>
             <plugin>
               <groupId>org.codehaus.mojo</groupId>
