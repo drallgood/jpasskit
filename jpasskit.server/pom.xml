@@ -46,6 +46,7 @@
                     <serverId>ossrh</serverId>
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                    <stagingProgressTimeoutMinutes>3000</stagingProgressTimeoutMinutes>
                 </configuration>
             </plugin>
             <plugin>
