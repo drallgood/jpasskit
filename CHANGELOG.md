@@ -1,10 +1,36 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 0.2.1 - xxx
+## 0.3.2 - 2023-05-24
 
 ### Added
 ### Deprecated
+### Changed
+
+- many more dependency updates to keep things secure
+
+### Removed
+### Fixed
+
+## 0.3.2 - 2023-05-22
+
+### Added
+### Deprecated
+### Changed
+
+- many dependency updates to keep things secure
+
+### Removed
+### Fixed
+
+## 0.3.0 - 2022-08-22
+
+### Added
+### Deprecated
+### Changed
+
+- many dependency updates 
+
 ### Removed
 ### Fixed
 
