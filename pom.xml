@@ -82,7 +82,7 @@
         <mockito.version>4.7.0</mockito.version>
         <pushy.version>0.15.2</pushy.version>
         <slf4j.version>2.0.0</slf4j.version>
-        <log4j.version>2.18.0</log4j.version>
+        <log4j.version>2.20.0</log4j.version>
         <testng.version>7.5</testng.version>
         <restlet.version>2.4.3</restlet.version>
         <!-- Plugin versions -->
