@@ -76,9 +76,8 @@ Checkout Jpasskit from github with this command "git clone https://github.com/dr
         String privateKeyPassword = "password"; // the password you used to export
         try {
           
-            PKSigningInformation pkSigningInformation = PKSigningUtil.
-                    loadSigningInformationFromPKCS12FileAndIntermediateCertificateFile(
-                    privateKeyPath, privateKeyPassword, appleWWDRCA);
+            PKSigningInformation pkSigningInformation = PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(privateKeyPath,
+                                                                        privateKeyPassword, appleWWDRCA);
            
             PKPass pass = new PKPass();
             pass.setPassTypeIdentifier("pass.com.yourdomain.type");
@@ -115,8 +114,8 @@ Checkout Jpasskit from github with this command "git clone https://github.com/dr
            
             if (pass.isValid()) {
                 String pathToTemplateDirectory = "./mypass.raw"; // replace with your folder with the icons
-                byte[] passZipAsByteArray = PKSigningUtil.
-                        createSignedAndZippedPkPassArchive(pass, pathToTemplateDirectory, pkSigningInformation);
+                byte[] passZipAsByteArray = PKFileBasedSigningUtil().createSignedAndZippedPkPassArchive(pass, pathToTemplateDirectory,
+                                                            pkSigningInformation);
                
                 String outputFile = "./mypass.pkpass"; // change the name of the pass
                 ByteArrayInputStream inputStream = new ByteArrayInputStream(passZipAsByteArray);
