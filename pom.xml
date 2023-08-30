@@ -74,11 +74,11 @@
         <!-- Dependency versions -->
         <assertj.version>3.24.2</assertj.version>
         <bouncy-castle.version>1.70</bouncy-castle.version>
-        <commons-codec.version>1.15</commons-codec.version>
-        <commons-io.version>2.12.0</commons-io.version>
+        <commons-codec.version>1.16.0</commons-codec.version>
+        <commons-io.version>2.13.0</commons-io.version>
         <commons-lang.version>3.12.0</commons-lang.version>
-        <guava.version>31.1-jre</guava.version>
-        <jackson.version>2.15.1</jackson.version>
+        <guava.version>32.1.2-jre</guava.version>
+        <jackson.version>2.15.2</jackson.version>
         <mockito.version>4.7.0</mockito.version>
         <pushy.version>0.15.2</pushy.version>
         <slf4j.version>2.0.7</slf4j.version>
@@ -90,9 +90,9 @@
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
         <maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version>
         <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
-        <maven-release-plugin.version>3.0.0</maven-release-plugin.version>
+        <maven-release-plugin.version>3.0.1</maven-release-plugin.version>
         <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
-        <maven-surefire-plugin.version>3.1.0</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
         <maven-wrapper-plugin.version>3.2.0</maven-wrapper-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
         <build-helper-maven-plugin.version>3.4.0</build-helper-maven-plugin.version>
