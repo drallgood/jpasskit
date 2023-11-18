@@ -86,7 +86,7 @@
         <testng.version>7.5</testng.version>
         <restlet.version>2.4.3</restlet.version>
         <!-- Plugin versions -->
-        <license-maven-plugin.version>4.2</license-maven-plugin.version>
+        <license-maven-plugin.version>4.3</license-maven-plugin.version>
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
         <maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version>
         <maven-javadoc-plugin.version>3.6.2</maven-javadoc-plugin.version>
