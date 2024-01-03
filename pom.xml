@@ -76,7 +76,7 @@
         <bouncy-castle.version>1.70</bouncy-castle.version>
         <commons-codec.version>1.16.0</commons-codec.version>
         <commons-io.version>2.15.1</commons-io.version>
-        <commons-lang.version>3.13.0</commons-lang.version>
+        <commons-lang.version>3.14.0</commons-lang.version>
         <guava.version>33.0.0-jre</guava.version>
         <jackson.version>2.16.1</jackson.version>
         <mockito.version>4.7.0</mockito.version>
