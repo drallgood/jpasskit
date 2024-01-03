@@ -95,7 +95,7 @@
         <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
         <maven-wrapper-plugin.version>3.2.0</maven-wrapper-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
-        <build-helper-maven-plugin.version>3.4.0</build-helper-maven-plugin.version>
+        <build-helper-maven-plugin.version>3.5.0</build-helper-maven-plugin.version>
     </properties>
 
     <modules>
