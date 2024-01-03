@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.brendamour</groupId>
     <artifactId>jpasskit-parent</artifactId>
-    <version>0.3.4-SNAPSHOT</version>
+    <version>0.3.4</version>
     <name>jPasskit Parent</name>
     <packaging>pom</packaging>
 
@@ -21,7 +21,7 @@
         <url>scm:git:git@github.com:drallgood/jpasskit.git</url>
         <connection>scm:git:git@github.com:drallgood/jpasskit.git</connection>
         <developerConnection>scm:git:git@github.com:drallgood/jpasskit.git</developerConnection>
-        <tag>jpasskit-0.3.3</tag>
+        <tag>jpasskit-parent-0.3.4</tag>
     </scm>
 
     <developers>
