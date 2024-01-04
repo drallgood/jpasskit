@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 
 ## 0.4.0 - 2024-??-??
+### Removed
+
+- !!! Support for Java 8 was removed. Please use 0.3.x on Java 8. 
 
 ## 0.3.4 - 2024-01-04
 ### Changed
