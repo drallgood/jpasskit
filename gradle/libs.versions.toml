@@ -17,6 +17,7 @@ org-restlet-jse-org-restlet = "2.4.3"
 org-restlet-jse-org-restlet-ext-simple = "2.4.3"
 org-slf4j-slf4j-api = "2.0.9"
 org-testng-testng = "7.9.0"
+com-benjaminsproule-license = "0.16.2"
 
 [libraries]
 com-eatthepath-pushy = { module = "com.eatthepath:pushy", version.ref = "com-eatthepath-pushy" }
@@ -34,3 +35,6 @@ org-restlet-jse-org-restlet = { module = "org.restlet.jse:org.restlet", version.
 org-restlet-jse-org-restlet-ext-simple = { module = "org.restlet.jse:org.restlet.ext.simple", version.ref = "org-restlet-jse-org-restlet-ext-simple" }
 org-slf4j-slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "org-slf4j-slf4j-api" }
 org-testng-testng = { module = "org.testng:testng", version.ref = "org-testng-testng" }
+com-benjaminsproule-license = { module = "com.benjaminsproule.license:com.benjaminsproule.license.gradle.plugin", version.ref = "com-benjaminsproule-license" }
+
+[plugins]
