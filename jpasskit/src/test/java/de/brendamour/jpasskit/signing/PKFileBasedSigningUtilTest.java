@@ -46,7 +46,7 @@ public class PKFileBasedSigningUtilTest {
     @Test
     public void testManifest() throws Exception {
 
-        File temporaryPassDir = new File("target/");
+        File temporaryPassDir = new File("build/");
         File manifestJSONFile = new File(getPathFromClasspath("pass.json"));
 
         PKSigningInformation pkSigningInformation =
@@ -66,7 +66,7 @@ public class PKFileBasedSigningUtilTest {
         passBuilder.getBarcodeBuilders().get(0)
                 .messageEncoding(Charset.forName("utf-8"));
 
-        createZipAndAssert(passBuilder.build(), "target/passFileBasedLoaded.zip");
+        createZipAndAssert(passBuilder.build(), "build/resources/test/passFileBasedLoaded.zip");
     }
 
     @Test
@@ -81,7 +81,7 @@ public class PKFileBasedSigningUtilTest {
                 .passTypeIdentifier("pti")
                 .teamIdentifier("ti");
 
-        createZipAndAssert(passBuilder.build(), "target/passFileBasedGenerated.zip");
+        createZipAndAssert(passBuilder.build(), "build/resources/test/passFileBasedGenerated.zip");
     }
 
     @Test
@@ -102,7 +102,7 @@ public class PKFileBasedSigningUtilTest {
                 .passTypeIdentifier("pti")
                 .teamIdentifier("ti");
 
-        createZipAndAssert(passBuilder.build(), "target/passFileBasedGenerated_andiOS8Fallback.zip");
+        createZipAndAssert(passBuilder.build(), "build/resources/test/passFileBasedGenerated_andiOS8Fallback.zip");
     }
 
     @Test
@@ -122,7 +122,7 @@ public class PKFileBasedSigningUtilTest {
                 .termsAndConditions("T&C")
                 .requiredPersonalizationField(PKPassPersonalizationField.PKPassPersonalizationFieldName);
 
-        createZipAndAssert(passBuilder.build(), personalization.build(), "target/passFileBasedGenerated.zip");
+        createZipAndAssert(passBuilder.build(), personalization.build(), "build/resources/test/passFileBasedGenerated.zip");
     }
 
     private void createZipAndAssert(PKPass pkPass, String fileName) throws Exception {

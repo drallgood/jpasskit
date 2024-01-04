@@ -63,7 +63,7 @@ public class PKInMemorySigningUtilTest {
 
         PKPass pass = new ObjectMapper().readValue(new File(getPathFromClasspath("pass.json")), PKPass.class);
 
-        createZipAndAssert(pkPassTemplateFolder, pass, "target/passInMemoryFolder.zip");
+        createZipAndAssert(pkPassTemplateFolder, pass, "build/resources/test/passInMemoryFolder.zip");
     }
 
     @Test
@@ -79,7 +79,7 @@ public class PKInMemorySigningUtilTest {
 
         PKPass pass = new ObjectMapper().readValue(new File(getPathFromClasspath("pass.json")), PKPass.class);
 
-        createZipAndAssert(pkPassTemplateInMemory, pass, "target/passInMemoryStream.zip");
+        createZipAndAssert(pkPassTemplateInMemory, pass, "build/resources/test/passInMemoryStream.zip");
     }
 
     @Test
@@ -100,7 +100,7 @@ public class PKInMemorySigningUtilTest {
                 .termsAndConditions("T&C")
                 .requiredPersonalizationField(PKPassPersonalizationField.PKPassPersonalizationFieldName);
 
-        createZipAndAssert(pkPassTemplateInMemory, pass, personalization.build(), "target/passInMemoryStream.zip");
+        createZipAndAssert(pkPassTemplateInMemory, pass, personalization.build(), "build/resources/test/passInMemoryStream.zip");
     }
 
     @Test

@@ -7,6 +7,7 @@
 plugins {
     `java-library`
     `maven-publish`
+    `jvm-test-suite`
 }
 
 repositories {
@@ -37,3 +38,8 @@ tasks.withType<JavaCompile>() {
 tasks.withType<Javadoc>() {
     options.encoding = "UTF-8"
 }
+
+tasks.register<Wrapper>("wrapper") {
+    gradleVersion = "8.5"
+}
+tasks.register("prepareKotlinBuildScriptModel"){}
