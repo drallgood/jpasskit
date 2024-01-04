@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<licensePluginReport goal="FORMAT" timestamp="1704327009545">
+    <module artifactId="jpasskit.server" groupId="de.brendamour" version="0.4.0-SNAPSHOT"/>
+    <files>
+        <file path=".checkstyle" result="UNKNOWN"/>
+        <file path="site/license-plugin-report.xml" result="ADDED"/>
+        <file path="src/main/java/de/brendamour/jpasskit/server/GetPKPassResponse.java" result="REPLACED"/>
+        <file path="src/main/java/de/brendamour/jpasskit/server/IPKRestletServerResourceFactory.java" result="REPLACED"/>
+        <file path="src/main/java/de/brendamour/jpasskit/server/PKAuthTokenNotValidException.java" result="REPLACED"/>
+        <file path="src/main/java/de/brendamour/jpasskit/server/PKDeviceResource.java" result="REPLACED"/>
+        <file path="src/main/java/de/brendamour/jpasskit/server/PKDeviceResourceFactory.java" result="REPLACED"/>
+        <file path="src/main/java/de/brendamour/jpasskit/server/PKLogResource.java" result="REPLACED"/>
+        <file path="src/main/java/de/brendamour/jpasskit/server/PKLogResourceFactory.java" result="REPLACED"/>
+        <file path="src/main/java/de/brendamour/jpasskit/server/PKPassNotModifiedException.java" result="REPLACED"/>
+        <file path="src/main/java/de/brendamour/jpasskit/server/PKPassResource.java" result="REPLACED"/>
+        <file path="src/main/java/de/brendamour/jpasskit/server/PKPassResourceFactory.java" result="REPLACED"/>
+        <file path="src/main/java/de/brendamour/jpasskit/server/PKPersonalizePassPayload.java" result="REPLACED"/>
+        <file path="src/main/java/de/brendamour/jpasskit/server/PKPersonalizePassResource.java" result="REPLACED"/>
+        <file path="src/main/java/de/brendamour/jpasskit/server/PKPersonalizePassResourceFactory.java" result="REPLACED"/>
+        <file path="src/main/java/de/brendamour/jpasskit/server/PKRestServer.java" result="REPLACED"/>
+        <file path="src/main/java/de/brendamour/jpasskit/server/PKSerialNumbersOfPassesForDeviceResponse.java" result="REPLACED"/>
+        <file path="src/main/java/de/brendamour/jpasskit/server/PKServerConfigurationException.java" result="REPLACED"/>
+        <file path="src/main/resources/log4j.properties" result="REPLACED"/>
+        <file path="src/test/java/de/brendamour/jpasskit/server/PKRestletServerResourceFactory.java" result="REPLACED"/>
+        <file path="src/test/java/de/brendamour/jpasskit/server/ServerActivatorTest.java" result="REPLACED"/>
+        <file path="src/test/resources/coupons.raw/de.lproj/pass.strings" result="UNKNOWN"/>
+        <file path="src/test/resources/coupons.raw/en.lproj/pass.strings" result="UNKNOWN"/>
+        <file path="src/test/resources/passbook/AppleWWDRCA.pem" result="UNKNOWN"/>
+    </files>
+</licensePluginReport>
