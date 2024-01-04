@@ -1,7 +1,7 @@
 # This workflow will build a Java project with Maven
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
 
-name: Java CI with Maven
+name: Java CI with Gradle
 
 on:
   push:
@@ -23,7 +23,7 @@ jobs:
         java-version: '11'
         distribution: 'adopt'
     - name: Setup Gradle
-      uses: gradle/gradle-build-action@v3
+      uses: gradle/gradle-build-action@v2
       with:
         add-job-summary-as-pr-comment: on-failure # Valid values are 'never' (default), 'always', and 'on-failure'
         dependency-graph: generate
