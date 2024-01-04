@@ -8,6 +8,7 @@ plugins {
     `java-library`
     `maven-publish`
     `jvm-test-suite`
+    signing
 }
 
 repositories {
@@ -24,11 +25,16 @@ repositories {
 group = "de.brendamour"
 version = "0.4.0-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
+extra["isReleaseVersion"] = !version.toString().endsWith("SNAPSHOT")
 
 publishing {
     publications.create<MavenPublication>("maven") {
         from(components["java"])
     }
+}
+
+signing {
+    sign(publishing.publications["maven"])
 }
 
 tasks.withType<JavaCompile>() {
