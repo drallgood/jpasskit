@@ -61,8 +61,9 @@ tasks.register("prepareKotlinBuildScriptModel"){}
 
 license {
     header  = project.file("header.txt")
+    skipExistingHeaders = true
     ext.set("year", Calendar.getInstance().get(Calendar.YEAR))
     ext.set("owner", "Patrice Brend'amour")
     ext.set("email", "patrice@brendamour.net")
-    excludes(arrayListOf("*pom.xm","*.checkstyle","**/*.cer","**/*.pem","**/*.p12","**/*.ignored_file","site/*","**/*.json"))
+    excludes(arrayListOf("*pom.xml","*.checkstyle","**/*.cer","**/*.pem","**/*.p12","**/*.ignored_file","site/*","**/*.json","**/*.png"))
 }
