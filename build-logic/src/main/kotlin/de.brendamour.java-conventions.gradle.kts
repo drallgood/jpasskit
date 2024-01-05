@@ -27,8 +27,11 @@ repositories {
 
 group = "de.brendamour"
 version = "0.4.0-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_11
 extra["isReleaseVersion"] = !version.toString().endsWith("SNAPSHOT")
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+}
 
 publishing {
     publications.create<MavenPublication>("maven") {
