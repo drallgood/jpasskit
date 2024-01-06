@@ -63,7 +63,8 @@ public class PKInMemorySigningUtilTest {
 
         PKPass pass = new ObjectMapper().readValue(new File(getPathFromClasspath("pass.json")), PKPass.class);
 
-        createZipAndAssert(pkPassTemplateFolder, pass, "build/resources/test/passInMemoryFolder.zip");
+        File passfile = File.createTempFile("passInMemoryFolder", ".zip");
+        createZipAndAssert(pkPassTemplateFolder, pass, passfile);
     }
 
     @Test
@@ -79,7 +80,8 @@ public class PKInMemorySigningUtilTest {
 
         PKPass pass = new ObjectMapper().readValue(new File(getPathFromClasspath("pass.json")), PKPass.class);
 
-        createZipAndAssert(pkPassTemplateInMemory, pass, "build/resources/test/passInMemoryStream.zip");
+        File passfile = File.createTempFile("passInMemoryStream", ".zip");
+        createZipAndAssert(pkPassTemplateInMemory, pass, passfile);
     }
 
     @Test
@@ -100,7 +102,8 @@ public class PKInMemorySigningUtilTest {
                 .termsAndConditions("T&C")
                 .requiredPersonalizationField(PKPassPersonalizationField.PKPassPersonalizationFieldName);
 
-        createZipAndAssert(pkPassTemplateInMemory, pass, personalization.build(), "build/resources/test/passInMemoryStream.zip");
+        File passfile = File.createTempFile("passInMemoryStream", ".zip");
+        createZipAndAssert(pkPassTemplateInMemory, pass, personalization.build(), passfile);
     }
 
     @Test
@@ -125,11 +128,11 @@ public class PKInMemorySigningUtilTest {
 
     }
 
-    private void createZipAndAssert(IPKPassTemplate pkPassTemplate, PKPass pkPass, String fileName) throws Exception {
-        createZipAndAssert(pkPassTemplate, pkPass, null, fileName);
+    private void createZipAndAssert(IPKPassTemplate pkPassTemplate, PKPass pkPass, File passZipFile) throws Exception {
+        createZipAndAssert(pkPassTemplate, pkPass, null, passZipFile);
     }
 
-    private void createZipAndAssert(IPKPassTemplate pkPassTemplate, PKPass pkPass, PKPersonalization personalization, String fileName)
+    private void createZipAndAssert(IPKPassTemplate pkPassTemplate, PKPass pkPass, PKPersonalization personalization, File passZipFile)
             throws Exception {
         PKSigningInformation pkSigningInformation = new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
                 KEYSTORE_PATH, KEYSTORE_PASSWORD, APPLE_WWDRCA);
@@ -144,7 +147,6 @@ public class PKInMemorySigningUtilTest {
         }
         ByteArrayInputStream inputStream = new ByteArrayInputStream(signedAndZippedPkPassArchive);
 
-        File passZipFile = new File(fileName);
         if (passZipFile.exists()) {
             passZipFile.delete();
         }
