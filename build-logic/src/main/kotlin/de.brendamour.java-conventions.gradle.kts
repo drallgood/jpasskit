@@ -31,18 +31,48 @@ extra["isReleaseVersion"] = !version.toString().endsWith("SNAPSHOT")
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
+    withJavadocJar()
+    withSourcesJar()
 }
 
 publishing {
     publications.create<MavenPublication>("maven") {
         from(components["java"])
+
+        pom {
+            description = "Java Library for Apple PassBook Web Service API (PARENT POM)"
+            url.set("https://github.com/drallgood/jpasskit")
+            inceptionYear.set("2012")
+            licenses {
+                license {
+                    name.set("The Apache License, Version 2.0")
+                    url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                }
+            }
+            developers {
+                developer {
+                    id.set("patrice")
+                    name.set("Patrice Brend'amour")
+                    email.set("patrice@brendamour.net")
+                    url.set("https://brendamour.net")
+                    timezone.set("Europe/Vienna")
+                }
+            }
+            scm {
+                connection.set("scm:https://github.com/drallgood/jpasskit.git")
+                developerConnection.set("scm:git@github.com:drallgood/jpasskit.git")
+                url.set("https://github.com/drallgood/jpasskit")
+            }
+        }
     }
 }
 
 signing {
-    val signingKey: String? by project
-    val signingPassword: String? by project
-    useInMemoryPgpKeys(signingKey, signingPassword)
+    if (project.hasProperty("signingKey")) {
+        useInMemoryPgpKeys(properties["signingKey"].toString(), properties["signingPassword"].toString())
+    } else {
+        useGpgCmd()
+    }
     sign(publishing.publications["maven"])
 }
 
