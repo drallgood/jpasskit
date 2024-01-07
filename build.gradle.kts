@@ -2,12 +2,11 @@ plugins {
     alias(libs.plugins.io.github.gradle.nexus.publish.plugin)
 }
 
+version =  "0.4.0-SNAPSHOT"
+
 nexusPublishing {
     repositories {
-        sonatype {
-            /*stagingProfileId.set()*/
-            packageGroup = "de.brendamour"
-        }
+        sonatype ()
     }
 }
 

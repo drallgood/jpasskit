@@ -10,5 +10,6 @@ pluginManagement {
 }
 
 rootProject.name = "jpasskit-parent"
+
 include(":jpasskit.server")
 include(":jpasskit")
