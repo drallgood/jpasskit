@@ -61,6 +61,7 @@
                     </properties>
                     <excludes>
                         <exclude>*pom.xml</exclude>
+                        <exclude>site/*</exclude>
                     </excludes>
                 </configuration>
                 <executions>

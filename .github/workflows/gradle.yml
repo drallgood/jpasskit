@@ -1,13 +1,16 @@
 # This workflow will build a Java project with Maven
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
 
-name: Java CI with Maven
+name: Java CI with Gradle
 
 on:
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+
+permissions:
+  pull-requests: write
 
 jobs:
   build:
@@ -19,14 +22,13 @@ jobs:
       with:
         java-version: '11'
         distribution: 'adopt'
-    - name: Cache Maven packages
-      uses: actions/cache@v2
+    - name: Setup Gradle
+      uses: gradle/gradle-build-action@v2.11.1
       with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
-    - name: Build with Maven
-      run: mvn --batch-mode --update-snapshots install
+        generate-job-summary: 'true' # Valid values are 'always' (default), 'never', and 'on-failure'
+        dependency-graph: generate
+    - name: Execute Gradle build
+      run: ./gradlew build --scan
 
   deploy:
     runs-on: ubuntu-latest
@@ -42,17 +44,12 @@ jobs:
         server-id: ossrh
         server-username: MAVEN_USERNAME
         server-password: MAVEN_PASSWORD
-        gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }} # Value of the GPG private key to import
-        gpg-passphrase: MAVEN_GPG_PASSPHRASE # env variable for GPG private key passphrase
-    - name: Cache Maven packages
-      uses: actions/cache@v2
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
+    - name: Setup Gradle
+      uses: gradle/gradle-build-action@v2.11.1
     - name: Publish Snapshot package
-      run: mvn --batch-mode -D skipTests --activate-profiles signgpg --no-transfer-progress deploy
+      run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository
       env:
-       MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-       MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
-       MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+       ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.OSSRH_USERNAME }}
+       ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.OSSRH_TOKEN }}
+       ORG_GRADLE_PROJECT_signingKey: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }} # Value of the GPG private key to import
+       ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.MAVEN_GPG_PASSPHRASE }} # env variable for GPG private key passphrase

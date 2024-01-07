@@ -102,6 +102,7 @@
                         <exclude>**/*.pem</exclude>
                         <exclude>**/*.p12</exclude>
                         <exclude>**/*.ignored_file</exclude>
+                        <exclude>site/*</exclude>
                     </excludes>
                 </configuration>
                 <executions>

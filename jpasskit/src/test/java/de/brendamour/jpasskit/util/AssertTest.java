@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (C) 2024 Patrice Brend'amour <patrice@brendamour.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,11 +31,11 @@ public class AssertTest {
 
     @Test
     public void notNullWithDummyValues() {
-        notNull(Integer.valueOf(42), "Test comment");
+        notNull(42, "Test comment");
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() {
-                notNull(null, "Instance <%s> is empty", null);
+                notNull(null, "Instance <%s> is empty", (Object) null);
             }
         }).isInstanceOf(IllegalArgumentException.class).hasMessage("Instance <null> is empty");
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {

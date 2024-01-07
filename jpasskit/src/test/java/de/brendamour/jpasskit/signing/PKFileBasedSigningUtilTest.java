@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (C) 2024 Patrice Brend'amour <patrice@brendamour.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -46,7 +46,7 @@ public class PKFileBasedSigningUtilTest {
     @Test
     public void testManifest() throws Exception {
 
-        File temporaryPassDir = new File("target/");
+        File temporaryPassDir = Files.createTempDirectory("pass").toFile();
         File manifestJSONFile = new File(getPathFromClasspath("pass.json"));
 
         PKSigningInformation pkSigningInformation =
@@ -66,7 +66,8 @@ public class PKFileBasedSigningUtilTest {
         passBuilder.getBarcodeBuilders().get(0)
                 .messageEncoding(Charset.forName("utf-8"));
 
-        createZipAndAssert(passBuilder.build(), "target/passFileBasedLoaded.zip");
+        File passfile = File.createTempFile("passFileBasedLoaded", ".zip");
+        createZipAndAssert(passBuilder.build(), passfile);
     }
 
     @Test
@@ -81,7 +82,8 @@ public class PKFileBasedSigningUtilTest {
                 .passTypeIdentifier("pti")
                 .teamIdentifier("ti");
 
-        createZipAndAssert(passBuilder.build(), "target/passFileBasedGenerated.zip");
+        File passfile = File.createTempFile("passFileBasedGenerated", ".zip");
+        createZipAndAssert(passBuilder.build(), passfile);
     }
 
     @Test
@@ -102,7 +104,8 @@ public class PKFileBasedSigningUtilTest {
                 .passTypeIdentifier("pti")
                 .teamIdentifier("ti");
 
-        createZipAndAssert(passBuilder.build(), "target/passFileBasedGenerated_andiOS8Fallback.zip");
+        File passfile = File.createTempFile("passFileBasedGenerated_andiOS8Fallback", ".zip");
+        createZipAndAssert(passBuilder.build(), passfile);
     }
 
     @Test
@@ -122,14 +125,15 @@ public class PKFileBasedSigningUtilTest {
                 .termsAndConditions("T&C")
                 .requiredPersonalizationField(PKPassPersonalizationField.PKPassPersonalizationFieldName);
 
-        createZipAndAssert(passBuilder.build(), personalization.build(), "target/passFileBasedGenerated.zip");
+        File passfile = File.createTempFile("passFileBasedGenerated", ".zip");
+        createZipAndAssert(passBuilder.build(), personalization.build(), passfile);
     }
 
-    private void createZipAndAssert(PKPass pkPass, String fileName) throws Exception {
+    private void createZipAndAssert(PKPass pkPass, File fileName) throws Exception {
         createZipAndAssert(pkPass, null, fileName);
     }
 
-    private void createZipAndAssert(PKPass pkPass, PKPersonalization personalization, String fileName) throws Exception {
+    private void createZipAndAssert(PKPass pkPass, PKPersonalization personalization, File passZipFile) throws Exception {
         PKSigningInformation pkSigningInformation =
                 new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
                 KEYSTORE_PATH, KEYSTORE_PASSWORD, APPLE_WWDRCA);
@@ -146,7 +150,6 @@ public class PKFileBasedSigningUtilTest {
         }
         ByteArrayInputStream inputStream = new ByteArrayInputStream(signedAndZippedPkPassArchive);
 
-        File passZipFile = new File(fileName);
         if (passZipFile.exists()) {
             passZipFile.delete();
         }
@@ -155,7 +158,7 @@ public class PKFileBasedSigningUtilTest {
         Assert.assertTrue(passZipFile.length() > 0);
         AssertZip.assertValid(passZipFile);
 
-        Path pkpassFile = Paths.get(fileName);
+        Path pkpassFile = passZipFile.toPath();
         FileSystem fs = FileSystems.newFileSystem(pkpassFile, (ClassLoader) null);
         Path bgFilePath = fs.getPath(PKPassTemplateInMemory.PK_ICON);
         Assert.assertTrue(Files.exists(bgFilePath));

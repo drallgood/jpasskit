@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (C) 2024 Patrice Brend'amour <patrice@brendamour.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
