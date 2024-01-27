@@ -16,7 +16,7 @@ dependencies {
     api(libs.commons.codec.commons.codec)
     api(libs.commons.io.commons.io)
     api(libs.org.apache.commons.commons.lang3)
-    api(libs.org.bouncycastle.bcpkix.jdk15on)
+    api(libs.org.bouncycastle.bcpkix.jdk18on)
     api(libs.org.slf4j.slf4j.api)
     testImplementation(libs.org.apache.logging.log4j.log4j.slf4j.impl)
     testImplementation(libs.org.assertj.assertj.core)
