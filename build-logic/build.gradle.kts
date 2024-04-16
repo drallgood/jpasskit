@@ -12,6 +12,7 @@ plugins {
 
 dependencies {
     implementation(libs.com.benjaminsproule.license)
+    implementation(libs.net.researchgate.release)
 }
 
 repositories {

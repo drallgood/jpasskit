@@ -1,5 +1,8 @@
+import org.gradle.tooling.GradleConnector
+
 plugins {
     alias(libs.plugins.io.github.gradle.nexus.publish.plugin)
+    alias(libs.plugins.net.researchgate.release)
 }
 
 version =  "0.4.0-SNAPSHOT"
