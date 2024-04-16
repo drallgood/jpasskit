@@ -5,7 +5,10 @@ plugins {
     alias(libs.plugins.net.researchgate.release)
 }
 
-version =  "0.4.0-SNAPSHOT"
+allprojects {
+    group = "de.brendamour"
+    version = "0.4.0-SNAPSHOT"
+}
 
 nexusPublishing {
     repositories {

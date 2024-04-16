@@ -25,8 +25,6 @@ repositories {
     }
 }
 
-group = "de.brendamour"
-version = "0.4.0-SNAPSHOT"
 extra["isReleaseVersion"] = !version.toString().endsWith("SNAPSHOT")
 
 java {
