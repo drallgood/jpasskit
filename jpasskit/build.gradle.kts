@@ -6,7 +6,6 @@
 
 plugins {
     id("de.brendamour.java-conventions")
-    id("net.researchgate.release")
 }
 
 dependencies {
@@ -23,7 +22,6 @@ dependencies {
     testImplementation(libs.org.assertj.assertj.core)
     testImplementation(libs.org.mockito.mockito.core)
     testImplementation(libs.org.testng.testng)
-    implementation(libs.net.researchgate.release)
 }
 
 description = "jPasskit"
