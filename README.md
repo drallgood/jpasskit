@@ -7,9 +7,9 @@ There are two separate projects:
 1. jPasskit - Which contains the Pass objects and useful utilities. It is designed to be included in existing Webservices, thus not including any request handling.
 2. jPasskit Server -  Which contains an additional REST Webservice, that can be included in existing Applications that do not use their own Webservice already. Note: This is still no standalone implementation. Things like storing passes and handling device (un)registrations are left open for the Application to implement.
 
-**Current stable release:** 0.3.4
+**Current stable release:** 0.4.0
 
-**Development Version:** 0.4.0-SNAPSHOT [![Build Status][image-1]][1] 
+**Development Version:** 0.4.1-SNAPSHOT [![Build Status][image-1]][1] 
 [![Codacy Badge][image-2]][2]
 [![DepShield Badge][image-3]][3]
 
@@ -200,6 +200,6 @@ The process in broad strokes works as follows:
 [2]:	https://app.codacy.com/app/drallgood/jpasskit?utm_source=github.com&utm_medium=referral&utm_content=drallgood/jpasskit&utm_campaign=Badge_Grade_Settings
 [3]:	https://depshield.github.io
 
-[image-1]:	https://github.com/drallgood/jpasskit/actions/workflows/maven.yml/badge.svg
-[image-2]:	https://api.codacy.com/project/badge/Grade/06abe09a4e9a4d52b044230d4a811ca2
+[image-1]:	https://github.com/drallgood/jpasskit/actions/workflows/gradle.yml/badge.svg
+[image-2]:	https://app.codacy.com/project/badge/Grade/e8d0e390a9c74e1babcac19b45ba89c5
 [image-3]:	https://depshield.sonatype.org/badges/drallgood/jpasskit/depshield.svg
