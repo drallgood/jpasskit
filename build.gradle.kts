@@ -1,6 +1,6 @@
 import org.gradle.tooling.GradleConnector
 import net.researchgate.release.ReleaseExtension
-import net.researchgate.release.tasks.CommitNewVersion
+import net.researchgate.release.tasks.UpdateVersion
 
 plugins {
     alias(libs.plugins.io.github.gradle.nexus.publish.plugin)
@@ -29,17 +29,15 @@ subprojects {
 }
 
 configure<ReleaseExtension> {
+    failOnCommitNeeded.set(false)
     with(git) {
         requireBranch.set("gradle_release_test")
+        pushToRemote.set("")
 //        requireBranch.set("master")
     }
 }
 
-tasks.withType<CommitNewVersion> {
-    shouldRunAfter("publishToSonatype")
-    shouldRunAfter("closeAndReleaseSonatypeStagingRepository")
-}
-
+tasks.getByPath(":afterReleaseBuild").dependsOn("publishToSonatype","closeAndReleaseSonatypeStagingRepository")
 
 // Workaround for https://github.com/researchgate/gradle-release/issues/184
 configure(listOf(tasks.release, tasks.runBuildTasks)) {
