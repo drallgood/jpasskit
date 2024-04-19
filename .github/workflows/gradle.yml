@@ -28,7 +28,7 @@ jobs:
         generate-job-summary: 'true' # Valid values are 'always' (default), 'never', and 'on-failure'
         dependency-graph: generate
     - name: Execute Gradle build
-      run: ./gradlew build --scan
+      run: ./gradlew build --scan --info
 
   deploy:
     runs-on: ubuntu-latest
@@ -47,7 +47,7 @@ jobs:
     - name: Setup Gradle
       uses: gradle/gradle-build-action@v2.11.1
     - name: Publish Snapshot package
-      run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository
+      run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository --info
       env:
        ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.OSSRH_USERNAME }}
        ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.OSSRH_TOKEN }}
