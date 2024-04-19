@@ -10,7 +10,6 @@ plugins {
 
 allprojects {
     group = "de.brendamour"
-    version = "0.4.0-SNAPSHOT"
 }
 
 nexusPublishing {
@@ -29,15 +28,12 @@ subprojects {
 }
 
 configure<ReleaseExtension> {
-    failOnCommitNeeded.set(false)
     with(git) {
-        requireBranch.set("gradle_release_test")
-        pushToRemote.set("")
-//        requireBranch.set("master")
+        requireBranch.set("master")
     }
 }
 
-tasks.getByPath(":afterReleaseBuild").dependsOn("publishToSonatype","closeAndReleaseSonatypeStagingRepository")
+
 
 // Workaround for https://github.com/researchgate/gradle-release/issues/184
 configure(listOf(tasks.release, tasks.runBuildTasks)) {

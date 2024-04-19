@@ -46,6 +46,8 @@ publishing {
         pom {
             description = "Java Library for Apple PassBook Web Service API (PARENT POM)"
             url.set("https://github.com/drallgood/jpasskit")
+            name.set(project.displayName)
+            description.set(project.description)
             inceptionYear.set("2012")
             licenses {
                 license {

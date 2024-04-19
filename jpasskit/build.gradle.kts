@@ -24,7 +24,7 @@ dependencies {
     testImplementation(libs.org.testng.testng)
 }
 
-description = "jPasskit"
+description = "Java Library for Apple PassBook Web Service API<"
 
 java {
     withJavadocJar()
