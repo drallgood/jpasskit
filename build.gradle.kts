@@ -1,6 +1,5 @@
 import org.gradle.tooling.GradleConnector
 import net.researchgate.release.ReleaseExtension
-import net.researchgate.release.tasks.UpdateVersion
 
 plugins {
     alias(libs.plugins.io.github.gradle.nexus.publish.plugin)

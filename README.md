@@ -33,8 +33,25 @@ or:
 **The released artifacts are now available at Maven Central**
 
 Snapshot versions can be found here: https://oss.sonatype.org/content/repositories/snapshots/
- 
- 
+
+### Using Gradle
+	
+	dependencies {
+    	api("de.brendamour:jpasskit:0.4.0")
+	}
+
+or:
+
+	dependencies {
+    	api("de.brendamour:jpasskit.server:0.4.0")
+	}
+
+
+**The released artifacts are now available at Maven Central**
+
+Snapshot versions can be found here: https://oss.sonatype.org/content/repositories/snapshots/
+
+
 ## Using jPasskit
 
 Using jPasskit is pretty straight forward:
