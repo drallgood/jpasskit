@@ -22,4 +22,30 @@ subprojects {
     initializeSonatypeStagingRepository {
         shouldRunAfter(tasks.withType<Sign>())
     }
+
+}
+
+// Workaround for https://github.com/researchgate/gradle-release/issues/184
+configure(listOf(tasks.release, tasks.runBuildTasks)) {
+    configure {
+        actions.clear()
+        doLast {
+            GradleConnector
+                    .newConnector()
+                    .forProjectDirectory(layout.projectDirectory.asFile)
+                    .connect()
+                    .use { projectConnection ->
+                        val buildLauncher = projectConnection
+                                .newBuild()
+                                .forTasks(*tasks.toTypedArray())
+                                .setStandardInput(System.`in`)
+                                .setStandardOutput(System.out)
+                                .setStandardError(System.err)
+                        gradle.startParameter.excludedTaskNames.forEach {
+                            buildLauncher.addArguments("-x", it)
+                        }
+                        buildLauncher.run()
+                    }
+        }
+    }
 }
