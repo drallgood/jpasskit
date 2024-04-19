@@ -28,6 +28,7 @@ subprojects {
 }
 
 configure<ReleaseExtension> {
+    tagTemplate.set("jpasskit-${version}")
     with(git) {
         requireBranch.set("master")
     }
