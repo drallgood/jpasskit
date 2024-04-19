@@ -1,13 +1,15 @@
 import org.gradle.tooling.GradleConnector
+import net.researchgate.release.ReleaseExtension
+import net.researchgate.release.tasks.UpdateVersion
 
 plugins {
     alias(libs.plugins.io.github.gradle.nexus.publish.plugin)
     alias(libs.plugins.net.researchgate.release)
+    `maven-publish`
 }
 
 allprojects {
     group = "de.brendamour"
-    version = "0.4.0-SNAPSHOT"
 }
 
 nexusPublishing {
@@ -24,6 +26,14 @@ subprojects {
     }
 
 }
+
+configure<ReleaseExtension> {
+    with(git) {
+        requireBranch.set("master")
+    }
+}
+
+
 
 // Workaround for https://github.com/researchgate/gradle-release/issues/184
 configure(listOf(tasks.release, tasks.runBuildTasks)) {
