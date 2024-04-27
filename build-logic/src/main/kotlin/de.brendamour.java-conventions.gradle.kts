@@ -46,7 +46,11 @@ publishing {
         pom {
             url.set("https://github.com/drallgood/jpasskit")
             name.set(project.name)
-            description.set(project.description)
+            if (project.description != null) {
+                description.set(project.description)
+            } else {
+                description.set("Java Library for Apple PassBook Web Service API")
+            }
             inceptionYear.set("2012")
             licenses {
                 license {
