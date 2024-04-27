@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 0.4.1 - 2024-??-??
+## 0.4.1 - 2024-04-27
 ### Changed
 
 - many more dependency updates to keep things secure
