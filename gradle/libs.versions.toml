@@ -5,7 +5,7 @@
 com-eatthepath-pushy = "0.15.4"
 com-fasterxml-jackson-core-jackson-databind = "2.17.0"
 com-fasterxml-jackson-datatype-jackson-datatype-jsr310 = "2.17.0"
-com-google-guava-guava = "33.1.0-jre"
+com-google-guava-guava = "33.2.1-jre"
 commons-codec-commons-codec = "1.16.1"
 commons-io-commons-io = "2.16.1"
 org-apache-commons-commons-lang3 = "3.14.0"
