@@ -35,17 +35,32 @@ jobs:
     if:  ${{ github.ref == 'refs/heads/master' }}
     needs: build
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Apache Maven Central
-      uses: actions/setup-java@v2
-      with: # running setup-java again overwrites the settings.xml
-        distribution: 'adopt'
-        java-version: '11'
+    - uses: actions/checkout@v4
+    - name: Set up Java
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
         server-id: ossrh
         server-username: MAVEN_USERNAME
         server-password: MAVEN_PASSWORD
+        gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+        gpg-passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+
     - name: Setup Gradle
       uses: gradle/gradle-build-action@v2.11.1
+
+    - name: Publish
+      run: ./gradlew publish jreleaserFullRelease --info
+      env:
+        JRELEASER_NEXUS2_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+        JRELEASER_NEXUS2_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+        JRELEASER_MAVENCENTRAL_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+        JRELEASER_MAVENCENTRAL_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+        JRELEASER_GPG_SECRET_KEY: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }} # Value of the GPG private key to import
+        JRELEASER_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }} # env variable for GPG private key passphrase
+        JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Publish Snapshot package
       run: ./gradlew publish jreleaserFullRelease --info
       env:

@@ -94,7 +94,11 @@ jreleaser {
                 create("release-deploy") {
                     active.set(Active.RELEASE)
                     url.set("https://central.sonatype.com/api/v1/publisher")
-                    stagingRepositories.set(listOf(layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath))
+                    stagingRepositories.set(
+                        listOf(
+                            layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath
+                        )
+                    )
                     applyMavenCentralRules.set(true)
                 }
             }
@@ -103,7 +107,11 @@ jreleaser {
                     active.set(Active.SNAPSHOT)
                     url.set("https://central.sonatype.com/api/v1/publisher")
                     snapshotUrl.set("https://central.sonatype.com/repository/maven-snapshots")
-                    stagingRepositories.set(listOf(layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath))
+                    stagingRepositories.set(
+                        listOf(
+                            layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath
+                        )
+                    )
                     applyMavenCentralRules.set(true)
                     closeRepository.set(true)
                     snapshotSupported.set(true)
@@ -115,8 +123,13 @@ jreleaser {
 }
 
 signing {
-    if (project.hasProperty("signingKeyId")) {
-        useInMemoryPgpKeys(properties["signingKeyId"].toString(),properties["signingKey"].toString(), properties["signingPassword"].toString())
+    val secretKey = System.getenv("JRELEASER_GPG_SECRET_KEY")
+    val passphrase = System.getenv("JRELEASER_GPG_PASSPHRASE")
+    if (secretKey != null && passphrase != null) {
+        useInMemoryPgpKeys(
+            secretKey,
+            passphrase
+        )
     } else {
         useGpgCmd()
     }
@@ -134,13 +147,25 @@ tasks.withType<Javadoc>() {
 tasks.register<Wrapper>("wrapper") {
     gradleVersion = "8.7"
 }
-tasks.register("prepareKotlinBuildScriptModel"){}
+tasks.register("prepareKotlinBuildScriptModel") {}
 
 license {
-    header  = project.file("header.txt")
+    header = project.file("header.txt")
     skipExistingHeaders = true
     ext.set("year", Calendar.getInstance().get(Calendar.YEAR))
     ext.set("owner", "Patrice Brend'amour")
     ext.set("email", "patrice@brendamour.net")
-    excludes(arrayListOf("*pom.xml","*.checkstyle","**/*.cer","**/*.pem","**/*.p12","**/*.ignored_file","site/*","**/*.json","**/*.png"))
+    excludes(
+        arrayListOf(
+            "*pom.xml",
+            "*.checkstyle",
+            "**/*.cer",
+            "**/*.pem",
+            "**/*.p12",
+            "**/*.ignored_file",
+            "site/*",
+            "**/*.json",
+            "**/*.png"
+        )
+    )
 }
