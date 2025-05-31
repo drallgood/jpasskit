@@ -47,9 +47,12 @@ jobs:
     - name: Setup Gradle
       uses: gradle/gradle-build-action@v2.11.1
     - name: Publish Snapshot package
-      run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository --info
+      run: ./gradlew jreleaserFullRelease --info
       env:
-       ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.OSSRH_USERNAME }}
-       ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.OSSRH_TOKEN }}
-       ORG_GRADLE_PROJECT_signingKey: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }} # Value of the GPG private key to import
-       ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.MAVEN_GPG_PASSPHRASE }} # env variable for GPG private key passphrase
+        JRELEASER_NEXUS2_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+        JRELEASER_NEXUS2_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+        JRELEASER_MAVENCENTRAL_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+        JRELEASER_MAVENCENTRAL_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+        JRELEASER_GPG_SECRET_KEY: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }} # Value of the GPG private key to import
+        JRELEASER_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }} # env variable for GPG private key passphrase
+        JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

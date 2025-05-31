@@ -14,7 +14,7 @@ dependencies {
     api(libs.org.restlet.jse.org.restlet.ext.simple)
 }
 
-description = "Java Server Example for Apple PassBook Web Service API"
+project.description = "Java Server Example for Apple PassBook Web Service API"
 
 java {
     withJavadocJar()

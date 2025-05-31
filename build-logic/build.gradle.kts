@@ -12,7 +12,11 @@ plugins {
 
 dependencies {
     implementation(libs.com.benjaminsproule.license)
-//    implementation(libs.net.researchgate.release)
+    implementation(libs.org.jreleaser)
+}
+
+kotlin {
+    jvmToolchain(11)
 }
 
 repositories {

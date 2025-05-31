@@ -19,7 +19,7 @@ org-slf4j-slf4j-api = "2.0.17"
 org-testng-testng = "7.11.0"
 com-benjaminsproule-license = "0.16.2"
 io-github-gradle-nexus-publish-plugin = "2.0.0"
-net-researchgate-release = '3.0.2'
+org-jreleaser = "1.18.0"
 
 [libraries]
 com-eatthepath-pushy = { module = "com.eatthepath:pushy", version.ref = "com-eatthepath-pushy" }
@@ -38,8 +38,7 @@ org-restlet-jse-org-restlet-ext-simple = { module = "org.restlet.jse:org.restlet
 org-slf4j-slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "org-slf4j-slf4j-api" }
 org-testng-testng = { module = "org.testng:testng", version.ref = "org-testng-testng" }
 com-benjaminsproule-license = { module = "com.benjaminsproule.license:com.benjaminsproule.license.gradle.plugin", version.ref = "com-benjaminsproule-license" }
-net-researchgate-release = { module = "net.researchgate:gradle-release", version.ref = "net-researchgate-release" }
+org-jreleaser = { module = "org.jreleaser:org.jreleaser.gradle.plugin", version.ref = "org-jreleaser" }
 
-[plugins]
-io-github-gradle-nexus-publish-plugin = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "io-github-gradle-nexus-publish-plugin" }
-net-researchgate-release = { id = "net.researchgate.release", version.ref = "net-researchgate-release" }
+#[plugins]
+#org-jreleaser = { id = "org.jreleaser:org.jreleaser.gradle.plugin", version.ref = "org-jreleaser" }
