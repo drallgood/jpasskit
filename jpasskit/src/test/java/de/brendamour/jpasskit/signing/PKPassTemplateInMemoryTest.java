@@ -21,8 +21,10 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.nio.file.FileSystems;
 import java.util.Collection;
@@ -118,7 +120,7 @@ public class PKPassTemplateInMemoryTest {
     public void addFile_fromURL() throws IOException {
         URL url = new URL("https://upload.wikimedia.org/wikipedia/commons/2/22/Big.Buck.Bunny.-.Bunny.Portrait.png");
         pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, url);
-        ByteBuffer expectedBuffer = ByteBuffer.wrap(toByteArray(url));
+        ByteBuffer expectedBuffer = ByteBuffer.wrap(toByteArrayFromUrl(url));
         Map<String, ByteBuffer> files = pkPassTemplateInMemory.getAllFiles();
         Assert.assertEquals(files.size(), 1);
         Assert.assertEquals(files.get(PKPassTemplateInMemory.PK_ICON_RETINA), expectedBuffer);
@@ -128,7 +130,7 @@ public class PKPassTemplateInMemoryTest {
     public void addFile_fromURL_withLocale() throws IOException {
         URL url = new URL("https://upload.wikimedia.org/wikipedia/commons/2/22/Big.Buck.Bunny.-.Bunny.Portrait.png");
         pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, Locale.ENGLISH, url);
-        ByteBuffer expectedBuffer = ByteBuffer.wrap(toByteArray(url));
+        ByteBuffer expectedBuffer = ByteBuffer.wrap(toByteArrayFromUrl(url));
         Map<String, ByteBuffer> files = pkPassTemplateInMemory.getAllFiles();
         Assert.assertEquals(files.size(), 1);
         Assert.assertEquals(files.get("en.lproj" + SEPARATOR + PKPassTemplateInMemory.PK_ICON_RETINA), expectedBuffer);
@@ -194,6 +196,30 @@ public class PKPassTemplateInMemoryTest {
             return toByteArray(is);
         }
     }
+
+    /**
+     * Helper method to read bytes from a URL with proper HTTP headers to avoid 403 errors.
+     * This mirrors the functionality added to PKPassTemplateInMemory.openUrlStream().
+     */
+    private byte[] toByteArrayFromUrl(URL url) throws IOException {
+        URLConnection connection = url.openConnection();
+        
+        // Set User-Agent header to avoid 403 Forbidden errors from servers that block requests without proper headers
+        connection.setRequestProperty("User-Agent", "Mozilla/5.0 (compatible; jpasskit/1.0)");
+        
+        // Set additional headers that some servers expect
+        if (connection instanceof HttpURLConnection) {
+            HttpURLConnection httpConnection = (HttpURLConnection) connection;
+            httpConnection.setRequestProperty("Accept", "*/*");
+            httpConnection.setRequestProperty("Accept-Language", "en-US,en;q=0.9");
+            httpConnection.setRequestProperty("Connection", "keep-alive");
+        }
+        
+        try (InputStream inputStream = connection.getInputStream()) {
+            return toByteArray(inputStream);
+        }
+    }
+
     private void prepareTemplate() throws IOException {
         // icon
         URL iconFileURL = PKPassTemplateInMemoryTest.class.getClassLoader().getResource("StoreCard.raw/icon@2x.png");

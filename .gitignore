@@ -65,3 +65,6 @@ gradle-app.setting
 
 # End of https://www.toptal.com/developers/gitignore/api/java,gradle
 **/gradle/wrapper/
+build-logic/bin
+jpasskit.server/bin
+jpasskit/bin

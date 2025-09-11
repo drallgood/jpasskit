@@ -20,7 +20,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -101,7 +103,7 @@ public class PKPassTemplateInMemory implements IPKPassTemplate {
     }
 
     public void addFile(String pathInTemplate, URL contentURL) throws IOException {
-        addFile(pathInTemplate, contentURL.openStream());
+        addFile(pathInTemplate, openUrlStream(contentURL));
     }
 
     public void addFile(String pathInTemplate, Locale locale, File file) throws IOException {
@@ -117,7 +119,7 @@ public class PKPassTemplateInMemory implements IPKPassTemplate {
     }
 
     public void addFile(String pathInTemplate, Locale locale, URL contentURL) throws IOException {
-        addFile(pathForLocale(pathInTemplate, locale), contentURL.openStream());
+        addFile(pathForLocale(pathInTemplate, locale), openUrlStream(contentURL));
     }
 
     public void addAllFiles(String directoryWithFilesToAdd) throws IOException {
@@ -148,6 +150,27 @@ public class PKPassTemplateInMemory implements IPKPassTemplate {
             return pathInTemplate;
         }
         return locale.getLanguage() + ".lproj" + File.separator + pathInTemplate;
+    }
+
+    /**
+     * Opens an InputStream from a URL with proper HTTP headers to avoid 403 errors.
+     * Sets a User-Agent header that is commonly accepted by web servers.
+     */
+    private InputStream openUrlStream(URL url) throws IOException {
+        URLConnection connection = url.openConnection();
+        
+        // Set User-Agent header to avoid 403 Forbidden errors from servers that block requests without proper headers
+        connection.setRequestProperty("User-Agent", "Mozilla/5.0 (compatible; jpasskit/1.0)");
+        
+        // Set additional headers that some servers expect
+        if (connection instanceof HttpURLConnection) {
+            HttpURLConnection httpConnection = (HttpURLConnection) connection;
+            httpConnection.setRequestProperty("Accept", "*/*");
+            httpConnection.setRequestProperty("Accept-Language", "en-US,en;q=0.9");
+            httpConnection.setRequestProperty("Connection", "keep-alive");
+        }
+        
+        return connection.getInputStream();
     }
 
 }
