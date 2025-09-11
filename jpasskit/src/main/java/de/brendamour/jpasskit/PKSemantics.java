@@ -21,6 +21,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import de.brendamour.jpasskit.enums.PKPassengerCapability;
+import de.brendamour.jpasskit.enums.PKTransitSecurityProgram;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import de.brendamour.jpasskit.enums.PKEventType;
@@ -74,6 +76,8 @@ public class PKSemantics implements Cloneable, Serializable {
 
     protected String boardingGroup;
 
+    protected String boardingZone;
+
     protected String boardingSequenceNumber;
 
     protected String confirmationNumber;
@@ -88,9 +92,13 @@ public class PKSemantics implements Cloneable, Serializable {
 
     protected String membershipProgramNumber;
 
+    public String membershipProgramStatus;
+
     protected String priorityStatus;
 
     protected String securityScreening;
+
+    protected List<String> loungePlaceIDs;
 
     /* Airline Boarding Passes */
     protected String flightCode;
@@ -105,6 +113,14 @@ public class PKSemantics implements Cloneable, Serializable {
 
     protected String departureTerminal;
 
+    protected String departureCityName;
+
+    protected String departureLocationTimeZone;
+
+    protected PKLocation departureAirportLocation;
+
+    protected List<PKTransitSecurityProgram> departureLocationSecurityPrograms;
+
     protected String departureGate;
 
     protected String destinationAirportCode;
@@ -114,6 +130,30 @@ public class PKSemantics implements Cloneable, Serializable {
     protected String destinationTerminal;
 
     protected String destinationGate;
+
+    protected String destinationCityName;
+
+    protected String destinationLocationTimeZone;
+
+    protected PKLocation destinationAirportLocation;
+
+    protected List<PKTransitSecurityProgram> destinationLocationSecurityPrograms;
+
+    protected List<PKPassengerCapability> passengerCapabilities;
+
+    protected List<PKTransitSecurityProgram> passengerEligibleSecurityPrograms;
+
+    protected String ticketFareClass;
+
+    protected Boolean internationalDocumentsAreVerified;
+
+    protected String internationalDocumentsVerifiedDeclarationName;
+
+    protected List<String> passengerServiceSSRs;
+
+    protected List<String> passengerInformationSSRs;
+
+    protected List<String> passengerAirlineSSRs;
 
     /* Train and Other Rail Boarding Passes */
     protected String departurePlatform;
@@ -249,6 +289,10 @@ public class PKSemantics implements Cloneable, Serializable {
         return boardingGroup;
     }
 
+    public String getBoardingZone() {
+        return boardingZone;
+    }
+
     public String getBoardingSequenceNumber() {
         return boardingSequenceNumber;
     }
@@ -263,6 +307,10 @@ public class PKSemantics implements Cloneable, Serializable {
 
     public String getMembershipProgramNumber() {
         return membershipProgramNumber;
+    }
+
+    public String getMembershipProgramStatus() {
+        return membershipProgramStatus;
     }
 
     public PKPersonNameComponents getPassengerName() {
@@ -305,6 +353,22 @@ public class PKSemantics implements Cloneable, Serializable {
         return departureTerminal;
     }
 
+    public String getDepartureCityName() {
+        return departureCityName;
+    }
+
+    public String getDepartureLocationTimeZone() {
+        return departureLocationTimeZone;
+    }
+
+    public PKLocation getDepartureAirportLocation() {
+        return departureAirportLocation;
+    }
+
+    public List<PKTransitSecurityProgram> getDepartureLocationSecurityPrograms() {
+        return departureLocationSecurityPrograms;
+    }
+
     public String getDestinationAirportCode() {
         return destinationAirportCode;
     }
@@ -319,6 +383,58 @@ public class PKSemantics implements Cloneable, Serializable {
 
     public String getDestinationTerminal() {
         return destinationTerminal;
+    }
+
+    public String getDestinationCityName() {
+        return destinationCityName;
+    }
+
+    public String getDestinationLocationTimeZone() {
+        return destinationLocationTimeZone;
+    }
+    
+    public PKLocation getDestinationAirportLocation() {
+        return destinationAirportLocation;
+    }
+
+    public List<PKTransitSecurityProgram> getDestinationLocationSecurityPrograms() {
+        return destinationLocationSecurityPrograms;
+    }
+
+    public List<PKPassengerCapability> getPassengerCapabilities() {
+        return passengerCapabilities;
+    }
+
+    public List<PKTransitSecurityProgram> getPassengerEligibleSecurityPrograms() {
+        return passengerEligibleSecurityPrograms;
+    }
+
+    public String getTicketFareClass() {
+        return ticketFareClass;
+    }
+
+    public Boolean getInternationalDocumentsAreVerified() {
+        return internationalDocumentsAreVerified;
+    }
+
+    public String getInternationalDocumentsVerifiedDeclarationName() {
+        return internationalDocumentsVerifiedDeclarationName;
+    }
+
+    public List<String> getPassengerServiceSSRs() {
+        return passengerServiceSSRs;
+    }
+
+    public List<String> getPassengerInformationSSRs() {
+        return passengerInformationSSRs;
+    }
+
+    public List<String> getPassengerAirlineSSRs() {
+        return passengerAirlineSSRs;
+    }
+
+    public List<String> getLoungePlaceIDs() {
+        return loungePlaceIDs;
     }
 
     public String getFlightCode() {

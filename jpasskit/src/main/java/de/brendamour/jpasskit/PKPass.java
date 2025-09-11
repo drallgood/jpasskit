@@ -18,7 +18,6 @@ package de.brendamour.jpasskit;
 import java.io.Serializable;
 import java.net.URL;
 import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -92,6 +91,25 @@ public class PKPass implements Cloneable, Serializable {
 
     // Feature added in iOS 12.0. It is not applicable to older iOS
     protected PKSemantics semantics;
+
+    // Features added in iOS 26. It is not applicable to older iOS.
+    protected URL purchaseAdditionalBaggageURL;
+    protected URL purchaseLoungeAccessURL;
+    protected URL changeSeatURL;
+    protected URL purchaseWifiURL;
+    protected URL orderFoodURL;
+    protected URL entertainmentURL;
+    protected URL reportLostBagURL;
+    protected URL managementURL;
+    protected String transitProviderPhoneNumber;
+    protected String transitProviderEmail;
+    protected URL transitProviderWebsiteUrl;
+    protected URL upgradeURL;
+    protected URL bagPolicyURL;
+    protected URL accessibilityURL;
+    protected URL requestWheelchairURL;
+    protected URL registerServiceAnimalURL;
+    protected List<String> preferredStyleSchemes;
 
     protected PKPass() {
         this.formatVersion = 1;
@@ -223,6 +241,70 @@ public class PKPass implements Cloneable, Serializable {
 
     public boolean isSharingProhibited() {
         return sharingProhibited;
+    }
+
+    public PKSemantics getSemantics() {
+        return semantics;
+    }
+
+    public URL getPurchaseAdditionalBaggageURL() {
+        return purchaseAdditionalBaggageURL;
+    }
+
+    public URL getPurchaseLoungeAccessURL() {
+        return purchaseLoungeAccessURL;
+    }
+
+    public URL getChangeSeatURL() {
+        return changeSeatURL;
+    }
+
+    public URL getPurchaseWifiURL() {
+        return purchaseWifiURL;
+    }
+
+    public URL getOrderFoodURL() {
+        return orderFoodURL;
+    }
+
+    public URL getEntertainmentURL() {
+        return entertainmentURL;
+    }
+
+    public URL getReportLostBagURL() {
+        return reportLostBagURL;
+    }
+
+    public URL getManagementURL() {
+        return managementURL;
+    }
+    public String getTransitProviderPhoneNumber() {
+        return transitProviderPhoneNumber;
+    }
+    public String getTransitProviderEmail() {
+        return transitProviderEmail;
+    }
+    public URL getTransitProviderWebsiteUrl() {
+        return transitProviderWebsiteUrl;
+    }
+    public URL getUpgradeURL() {
+        return upgradeURL;
+    }
+    public URL getBagPolicyURL() {
+        return bagPolicyURL;
+    }
+    public URL getAccessibilityURL() {
+        return accessibilityURL;
+    }
+    public URL getRequestWheelchairURL() {
+        return requestWheelchairURL;
+    }
+    public URL getRegisterServiceAnimalURL() {
+        return registerServiceAnimalURL;
+    }
+
+    public List<String> getPreferredStyleSchemes() {
+        return preferredStyleSchemes;
     }
 
     @Override

@@ -363,6 +363,92 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
         return this;
     }
 
+    public PKPassBuilder purchaseAdditionalBaggageURL(URL purchaseAdditionalBaggageURL) {
+        this.pkPass.purchaseAdditionalBaggageURL = purchaseAdditionalBaggageURL;
+        return this;
+    }
+
+    public PKPassBuilder purchaseLoungeAccessURL(URL purchaseLoungeAccessURL) {
+        this.pkPass.purchaseLoungeAccessURL = purchaseLoungeAccessURL;
+        return this;
+    }
+
+    public PKPassBuilder changeSeatURL(URL changeSeatURL) {
+        this.pkPass.changeSeatURL = changeSeatURL;
+        return this;
+    }
+
+    public PKPassBuilder purchaseWifiURL(URL purchaseWifiURL) {
+        this.pkPass.purchaseWifiURL = purchaseWifiURL;
+        return this;
+    }
+
+    public PKPassBuilder orderFoodURL(URL orderFoodURL) {
+        this.pkPass.orderFoodURL = orderFoodURL;
+        return this;
+    }
+
+    public PKPassBuilder entertainmentURL(URL entertainmentURL) {
+        this.pkPass.entertainmentURL = entertainmentURL;
+        return this;
+    }
+
+    public PKPassBuilder reportLostBagURL(URL reportLostBagURL) {
+        this.pkPass.reportLostBagURL = reportLostBagURL;
+        return this;
+    }
+
+
+    public PKPassBuilder managementURL(URL managementURL) {
+        this.pkPass.managementURL = managementURL;
+        return this;
+    }
+
+    public PKPassBuilder transitProviderPhoneNumber(String transitProviderPhoneNumber) {
+        this.pkPass.transitProviderPhoneNumber = transitProviderPhoneNumber;
+        return this;
+    }
+
+    public PKPassBuilder transitProviderEmail(String transitProviderEmail) {
+        this.pkPass.transitProviderEmail = transitProviderEmail;
+        return this;
+    }
+
+    public PKPassBuilder transitProviderWebsiteUrl(URL transitProviderWebsiteUrl) {
+        this.pkPass.transitProviderWebsiteUrl = transitProviderWebsiteUrl;
+        return this;
+    }
+
+    public PKPassBuilder upgradeURL(URL upgradeURL) {
+        this.pkPass.upgradeURL = upgradeURL;
+        return this;
+    }
+
+    public PKPassBuilder bagPolicyURL(URL bagPolicyURL) {
+        this.pkPass.bagPolicyURL = bagPolicyURL;
+        return this;
+    }
+
+    public PKPassBuilder accessibilityURL(URL accessibilityURL) {
+        this.pkPass.accessibilityURL = accessibilityURL;
+        return this;
+    }
+
+    public PKPassBuilder requestWheelchairURL(URL requestWheelchairURL) {
+        this.pkPass.requestWheelchairURL = requestWheelchairURL;
+        return this;
+    }
+    
+    public PKPassBuilder registerServiceAnimalURL(URL registerServiceAnimalURL) {
+        this.pkPass.registerServiceAnimalURL = registerServiceAnimalURL;
+        return this;
+    }
+
+    public PKPassBuilder preferredStyleSchemes(List<String> preferredStyleSchemes) {
+        this.pkPass.preferredStyleSchemes = preferredStyleSchemes;
+        return this;
+    }
+
     public boolean isValid() {
         return getValidationErrors().isEmpty();
     }
