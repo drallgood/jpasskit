@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2024 Patrice Brend'amour <patrice@brendamour.net>
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,10 +15,16 @@
  */
 package de.brendamour.jpasskit.signing;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.util.StdDateFormat;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.brendamour.jpasskit.PKBarcode;
 import de.brendamour.jpasskit.PKPass;
 import de.brendamour.jpasskit.PKPassBuilder;
+import de.brendamour.jpasskit.PKRelevantDates;
 import de.brendamour.jpasskit.enums.PKBarcodeFormat;
 import de.brendamour.jpasskit.enums.PKPassPersonalizationField;
 import de.brendamour.jpasskit.personalization.PKPersonalization;
@@ -31,10 +37,12 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 
 public class PKFileBasedSigningUtilTest {
 
@@ -58,7 +66,8 @@ public class PKFileBasedSigningUtilTest {
 
     @Test
     public void testFileBasedSigningWithLoadedPass() throws Exception {
-        PKPass pass = new ObjectMapper().readValue(new File(getPathFromClasspath("pass.json")), PKPass.class);
+        ObjectMapper objectMapper = getObjectMapper();
+        PKPass pass = objectMapper.readValue(new File(getPathFromClasspath("pass.json")), PKPass.class);
         PKPassBuilder passBuilder = PKPass.builder(pass)
                 .relevantDate(Instant.now())
                 .userInfo(Collections.<String, Object>singletonMap("name", "John Doe"));
@@ -136,7 +145,7 @@ public class PKFileBasedSigningUtilTest {
     private void createZipAndAssert(PKPass pkPass, PKPersonalization personalization, File passZipFile) throws Exception {
         PKSigningInformation pkSigningInformation =
                 new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
-                KEYSTORE_PATH, KEYSTORE_PASSWORD, APPLE_WWDRCA);
+                        KEYSTORE_PATH, KEYSTORE_PASSWORD, APPLE_WWDRCA);
         PKPassTemplateFolder pkPassTemplate = new PKPassTemplateFolder(getPathFromClasspath(PASS_TEMPLATE_FOLDER));
         IPKSigningUtil pkSigningUtil = new PKFileBasedSigningUtil();
         byte[] signedAndZippedPkPassArchive;
@@ -166,7 +175,62 @@ public class PKFileBasedSigningUtilTest {
         Assert.assertFalse(Files.exists(ignoredFilePath));
     }
 
+    @Test
+    public void testRelevantDatesJsonSerialization() throws Exception {
+        Instant date = Instant.parse("2025-01-15T10:00:00Z");
+        Instant startDate = Instant.parse("2025-01-15T09:00:00Z");
+        Instant endDate = Instant.parse("2025-01-15T11:00:00Z");
+
+        PKRelevantDates relevantDates = PKRelevantDates.builder()
+                .date(date)
+                .startDate(startDate)
+                .endDate(endDate)
+                .build();
+
+        PKPassBuilder passBuilder = PKPass.builder()
+                .relevantDates(relevantDates)
+                .barcodeBuilder(
+                        PKBarcode.builder()
+                                .format(PKBarcodeFormat.PKBarcodeFormatQR)
+                                .message("abcdefg")
+                                .messageEncoding(StandardCharsets.UTF_8)
+                )
+                .passTypeIdentifier("pti")
+                .teamIdentifier("ti");
+
+        PKPass pass = passBuilder.build();
+
+        ObjectMapper objectMapper = getObjectMapper();
+
+        String json = objectMapper.writeValueAsString(pass);
+
+        // Verify the relevantDates object is serialized correctly
+        Assert.assertTrue(json.contains("\"relevantDates\""));
+        Assert.assertTrue(json.contains("\"date\":\"2025-01-15T10:00:00Z\""));
+        Assert.assertTrue(json.contains("\"startDate\":\"2025-01-15T09:00:00Z\""));
+        Assert.assertTrue(json.contains("\"endDate\":\"2025-01-15T11:00:00Z\""));
+
+        // Test deserialization back to object
+        PKPass deserializedPass = objectMapper.readValue(json, PKPass.class);
+        Assert.assertNotNull(deserializedPass.getRelevantDates());
+        Assert.assertEquals(deserializedPass.getRelevantDates().getDate(), date);
+        Assert.assertEquals(deserializedPass.getRelevantDates().getStartDate(), startDate);
+        Assert.assertEquals(deserializedPass.getRelevantDates().getEndDate(), endDate);
+    }
+
     private String getPathFromClasspath(String path) throws Exception {
         return Paths.get(ClassLoader.getSystemResource(path).toURI()).toString();
+    }
+
+    private ObjectMapper getObjectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        objectMapper.setDateFormat(new StdDateFormat());
+        objectMapper.configOverride(Date.class).setFormat(JsonFormat.Value.forPattern("yyyy-MM-dd'T'HH:mm:ssXXX"));
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        objectMapper.registerModule(new JavaTimeModule());
+
+        return objectMapper;
     }
 }

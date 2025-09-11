@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2024 Patrice Brend'amour <patrice@brendamour.net>
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,35 +15,28 @@
  */
 package de.brendamour.jpasskit;
 
-import static de.brendamour.jpasskit.passes.PKGenericPassTest.SOME;
-import static de.brendamour.jpasskit.passes.PKGenericPassTest.field;
-import java.time.Instant;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import com.google.common.collect.ImmutableMap;
+import de.brendamour.jpasskit.enums.PKBarcodeFormat;
+import de.brendamour.jpasskit.enums.PKTransitType;
+import de.brendamour.jpasskit.passes.*;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
-import java.awt.Color;
+import java.awt.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import de.brendamour.jpasskit.enums.PKTransitType;
-import de.brendamour.jpasskit.passes.PKBoardingPass;
-import de.brendamour.jpasskit.passes.PKCoupon;
-import de.brendamour.jpasskit.passes.PKEventTicket;
-import de.brendamour.jpasskit.passes.PKGenericPass;
-import de.brendamour.jpasskit.passes.PKGenericPassBuilder;
-import de.brendamour.jpasskit.passes.PKStoreCard;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableMap;
-
-import de.brendamour.jpasskit.enums.PKBarcodeFormat;
+import static de.brendamour.jpasskit.passes.PKGenericPassTest.SOME;
+import static de.brendamour.jpasskit.passes.PKGenericPassTest.field;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class PKPassTest {
 
@@ -67,6 +60,11 @@ public class PKPassTest {
     private static final Map<String, Object> USER_INFO = ImmutableMap.<String, Object> of("name", "John Doe");
     private static final Instant EXPIRATION_DATE = Instant.now();
     private static final long ASSOCIATED_STORE_IDENTIFIER = 1L;
+    private static final PKRelevantDates RELEVANT_DATES = PKRelevantDates.builder()
+            .date(Instant.now())
+            .startDate(Instant.now().minusSeconds(3600))
+            .endDate(Instant.now().plusSeconds(7200))
+            .build();
 
     private PKPassBuilder builder;
 
@@ -145,6 +143,7 @@ public class PKPassTest {
         assertThat(pass.getUserInfo()).isNull();
         assertThat(pass.getExpirationDate()).isNull();
         assertThat(pass.getBarcodes()).isNotNull().isEmpty();
+        assertThat(pass.getRelevantDates()).isNull();
     }
 
     @Test
@@ -178,6 +177,19 @@ public class PKPassTest {
         assertThat(pass.getBarcodes()).isNotNull().hasSize(2);
 
         assertThat(this.builder.isValid()).isFalse();
+    }
+
+    @Test
+    public void test_getRelevantDates() {
+        assertThat(this.builder
+                .relevantDates(RELEVANT_DATES)
+                .build()
+                .getRelevantDates()).isEqualTo(RELEVANT_DATES);
+
+        assertThat(this.builder
+                .relevantDates((PKRelevantDates) null)
+                .build()
+                .getRelevantDates()).isNull();
     }
 
     @Test
@@ -275,8 +287,7 @@ public class PKPassTest {
 
         PKPass clone = PKPass.builder(pass).build();
 
-        assertThat(clone)
-                .isEqualToComparingFieldByFieldRecursively(pass);
+        assertThat(clone).usingRecursiveComparison().isEqualTo(pass);
     }
 
     @Test
@@ -293,8 +304,7 @@ public class PKPassTest {
 
         PKPass clone = PKPass.builder(pass).build();
 
-        assertThat(clone)
-                .isEqualToComparingFieldByFieldRecursively(pass);
+        assertThat(clone).usingRecursiveComparison().isEqualTo(pass);
     }
 
     @Test
@@ -311,8 +321,7 @@ public class PKPassTest {
 
         PKPass clone = PKPass.builder(pass).build();
 
-        assertThat(clone)
-                .isEqualToComparingFieldByFieldRecursively(pass);
+        assertThat(clone).usingRecursiveComparison().isEqualTo(pass);
     }
 
     @Test
@@ -329,8 +338,7 @@ public class PKPassTest {
 
         PKPass clone = PKPass.builder(pass).build();
 
-        assertThat(clone)
-                .isEqualToComparingFieldByFieldRecursively(pass);
+        assertThat(clone).usingRecursiveComparison().isEqualTo(pass);
     }
 
     @Test
@@ -347,8 +355,7 @@ public class PKPassTest {
 
         PKPass clone = PKPass.builder(pass).build();
 
-        assertThat(clone)
-                .isEqualToComparingFieldByFieldRecursively(pass);
+        assertThat(clone).usingRecursiveComparison().isEqualTo(pass);
     }
 
     private static URL asUrl(String value) {
