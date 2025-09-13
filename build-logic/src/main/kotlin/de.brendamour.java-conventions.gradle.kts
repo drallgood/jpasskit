@@ -9,6 +9,11 @@ plugins {
     signing
     id("org.jreleaser")
     id("com.benjaminsproule.license")
+    jacoco
+}
+
+jacoco {
+    toolVersion = "0.8.13"
 }
 
 repositories {
@@ -168,4 +173,54 @@ license {
             "**/*.png"
         )
     )
+}
+
+// JaCoCo configuration
+jacoco {
+    toolVersion = "0.8.13"
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+        csv.required.set(false)
+    }
+    finalizedBy(tasks.jacocoTestCoverageVerification)
+}
+
+// Re-enable JaCoCo instrumentation with updated version
+tasks.test {
+    useTestNG()
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestCoverageVerification {
+    dependsOn(tasks.jacocoTestReport)
+    violationRules {
+        rule {
+            limit {
+                minimum = "0.85".toBigDecimal()
+            }
+        }
+        rule {
+            enabled = true
+            element = "CLASS"
+            limit {
+                counter = "BRANCH"
+                value = "COVEREDRATIO"
+                minimum = "0.80".toBigDecimal()
+            }
+            excludes = listOf(
+                "*.test.*",
+                "*.tests.*",
+                "*Test*"
+            )
+        }
+    }
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport)
 }
