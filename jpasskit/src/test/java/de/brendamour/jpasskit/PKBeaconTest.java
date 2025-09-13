@@ -118,4 +118,40 @@ public class PKBeaconTest {
                 .contains(UUID)
                 .contains(TEXT);
     }
+
+    @Test
+    public void test_of_withNullSource() {
+        PKBeaconBuilder newBuilder = PKBeacon.builder().of(null);
+        assertThat(newBuilder).isNotNull();
+        // Should create a new beacon with default values
+        PKBeacon beacon = newBuilder.build();
+        assertThat(beacon).isNotNull();
+    }
+
+    @Test
+    public void test_getValidationErrors_withInvalidProximityUUID() {
+        builder.proximityUUID(null);
+        assertThat(builder.getValidationErrors()).hasSize(1);
+        assertThat(builder.getValidationErrors().get(0)).contains("proximityUUID");
+    }
+
+    @Test
+    public void test_getValidationErrors_withValidData() {
+        // Ensure all required fields are set
+        fillBeacon();
+        assertThat(builder.getValidationErrors()).isEmpty();
+    }
+
+    @Test
+    public void test_of_withValidSource() {
+        PKBeacon originalBeacon = builder.build();
+        PKBeaconBuilder newBuilder = PKBeacon.builder().of(originalBeacon);
+        PKBeacon clonedBeacon = newBuilder.build();
+        
+        assertThat(clonedBeacon).isNotSameAs(originalBeacon);
+        assertThat(clonedBeacon.getMajor()).isEqualTo(originalBeacon.getMajor());
+        assertThat(clonedBeacon.getMinor()).isEqualTo(originalBeacon.getMinor());
+        assertThat(clonedBeacon.getProximityUUID()).isEqualTo(originalBeacon.getProximityUUID());
+        assertThat(clonedBeacon.getRelevantText()).isEqualTo(originalBeacon.getRelevantText());
+    }
 }
