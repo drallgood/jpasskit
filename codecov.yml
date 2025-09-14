@@ -1,0 +1,28 @@
+coverage:
+  status:
+    project:
+      default:
+        target: 85%
+        threshold: 2%
+        if_ci_failed: error
+    patch:
+      default:
+        target: 80%
+        threshold: 5%
+        if_ci_failed: error
+
+comment:
+  layout: "reach,diff,flags,tree"
+  behavior: default
+  require_changes: false
+
+ignore:
+  - "**/*Test*.java"
+  - "**/test/**"
+  - "**/tests/**"
+  - "**/*.test.java"
+
+flags:
+  unittests:
+    paths:
+      - src/main/java/
