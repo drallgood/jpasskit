@@ -83,6 +83,32 @@ publishing {
 
 jreleaser {
     gitRootSearch.set(true)
+    
+    project {
+        name = "jpasskit"
+        description = "Java Library for Apple PassKit Web Service"
+        website = "https://github.com/drallgood/jpasskit"
+        license = "Apache-2.0"
+        authors = ["Patrice Brend'amour"]
+        copyright = "2012-${Calendar.getInstance().get(Calendar.YEAR)} Patrice Brend'amour"
+    }
+    
+    release {
+        github {
+            repoOwner = "drallgood"
+            name = "jpasskit"
+            overwrite = true
+            skipReleaseSignatures = true
+            skipTag = true  // We're creating the tag manually
+            updateChecksums = true
+            changelog {
+                formatted = "ALWAYS"
+                preset = "conventional-commits"
+                skipMergeCommits = true
+            }
+        }
+    }
+    
     signing {
         active.set(Active.ALWAYS)
         armored.set(true)
