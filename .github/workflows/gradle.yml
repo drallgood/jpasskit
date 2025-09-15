@@ -31,6 +31,12 @@ jobs:
       run: ./gradlew build --scan --info
     - name: Generate test coverage report
       run: ./gradlew jacocoTestReport
+    - name: List coverage files for debugging
+      run: |
+        echo "Checking for coverage files..."
+        find . -name "jacocoTestReport.xml" -type f
+        ls -la jpasskit/build/reports/jacoco/test/ || echo "jpasskit coverage dir not found"
+        ls -la jpasskit.server/build/reports/jacoco/test/ || echo "jpasskit.server coverage dir not found"
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v4
       with:
@@ -39,6 +45,8 @@ jobs:
         flags: unittests
         name: codecov-umbrella
         fail_ci_if_error: false
+        verbose: true
+        directory: ./
     - name: Upload coverage reports as artifacts
       uses: actions/upload-artifact@v4
       if: always()
