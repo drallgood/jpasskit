@@ -22,6 +22,8 @@ import java.util.List;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
 import de.brendamour.jpasskit.enums.PKEventType;
+import de.brendamour.jpasskit.enums.PKPassengerCapability;
+import de.brendamour.jpasskit.enums.PKTransitSecurityProgram;
 import de.brendamour.jpasskit.semantics.PKCurrencyAmount;
 import de.brendamour.jpasskit.semantics.PKPersonNameComponents;
 import de.brendamour.jpasskit.semantics.PKSeat;
@@ -144,6 +146,11 @@ public class PKSemanticsBuilder implements IPKValidateable, IPKBuilder<PKSemanti
         return this;
     }
 
+    public PKSemanticsBuilder boardingZone(String boardingZone) {
+        this.semantics.boardingZone = boardingZone;
+        return this;
+    }
+
     public PKSemanticsBuilder boardingSequenceNumber(String boardingSequenceNumber) {
         this.semantics.boardingSequenceNumber = boardingSequenceNumber;
         return this;
@@ -176,6 +183,11 @@ public class PKSemanticsBuilder implements IPKValidateable, IPKBuilder<PKSemanti
 
     public PKSemanticsBuilder membershipProgramNumber(String membershipProgramNumber) {
         this.semantics.membershipProgramNumber = membershipProgramNumber;
+        return this;
+    }
+
+    public PKSemanticsBuilder membershipProgramStatus(String membershipProgramStatus) {
+        this.semantics.membershipProgramStatus = membershipProgramStatus;
         return this;
     }
 
@@ -224,8 +236,58 @@ public class PKSemanticsBuilder implements IPKValidateable, IPKBuilder<PKSemanti
         return this;
     }
 
+    public PKSemanticsBuilder departureCityName(String departureCityName) {
+        this.semantics.departureCityName = departureCityName;
+        return this;
+    }
+
+    public PKSemanticsBuilder departureLocationTimeZone(String departureLocationTimeZone) {
+        this.semantics.departureLocationTimeZone = departureLocationTimeZone;
+        return this;
+    }
+
+    public PKSemanticsBuilder departureAirportLocation(PKLocation departureAirportLocation) {
+        this.semantics.departureAirportLocation = departureAirportLocation;
+        return this;
+    }
+
+    public PKSemanticsBuilder departureLocationSecurityPrograms(List<PKTransitSecurityProgram> departureLocationSecurityPrograms) {
+        this.semantics.departureLocationSecurityPrograms = departureLocationSecurityPrograms;
+        return this;
+    }
+
+    public PKSemanticsBuilder destinationLocationSecurityPrograms(List<PKTransitSecurityProgram> destinationLocationSecurityPrograms) {
+        this.semantics.destinationLocationSecurityPrograms = destinationLocationSecurityPrograms;
+        return this;
+    }
+
     public PKSemanticsBuilder destinationAirportCode(String destinationAirportCode) {
         this.semantics.destinationAirportCode = destinationAirportCode;
+        return this;
+    }
+
+    public PKSemanticsBuilder destinationCityName(String destinationCityName) {
+        this.semantics.destinationCityName = destinationCityName;
+        return this;
+    }
+
+    public PKSemanticsBuilder destinationLocationTimeZone(String destinationLocationTimeZone) {
+        this.semantics.destinationLocationTimeZone = destinationLocationTimeZone;
+        return this;
+    }
+
+    public PKSemanticsBuilder destinationAirportLocation(PKLocation destinationAirportLocation) {
+        this.semantics.destinationAirportLocation = destinationAirportLocation;
+        return this;
+    }
+
+    public PKSemanticsBuilder passengerCapabilities(List<PKPassengerCapability> passengerCapabilities) {
+        this.semantics.passengerCapabilities = passengerCapabilities;
+        return this;
+    }
+
+    public PKSemanticsBuilder passengerEligibleSecurityPrograms(List<PKTransitSecurityProgram> passengerEligibleSecurityPrograms) {
+        this.semantics.passengerEligibleSecurityPrograms = passengerEligibleSecurityPrograms;
         return this;
     }
 
@@ -376,6 +438,41 @@ public class PKSemanticsBuilder implements IPKValidateable, IPKBuilder<PKSemanti
 
     public PKSemanticsBuilder balance(PKCurrencyAmount balance) {
         this.semantics.balance = balance;
+        return this;
+    }
+
+    public PKSemanticsBuilder ticketFareClass(String ticketFareClass) {
+        this.semantics.ticketFareClass = ticketFareClass;
+        return this;
+    }
+
+    public PKSemanticsBuilder internationalDocumentsAreVerified(Boolean internationalDocumentsAreVerified) {
+        this.semantics.internationalDocumentsAreVerified = internationalDocumentsAreVerified;
+        return this;
+    }
+
+    public PKSemanticsBuilder internationalDocumentsVerifiedDeclarationName(String internationalDocumentsVerifiedDeclarationName) {
+        this.semantics.internationalDocumentsVerifiedDeclarationName = internationalDocumentsVerifiedDeclarationName;
+        return this;
+    }
+
+    public PKSemanticsBuilder passengerServiceSSRs(List<String> passengerServiceSSRs) {
+        this.semantics.passengerServiceSSRs = passengerServiceSSRs;
+        return this;
+    }
+
+    public PKSemanticsBuilder passengerInformationSSRs(List<String> passengerInformationSSRs) {
+        this.semantics.passengerInformationSSRs = passengerInformationSSRs;
+        return this;
+    }
+
+    public PKSemanticsBuilder passengerAirlineSSRs(List<String> passengerAirlineSSRs) {
+        this.semantics.passengerAirlineSSRs = passengerAirlineSSRs;
+        return this;
+    }
+
+    public PKSemanticsBuilder loungePlaceIDs(List<String> loungePlaceIDs) {
+        this.semantics.loungePlaceIDs = loungePlaceIDs;
         return this;
     }
 

@@ -15,6 +15,7 @@
  */
 package de.brendamour.jpasskit;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import de.brendamour.jpasskit.enums.PKBarcodeFormat;
 import de.brendamour.jpasskit.enums.PKTransitType;
@@ -356,6 +357,26 @@ public class PKPassTest {
         PKPass clone = PKPass.builder(pass).build();
 
         assertThat(clone).usingRecursiveComparison().isEqualTo(pass);
+    }
+
+    @Test
+    public void test_passSemanticsSerialization() {
+        var pass = this.builder
+                .semantics(
+                        PKSemantics
+                                .builder()
+                                .airlineCode("ABC")
+                                .flightNumber(123)
+                                .build()
+                )
+                .build();
+        var mapper = new ObjectMapper();
+        var serializedPass = mapper.convertValue(pass, Map.class);
+
+        assertThat(serializedPass.get("semantics")).isInstanceOfSatisfying(Map.class, semantics -> {
+            assertThat(semantics.get("airlineCode")).isEqualTo("ABC");
+            assertThat(semantics.get("flightNumber")).isEqualTo(123);
+        });
     }
 
     private static URL asUrl(String value) {
