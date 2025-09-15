@@ -77,15 +77,18 @@ jobs:
       uses: gradle/gradle-build-action@v2.11.1
 
     - name: Publish
-      run: ./gradlew publish jreleaserFullRelease --info --stacktrace
       env:
+        JRELEASER_GITHUB_TOKEN: ${{ secrets.JRL_GITHUB_TOKEN }}
+        JRELEASER_PROJECT_VERSION: ${{ github.ref_name }}
         JRELEASER_NEXUS2_USERNAME: ${{ secrets.OSSRH_USERNAME }}
         JRELEASER_NEXUS2_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
         JRELEASER_MAVENCENTRAL_USERNAME: ${{ secrets.OSSRH_USERNAME }}
         JRELEASER_MAVENCENTRAL_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
         JRELEASER_GPG_SECRET_KEY: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }} # Value of the GPG private key to import
         JRELEASER_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }} # env variable for GPG private key passphrase
-        JRELEASER_GITHUB_TOKEN: ${{ secrets.JRL_GITHUB_TOKEN }}
+      run: |
+        ./gradlew clean build publishToMavenLocal --info --stacktrace
+        ./gradlew jreleaser:full-release --info --stacktrace
 
     - name: JReleaser output
       if: always()
