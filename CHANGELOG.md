@@ -1,6 +1,32 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.5.0 - 2025-09-16
+### Added
+
+- iOS 26 boarding pass support:
+  - `PKSemantics`
+  - `PKPassengerCapability`
+  - `PKTransitSecurityProgram`
+- Comprehensive new tests across builders and signing utilities; overall coverage improved to ~84%+
+
+### Changed
+
+- CI/CD
+  - Fixed GitHub Actions deploy workflow to only run on tags; prevents empty draft releases
+  - Improved Codecov integration for multi-module reporting
+  - Snapshot deployments enabled on pushes when version ends with `-SNAPSHOT` (Sonatype snapshots)
+  - Release pipeline now publishes all modules and uses JReleaser for a unified multi-module release
+- Build
+  - Centralized dependency and plugin versions via `gradle/libs.versions.toml`
+  - Stabilized tests by removing external network dependency in `PKPassTemplateInMemoryTest`
+  - JaCoCo pinned to a compatible version and Gradle Java runtime guidance updated (use JDK 17/21)
+
+### Fixed
+
+- Deploy job reliability (publish before JReleaser; include all subprojects)
+- Intermittent 403 errors in tests due to external URL fetches
+
 ## 0.4.3 - 2024-XX-XX
 ### Changed
 
