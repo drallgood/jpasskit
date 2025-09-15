@@ -118,7 +118,7 @@ public class PKPassTemplateInMemoryTest {
 
     @Test
     public void addFile_fromURL() throws IOException {
-        URL url = new URL("https://upload.wikimedia.org/wikipedia/commons/2/22/Big.Buck.Bunny.-.Bunny.Portrait.png");
+        URL url = PKPassTemplateInMemoryTest.class.getClassLoader().getResource("StoreCard.raw/icon@2x.png");
         pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, url);
         ByteBuffer expectedBuffer = ByteBuffer.wrap(toByteArrayFromUrl(url));
         Map<String, ByteBuffer> files = pkPassTemplateInMemory.getAllFiles();
@@ -128,7 +128,7 @@ public class PKPassTemplateInMemoryTest {
 
     @Test
     public void addFile_fromURL_withLocale() throws IOException {
-        URL url = new URL("https://upload.wikimedia.org/wikipedia/commons/2/22/Big.Buck.Bunny.-.Bunny.Portrait.png");
+        URL url = PKPassTemplateInMemoryTest.class.getClassLoader().getResource("StoreCard.raw/icon@2x.png");
         pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, Locale.ENGLISH, url);
         ByteBuffer expectedBuffer = ByteBuffer.wrap(toByteArrayFromUrl(url));
         Map<String, ByteBuffer> files = pkPassTemplateInMemory.getAllFiles();

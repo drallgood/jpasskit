@@ -20,6 +20,7 @@ org-testng-testng = "7.11.0"
 com-benjaminsproule-license = "0.16.2"
 io-github-gradle-nexus-publish-plugin = "2.0.0"
 org-jreleaser = "1.18.0"
+jacoco = "0.8.13"
 
 [libraries]
 com-eatthepath-pushy = { module = "com.eatthepath:pushy", version.ref = "com-eatthepath-pushy" }

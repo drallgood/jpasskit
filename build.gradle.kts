@@ -1,12 +1,20 @@
-import org.gradle.tooling.GradleConnector
-
 plugins {
     `maven-publish`
 }
 
 allprojects {
     group = "de.brendamour"
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    tasks.withType<JavaCompile> {
+        sourceCompatibility = JavaVersion.VERSION_11.toString()
+        targetCompatibility = JavaVersion.VERSION_11.toString()
+    }
 }
+
+
 
 //nexusPublishing {
 //    repositories {
@@ -21,38 +29,4 @@ allprojects {
 //        shouldRunAfter(tasks.withType<Sign>())
 //    }
 //
-//}
-
-//configure<ReleaseExtension> {
-//    tagTemplate.set("jpasskit-\${version}")
-//    with(git) {
-//        requireBranch.set("main")
-//    }
-//}
-
-
-
-//// Workaround for https://github.com/researchgate/gradle-release/issues/184
-//configure(listOf(tasks.release, tasks.runBuildTasks)) {
-//    configure {
-//        actions.clear()
-//        doLast {
-//            GradleConnector
-//                    .newConnector()
-//                    .forProjectDirectory(layout.projectDirectory.asFile)
-//                    .connect()
-//                    .use { projectConnection ->
-//                        val buildLauncher = projectConnection
-//                                .newBuild()
-//                                .forTasks(*tasks.toTypedArray())
-//                                .setStandardInput(System.`in`)
-//                                .setStandardOutput(System.out)
-//                                .setStandardError(System.err)
-//                        gradle.startParameter.excludedTaskNames.forEach {
-//                            buildLauncher.addArguments("-x", it)
-//                        }
-//                        buildLauncher.run()
-//                    }
-//        }
-//    }
 //}

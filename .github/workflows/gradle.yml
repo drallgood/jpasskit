@@ -80,16 +80,17 @@ jobs:
     - name: Publish
       env:
         JRELEASER_GITHUB_TOKEN: ${{ secrets.JRL_GITHUB_TOKEN }}
-        JRELEASER_PROJECT_VERSION: ${{ github.ref_name }}
         JRELEASER_NEXUS2_USERNAME: ${{ secrets.OSSRH_USERNAME }}
         JRELEASER_NEXUS2_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
         JRELEASER_MAVENCENTRAL_USERNAME: ${{ secrets.OSSRH_USERNAME }}
         JRELEASER_MAVENCENTRAL_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
-        JRELEASER_GPG_SECRET_KEY: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }} # Value of the GPG private key to import
-        JRELEASER_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }} # env variable for GPG private key passphrase
+        JRELEASER_GPG_SECRET_KEY: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+        JRELEASER_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
       run: |
-        ./gradlew clean build publishToMavenLocal --info --stacktrace
-        ./gradlew jreleaser:full-release --info --stacktrace
+        VERSION_NO_V=${GITHUB_REF_NAME#v}
+        echo "Releasing version: $VERSION_NO_V"
+        ./gradlew clean :jpasskit:publish -Pversion=$VERSION_NO_V --info --stacktrace
+        ./gradlew :jpasskit:jreleaserFullRelease -Pversion=$VERSION_NO_V --info --stacktrace
 
     - name: JReleaser output
       if: always()
@@ -99,3 +100,53 @@ jobs:
         path: |
           out/jreleaser/trace.log
           out/jreleaser/output.properties
+
+  snapshot-deploy:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/')
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          server-id: ossrh
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          gpg-passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2.11.1
+
+      - name: Read project version
+        id: read_version
+        run: |
+          VERSION=$(grep '^version=' gradle.properties | cut -d'=' -f2)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Project version: $VERSION"
+
+      - name: Publish SNAPSHOT (only if -SNAPSHOT)
+        if: contains(steps.read_version.outputs.version, '-SNAPSHOT')
+        env:
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.JRL_GITHUB_TOKEN }}
+          JRELEASER_NEXUS2_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          JRELEASER_NEXUS2_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+          JRELEASER_MAVENCENTRAL_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          JRELEASER_MAVENCENTRAL_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+          JRELEASER_GPG_SECRET_KEY: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          JRELEASER_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+        run: |
+          ./gradlew clean :jpasskit:publish --info --stacktrace
+          ./gradlew :jpasskit:jreleaserDeploy --info --stacktrace
+
+      - name: JReleaser output (SNAPSHOT)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jreleaser-deploy-snapshot
+          path: |
+            out/jreleaser/trace.log
+            out/jreleaser/output.properties

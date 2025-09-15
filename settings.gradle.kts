@@ -5,6 +5,10 @@
  */
 
 pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
     // Include 'plugins build' to define convention plugins.
     includeBuild("build-logic")
 }

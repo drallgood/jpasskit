@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     `kotlin-dsl`
-    id("org.jetbrains.kotlin.jvm") version "1.9.23"
 }
 
 repositories {
@@ -12,29 +11,22 @@ repositories {
 }
 
 dependencies {
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.9.23"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    implementation(libs.com.benjaminsproule.license)
+    // Plugin markers needed by the precompiled script plugin
     implementation(libs.org.jreleaser)
+    implementation(libs.com.benjaminsproule.license)
 }
 
-kotlin {
-    jvmToolchain(11)
+// Use JDK 11 to compile precompiled script plugins
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions {
         jvmTarget = "11"
-        apiVersion = "1.5"
-        languageVersion = "1.5"
+        apiVersion = "1.8"
+        languageVersion = "1.8"
     }
 }
 
-gradlePlugin {
-    plugins {
-        create("java-conventions") {
-            id = "de.brendamour.java-conventions"
-            implementationClass = "de.brendamour.JavaConventionsPlugin"
-        }
-    }
-}
