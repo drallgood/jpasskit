@@ -25,4 +25,5 @@ ignore:
 flags:
   unittests:
     paths:
-      - src/main/java/
+      - jpasskit/src/main/java/
+      - jpasskit.server/src/main/java/
