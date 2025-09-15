@@ -5,9 +5,9 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ master ]
+    branches: [ main, master ]
 
 permissions:
   pull-requests: write
@@ -50,7 +50,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    if:  ${{ github.ref == 'refs/heads/master' }}
+    if:  ${{ github.ref == 'refs/heads/main' }}
     needs: build
     steps:
     - uses: actions/checkout@v4

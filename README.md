@@ -113,7 +113,7 @@ In order to use an existing folder on the file system as you pass's template, yo
 
 The content of this directory is defined in the PassKit Developer Documentation.
 
-<img src="https://github.com/bitzeche/jpasskit/raw/master/passFolder.png">
+<img src="https://github.com/bitzeche/jpasskit/raw/main/passFolder.png">
 
 That's it. When signing the pass, the contents of this folder will be copied into the pass.
 
