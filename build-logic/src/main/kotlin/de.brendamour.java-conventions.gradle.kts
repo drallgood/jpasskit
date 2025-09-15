@@ -85,26 +85,24 @@ jreleaser {
     gitRootSearch.set(true)
     
     project {
-        name = "jpasskit"
-        description = "Java Library for Apple PassKit Web Service"
-        website = "https://github.com/drallgood/jpasskit"
-        license = "Apache-2.0"
-        authors = ["Patrice Brend'amour"]
-        copyright = "2012-${Calendar.getInstance().get(Calendar.YEAR)} Patrice Brend'amour"
+        name.set("jpasskit")
+        description.set("Java Library for Apple PassKit Web Service")
+        website.set("https://github.com/drallgood/jpasskit")
+        license.set("Apache-2.0")
+        authors.set(listOf("Patrice Brend'amour"))
+        copyright.set("2012-${Calendar.getInstance().get(Calendar.YEAR)} Patrice Brend'amour")
     }
     
     release {
         github {
-            repoOwner = "drallgood"
-            name = "jpasskit"
-            overwrite = true
-            skipReleaseSignatures = true
-            skipTag = true  // We're creating the tag manually
-            updateChecksums = true
+            repoOwner.set("drallgood")
+            name.set("jpasskit")
+            overwrite.set(true)
+            skipTag.set(true)  // We're creating the tag manually
             changelog {
-                formatted = "ALWAYS"
-                preset = "conventional-commits"
-                skipMergeCommits = true
+                formatted.set("ALWAYS")
+                preset.set("conventional-commits")
+                skipMergeCommits.set(true)
             }
         }
     }
