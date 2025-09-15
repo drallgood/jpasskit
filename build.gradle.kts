@@ -26,7 +26,7 @@ allprojects {
 //configure<ReleaseExtension> {
 //    tagTemplate.set("jpasskit-\${version}")
 //    with(git) {
-//        requireBranch.set("master")
+//        requireBranch.set("main")
 //    }
 //}
 

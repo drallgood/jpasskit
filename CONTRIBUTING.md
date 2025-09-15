@@ -30,5 +30,5 @@ If you have any more questions, [open an issue][issue] or send us an [email][ema
 [pr]: https://github.com/bitzeche/jpasskit/compare/
 [issue]: https://github.com/bitzeche/jpasskit/issues/
 [email]: mailto:p.brendamour@bitzeche.de
-[changelog]: https://github.com/bitzeche/jpasskit/blob/master/CHANGELOG.md
+[changelog]: https://github.com/bitzeche/jpasskit/blob/main/CHANGELOG.md
 
