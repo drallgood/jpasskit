@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
   - `PKSemantics`
   - `PKPassengerCapability`
   - `PKTransitSecurityProgram`
+- Relevant dates object support (`RelevantDates`)
 - Comprehensive new tests across builders and signing utilities; overall coverage improved to ~84%+
 
 ### Changed
@@ -16,11 +17,26 @@ All notable changes to this project will be documented in this file.
   - Fixed GitHub Actions deploy workflow to only run on tags; prevents empty draft releases
   - Improved Codecov integration for multi-module reporting
   - Snapshot deployments enabled on pushes when version ends with `-SNAPSHOT` (Sonatype snapshots)
-  - Release pipeline now publishes all modules and uses JReleaser for a unified multi-module release
+  - Release pipeline now publishes all modules and uses JReleaser for a unified multi-module release (jpasskit + jpasskit.server)
 - Build
   - Centralized dependency and plugin versions via `gradle/libs.versions.toml`
   - Stabilized tests by removing external network dependency in `PKPassTemplateInMemoryTest`
   - JaCoCo pinned to a compatible version and Gradle Java runtime guidance updated (use JDK 17/21)
+  - Multi-module staging directories aggregated so JReleaser releases artifacts from all subprojects
+
+### Dependencies
+
+- Jackson: `jackson-databind`, `jackson-datatype-jsr310` updates
+- Guava: updated to latest 33.x jre
+- Apache Commons:
+  - `commons-lang3` 3.15.x
+  - `commons-codec` 1.17.x (and later to 1.19.0 in catalog)
+  - `commons-io` 2.20.0
+- AssertJ 3.26.x
+- Mockito 5.12.x
+- TestNG 7.10.x
+- SLF4J API 2.0.17
+- BouncyCastle `bcpkix-jdk18on` 1.81
 
 ### Fixed
 
