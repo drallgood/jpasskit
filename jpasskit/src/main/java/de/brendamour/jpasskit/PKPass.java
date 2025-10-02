@@ -18,7 +18,6 @@ package de.brendamour.jpasskit;
 import java.io.Serializable;
 import java.net.URL;
 import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -56,7 +55,7 @@ public class PKPass implements Cloneable, Serializable {
 
     protected List<PKBeacon> beacons;
     protected List<PKLocation> locations;
-    protected PKRelevantDates relevantDates;
+    protected List<PKRelevantDate> relevantDates;
 
     protected List<PKBarcode> barcodes;
 
@@ -165,7 +164,7 @@ public class PKPass implements Cloneable, Serializable {
         return locations;
     }
 
-    public PKRelevantDates getRelevantDates() {
+    public List<PKRelevantDate> getRelevantDates() {
         return relevantDates;
     }
 

@@ -21,8 +21,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.io.Serializable;
 import java.time.Instant;
 
-@JsonDeserialize(builder = PKRelevantDatesBuilder.class)
-public class PKRelevantDates implements Cloneable, Serializable {
+@JsonDeserialize(builder = PKRelevantDateBuilder.class)
+public class PKRelevantDate implements Cloneable, Serializable {
 
     private static final long serialVersionUID = -8742901234567890123L;
 
@@ -30,7 +30,7 @@ public class PKRelevantDates implements Cloneable, Serializable {
     protected Instant endDate;
     protected Instant startDate;
 
-    protected PKRelevantDates() {
+    protected PKRelevantDate() {
     }
 
     /**
@@ -63,11 +63,11 @@ public class PKRelevantDates implements Cloneable, Serializable {
     }
 
     @Override
-    protected PKRelevantDates clone() {
+    protected PKRelevantDate clone() {
         try {
-            return (PKRelevantDates) super.clone();
+            return (PKRelevantDate) super.clone();
         } catch (CloneNotSupportedException ex) {
-            throw new IllegalStateException("Failed to clone PKRelevantDates instance", ex);
+            throw new IllegalStateException("Failed to clone PKRelevantDate instance", ex);
         }
     }
 
@@ -76,11 +76,11 @@ public class PKRelevantDates implements Cloneable, Serializable {
         return ToStringBuilder.reflectionToString(this);
     }
 
-    public static PKRelevantDatesBuilder builder() {
-        return new PKRelevantDatesBuilder();
+    public static PKRelevantDateBuilder builder() {
+        return new PKRelevantDateBuilder();
     }
 
-    public static PKRelevantDatesBuilder builder(PKRelevantDates relevantDates) {
+    public static PKRelevantDateBuilder builder(PKRelevantDate relevantDates) {
         return builder().of(relevantDates);
     }
 }

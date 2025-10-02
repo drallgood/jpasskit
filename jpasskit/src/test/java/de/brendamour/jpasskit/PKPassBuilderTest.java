@@ -16,7 +16,6 @@
 package de.brendamour.jpasskit;
 
 import de.brendamour.jpasskit.enums.PKBarcodeFormat;
-import de.brendamour.jpasskit.enums.PKPassType;
 import de.brendamour.jpasskit.passes.*;
 import de.brendamour.jpasskit.semantics.PKCurrencyAmount;
 import org.testng.Assert;
@@ -152,7 +151,7 @@ public class PKPassBuilderTest {
 
     @Test
     public void testOfWithRelevantDates() {
-        PKRelevantDates relevantDates = PKRelevantDates.builder()
+        PKRelevantDate relevantDates = PKRelevantDate.builder()
             .date(Instant.now())
             .build();
         
@@ -162,7 +161,7 @@ public class PKPassBuilderTest {
             .teamIdentifier("TEAM123")
             .description("Test Pass")
             .organizationName("Test Org")
-            .relevantDates(relevantDates)
+            .relevantDates(List.of(relevantDates))
             .pass(PKGenericPass.builder())
             .build();
         
