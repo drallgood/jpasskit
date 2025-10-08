@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2024 Patrice Brend'amour <patrice@brendamour.net>
- * <p>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -220,6 +220,81 @@ public class PKFileBasedSigningUtilTest {
 
     private String getPathFromClasspath(String path) throws Exception {
         return Paths.get(ClassLoader.getSystemResource(path).toURI()).toString();
+    }
+
+    @Test
+    public void testFileBasedStreamingWithGeneratedPass() throws Exception {
+        PKPassBuilder passBuilder = PKPass.builder()
+                .barcodeBuilder(
+                        PKBarcode.builder()
+                                .format(PKBarcodeFormat.PKBarcodeFormatQR)
+                                .message("abcdefg")
+                                .messageEncoding(Charset.forName("UTF-8"))
+                )
+                .passTypeIdentifier("pti")
+                .teamIdentifier("ti");
+
+        File passfile = File.createTempFile("passFileBasedStreamGenerated", ".zip");
+        createZipAndAssertStream(passBuilder.build(), passfile);
+    }
+
+    @Test
+    public void testFileBasedStreamingWithGeneratedPassAndPersonalization() throws Exception {
+        PKPassBuilder passBuilder = PKPass.builder()
+                .barcodeBuilder(
+                        PKBarcode.builder()
+                                .format(PKBarcodeFormat.PKBarcodeFormatQR)
+                                .message("abcdefg")
+                                .messageEncoding(Charset.forName("UTF-8"))
+                )
+                .passTypeIdentifier("pti")
+                .teamIdentifier("ti");
+
+        PKPersonalizationBuilder personalization = PKPersonalization.builder()
+                .description("desc")
+                .termsAndConditions("T&C")
+                .requiredPersonalizationField(PKPassPersonalizationField.PKPassPersonalizationFieldName);
+
+        File passfile = File.createTempFile("passFileBasedStreamGenerated", ".zip");
+        createZipAndAssertStream(passBuilder.build(), personalization.build(), passfile);
+    }
+
+    private void createZipAndAssertStream(PKPass pkPass, File passZipFile) throws Exception {
+        createZipAndAssertStream(pkPass, null, passZipFile);
+    }
+
+    private void createZipAndAssertStream(PKPass pkPass, PKPersonalization personalization, File passZipFile) throws Exception {
+        PKSigningInformation pkSigningInformation =
+                new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
+                        KEYSTORE_PATH, KEYSTORE_PASSWORD, APPLE_WWDRCA);
+        PKPassTemplateFolder pkPassTemplate = new PKPassTemplateFolder(getPathFromClasspath(PASS_TEMPLATE_FOLDER));
+        IPKSigningUtil pkSigningUtil = new PKFileBasedSigningUtil();
+
+        if (passZipFile.exists()) {
+            passZipFile.delete();
+        }
+
+        try (FileOutputStream outputStream = new FileOutputStream(passZipFile)) {
+            if (personalization != null) {
+                pkSigningUtil.createSignedAndZippedPersonalizedPkPassArchiveStream(pkPass,
+                        personalization, pkPassTemplate,
+                        pkSigningInformation, outputStream);
+            } else {
+                pkSigningUtil.createSignedAndZippedPkPassArchiveStream(pkPass, pkPassTemplate,
+                        pkSigningInformation, outputStream);
+            }
+        }
+
+        Assert.assertTrue(passZipFile.exists());
+        Assert.assertTrue(passZipFile.length() > 0);
+        AssertZip.assertValid(passZipFile);
+
+        Path pkpassFile = passZipFile.toPath();
+        FileSystem fs = FileSystems.newFileSystem(pkpassFile, (ClassLoader) null);
+        Path bgFilePath = fs.getPath(PKPassTemplateInMemory.PK_ICON);
+        Assert.assertTrue(Files.exists(bgFilePath));
+        Path ignoredFilePath = fs.getPath(".ignored_file");
+        Assert.assertFalse(Files.exists(ignoredFilePath));
     }
 
     private ObjectMapper getObjectMapper() {
