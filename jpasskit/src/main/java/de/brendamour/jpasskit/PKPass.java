@@ -55,7 +55,7 @@ public class PKPass implements Cloneable, Serializable {
 
     protected List<PKBeacon> beacons;
     protected List<PKLocation> locations;
-    protected PKRelevantDates relevantDates;
+    protected List<PKRelevantDate> relevantDates;
 
     protected List<PKBarcode> barcodes;
 
@@ -183,7 +183,7 @@ public class PKPass implements Cloneable, Serializable {
         return locations;
     }
 
-    public PKRelevantDates getRelevantDates() {
+    public List<PKRelevantDate> getRelevantDates() {
         return relevantDates;
     }
 

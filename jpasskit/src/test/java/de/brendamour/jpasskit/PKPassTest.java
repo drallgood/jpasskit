@@ -61,7 +61,7 @@ public class PKPassTest {
     private static final Map<String, Object> USER_INFO = ImmutableMap.<String, Object> of("name", "John Doe");
     private static final Instant EXPIRATION_DATE = Instant.now();
     private static final long ASSOCIATED_STORE_IDENTIFIER = 1L;
-    private static final PKRelevantDates RELEVANT_DATES = PKRelevantDates.builder()
+    private static final PKRelevantDate RELEVANT_DATE = PKRelevantDate.builder()
             .date(Instant.now())
             .startDate(Instant.now().minusSeconds(3600))
             .endDate(Instant.now().plusSeconds(7200))
@@ -144,7 +144,9 @@ public class PKPassTest {
         assertThat(pass.getUserInfo()).isNull();
         assertThat(pass.getExpirationDate()).isNull();
         assertThat(pass.getBarcodes()).isNotNull().isEmpty();
-        assertThat(pass.getRelevantDates()).isNull();
+        assertThat(pass.getBeacons()).isNotNull().isEmpty();
+        assertThat(pass.getLocations()).isNotNull().isEmpty();
+        assertThat(pass.getRelevantDates()).isNotNull().isEmpty();
     }
 
     @Test
@@ -182,15 +184,12 @@ public class PKPassTest {
 
     @Test
     public void test_getRelevantDates() {
-        assertThat(this.builder
-                .relevantDates(RELEVANT_DATES)
-                .build()
-                .getRelevantDates()).isEqualTo(RELEVANT_DATES);
-
-        assertThat(this.builder
-                .relevantDates((PKRelevantDates) null)
-                .build()
-                .getRelevantDates()).isNull();
+        var relevantDates = List.of(RELEVANT_DATE);
+        var result = this.builder
+                .relevantDates(relevantDates)
+                .build();
+        assertThat(result.getRelevantDates()).hasSize(1);
+        assertThat(result.getRelevantDates()).usingRecursiveComparison().isEqualTo(relevantDates);
     }
 
     @Test

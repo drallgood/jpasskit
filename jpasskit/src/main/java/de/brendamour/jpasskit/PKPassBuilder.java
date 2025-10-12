@@ -51,6 +51,7 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
 
     protected List<PKBeaconBuilder> beacons;
     protected List<PKLocationBuilder> locations;
+    protected List<PKRelevantDateBuilder> relevantDates;
     protected List<PKBarcodeBuilder> barcodes;
     protected List<PWAssociatedAppBuilder> associatedApps;
     protected List<Long> associatedStoreIdentifiers;
@@ -60,6 +61,7 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
         this.pass = PKGenericPass.builder();
         this.beacons = new CopyOnWriteArrayList<>();
         this.locations = new CopyOnWriteArrayList<>();
+        this.relevantDates = new CopyOnWriteArrayList<>();
         this.barcodes = new CopyOnWriteArrayList<>();
         this.associatedApps = new CopyOnWriteArrayList<>();
         this.associatedStoreIdentifiers = new CopyOnWriteArrayList<>();
@@ -115,9 +117,7 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
             }
             this.beacons = BuilderUtils.toBeaconBuilderList(pass.getBeacons());
             this.locations = BuilderUtils.toLocationBuilderList(pass.getLocations());
-            if (pass.relevantDates != null) {
-                this.pkPass.relevantDates = pass.relevantDates.clone();
-            }
+            this.relevantDates = BuilderUtils.toRelevantDateBuilderList(pass.getRelevantDates());
             this.barcodes = BuilderUtils.toBarcodeBuilderList(pass.getBarcodes());
             this.associatedApps = BuilderUtils.toAssociatedAppBuilderList(pass.getAssociatedApps());
             if (pass.getAssociatedStoreIdentifiers() != null) {
@@ -242,13 +242,20 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
         return this;
     }
 
-    public PKPassBuilder relevantDates(PKRelevantDates relevantDates) {
-        this.pkPass.relevantDates = relevantDates;
+    public PKPassBuilder relevantDates(List<PKRelevantDate> relevantDates) {
+        if (relevantDates == null || relevantDates.isEmpty()) {
+            this.relevantDates.clear();
+            return this;
+        }
+        relevantDates.stream().map(PKRelevantDate::builder).forEach(this::relevantDatesBuilder);
         return this;
     }
 
-    public PKPassBuilder relevantDatesBuilder(PKRelevantDatesBuilder relevantDatesBuilder) {
-        return relevantDates(relevantDatesBuilder.build());
+    public PKPassBuilder relevantDatesBuilder(PKRelevantDateBuilder relevantDate) {
+        if (relevantDate != null) {
+            this.relevantDates.add(relevantDate);
+        }
+        return this;
     }
 
     public PKPassBuilder barcodeBuilder(PKBarcodeBuilder barcode) {
@@ -555,6 +562,7 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
         }
         this.pkPass.beacons = BuilderUtils.buildAll(this.beacons);
         this.pkPass.locations = BuilderUtils.buildAll(this.locations);
+        this.pkPass.relevantDates = BuilderUtils.buildAll(this.relevantDates);
         this.pkPass.barcodes = BuilderUtils.buildAll(this.barcodes);
         this.pkPass.associatedApps = BuilderUtils.buildAll(this.associatedApps);
         this.pkPass.associatedStoreIdentifiers = Collections.unmodifiableList(this.associatedStoreIdentifiers);

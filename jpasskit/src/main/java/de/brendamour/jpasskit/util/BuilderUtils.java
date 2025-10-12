@@ -16,17 +16,7 @@
 package de.brendamour.jpasskit.util;
 
 
-import de.brendamour.jpasskit.IPKBuilder;
-import de.brendamour.jpasskit.PKBarcode;
-import de.brendamour.jpasskit.PKBarcodeBuilder;
-import de.brendamour.jpasskit.PKBeacon;
-import de.brendamour.jpasskit.PKBeaconBuilder;
-import de.brendamour.jpasskit.PKField;
-import de.brendamour.jpasskit.PKFieldBuilder;
-import de.brendamour.jpasskit.PKLocation;
-import de.brendamour.jpasskit.PKLocationBuilder;
-import de.brendamour.jpasskit.PWAssociatedApp;
-import de.brendamour.jpasskit.PWAssociatedAppBuilder;
+import de.brendamour.jpasskit.*;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -65,6 +55,10 @@ public class BuilderUtils {
 
     public static List<PKLocationBuilder> toLocationBuilderList(List<PKLocation> locations) {
         return toBuilderList(locations, PKLocation::builder);
+    }
+
+    public static List<PKRelevantDateBuilder> toRelevantDateBuilderList(List<PKRelevantDate> relevantDates) {
+        return toBuilderList(relevantDates, PKRelevantDate::builder);
     }
 
     public static List<PWAssociatedAppBuilder> toAssociatedAppBuilderList(List<PWAssociatedApp> associatedApps) {

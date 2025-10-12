@@ -21,26 +21,26 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import java.time.Instant;
 
 /**
- * Allows constructing and validating {@link PKRelevantDates} entities.
+ * Allows constructing and validating {@link PKRelevantDate} entities.
  */
 @JsonPOJOBuilder(withPrefix = "")
-public class PKRelevantDatesBuilder implements IPKBuilder<PKRelevantDates> {
+public class PKRelevantDateBuilder implements IPKBuilder<PKRelevantDate> {
 
-    private PKRelevantDates relevantDates;
+    private PKRelevantDate relevantDate;
 
-    protected PKRelevantDatesBuilder() {
-        this.relevantDates = new PKRelevantDates();
+    protected PKRelevantDateBuilder() {
+        this.relevantDate = new PKRelevantDate();
     }
 
     @Override
-    public PKRelevantDatesBuilder of(final PKRelevantDates source) {
+    public PKRelevantDateBuilder of(final PKRelevantDate source) {
         if (source == null) {
             return this;
         }
 
-        this.relevantDates.date = source.date;
-        this.relevantDates.endDate = source.endDate;
-        this.relevantDates.startDate = source.startDate;
+        this.relevantDate.date = source.date;
+        this.relevantDate.endDate = source.endDate;
+        this.relevantDate.startDate = source.startDate;
 
         return this;
     }
@@ -53,8 +53,8 @@ public class PKRelevantDatesBuilder implements IPKBuilder<PKRelevantDates> {
      * @return current builder instance for chaining
      */
     @JsonProperty("date")
-    public PKRelevantDatesBuilder date(Instant date) {
-        this.relevantDates.date = date;
+    public PKRelevantDateBuilder date(Instant date) {
+        this.relevantDate.date = date;
         return this;
     }
 
@@ -66,8 +66,8 @@ public class PKRelevantDatesBuilder implements IPKBuilder<PKRelevantDates> {
      * @return current builder instance for chaining
      */
     @JsonProperty("endDate")
-    public PKRelevantDatesBuilder endDate(Instant endDate) {
-        this.relevantDates.endDate = endDate;
+    public PKRelevantDateBuilder endDate(Instant endDate) {
+        this.relevantDate.endDate = endDate;
         return this;
     }
 
@@ -78,13 +78,13 @@ public class PKRelevantDatesBuilder implements IPKBuilder<PKRelevantDates> {
      * @return current builder instance for chaining
      */
     @JsonProperty("startDate")
-    public PKRelevantDatesBuilder startDate(Instant startDate) {
-        this.relevantDates.startDate = startDate;
+    public PKRelevantDateBuilder startDate(Instant startDate) {
+        this.relevantDate.startDate = startDate;
         return this;
     }
 
     @Override
-    public PKRelevantDates build() {
-        return this.relevantDates;
+    public PKRelevantDate build() {
+        return this.relevantDate;
     }
 }
