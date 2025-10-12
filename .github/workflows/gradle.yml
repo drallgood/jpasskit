@@ -89,8 +89,8 @@ jobs:
       run: |
         VERSION_NO_V=${GITHUB_REF_NAME#v}
         echo "Releasing version: $VERSION_NO_V"
-        ./gradlew clean :jpasskit:publish -Pversion=$VERSION_NO_V --info --stacktrace
-        ./gradlew :jpasskit:jreleaserFullRelease -Pversion=$VERSION_NO_V --info --stacktrace
+        ./gradlew clean publish -Pversion=$VERSION_NO_V --info --stacktrace
+        ./gradlew jreleaserFullRelease -Pversion=$VERSION_NO_V --info --stacktrace
 
     - name: JReleaser output
       if: always()
@@ -139,8 +139,8 @@ jobs:
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
         run: |
-          ./gradlew clean :jpasskit:publish --info --stacktrace
-          ./gradlew :jpasskit:jreleaserDeploy --info --stacktrace
+          ./gradlew clean publish --info --stacktrace
+          ./gradlew jreleaserDeploy --info --stacktrace
 
       - name: JReleaser output (SNAPSHOT)
         if: always()
