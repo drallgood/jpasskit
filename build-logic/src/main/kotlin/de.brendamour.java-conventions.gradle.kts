@@ -214,7 +214,7 @@ jreleaser {
     }
     
     signing {
-        active.set("ALWAYS")
+        active.set(Active.ALWAYS)
         armored.set(true)
         command {
             executable.set("gpg")
@@ -228,7 +228,7 @@ jreleaser {
         maven {
             mavenCentral {
                 create("release-deploy") {
-                    active.set("RELEASE")
+                    active.set(Active.RELEASE)
                     url.set("https://central.sonatype.com/api/v1/publisher")
                     stagingRepositories.set(
                         listOf(
@@ -240,7 +240,7 @@ jreleaser {
             }
             nexus2 {
                 create("snapshot-deploy") {
-                    active.set("SNAPSHOT")
+                    active.set(Active.SNAPSHOT)
                     url.set("https://central.sonatype.com/api/v1/publisher")
                     snapshotUrl.set("https://central.sonatype.com/repository/maven-snapshots")
                     stagingRepositories.set(
