@@ -4,6 +4,8 @@ plugins {
     id("org.jreleaser") version "1.21.0"
 }
 
+import org.jreleaser.model.Active
+
 jreleaser {
     gitRootSearch.set(true)
     
@@ -12,6 +14,7 @@ jreleaser {
         description.set("Java Library for Apple PassKit Web Service")
         license.set("Apache-2.0")
         authors.set(listOf("Patrice Brend'amour"))
+        copyright.set("2012-${java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)} Patrice Brend'amour")
     }
     
     release {
@@ -28,40 +31,24 @@ jreleaser {
     }
     
     signing {
-        active.set(org.jreleaser.model.Active.ALWAYS)
+        active.set(Active.ALWAYS)
         armored.set(true)
-        command {
-            executable.set("gpg")
-            args.set(listOf("--batch", "--yes", "--pinentry-mode", "loopback"))
-            keyName.set("9474B9FCBDF93BEE7CC4B69B4CE3C3B7A5E5FCC2")
-        }
-        mode.set(org.jreleaser.model.Signing.Mode.COMMAND)
     }
     
     deploy {
         maven {
-            val stagingPaths = listOf(
-                layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath,
-                project(":jpasskit").layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath,
-                project(":jpasskit.server").layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath
-            )
             mavenCentral {
                 create("release-deploy") {
-                    active.set(org.jreleaser.model.Active.RELEASE)
+                    active.set(Active.RELEASE)
                     url.set("https://central.sonatype.com/api/v1/publisher")
-                    stagingRepositories.set(stagingPaths)
+                    stagingRepositories.set(
+                        listOf(
+                            layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath,
+                            project(":jpasskit").layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath,
+                            project(":jpasskit.server").layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath
+                        )
+                    )
                     applyMavenCentralRules.set(true)
-                }
-            }
-            nexus2 {
-                create("snapshot-deploy") {
-                    active.set(org.jreleaser.model.Active.SNAPSHOT)
-                    url.set("https://central.sonatype.com/api/v1/publisher")
-                    snapshotUrl.set("https://central.sonatype.com/repository/maven-snapshots")
-                    stagingRepositories.set(stagingPaths)
-                    applyMavenCentralRules.set(true)
-                    closeRepository.set(true)
-                    snapshotSupported.set(true)
                 }
             }
         }
