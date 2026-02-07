@@ -23,8 +23,6 @@ plugins {
     jacoco
 }
 
-import java.util.Calendar
-
 jacoco {
     toolVersion = "0.8.13"
 }
