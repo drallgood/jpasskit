@@ -1,5 +1,6 @@
 plugins {
     `maven-publish`
+    id("de.brendamour.java-conventions")
 }
 
 allprojects {

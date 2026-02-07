@@ -7,6 +7,12 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.api.tasks.wrapper.Wrapper
 
+// Constants for JReleaser configuration
+val JPASSKIT_WEBSITE = "https://github.com/drallgood/jpasskit"
+val JPASSKIT_AUTHOR = "Patrice Brend'amour"
+val JPASSKIT_SCM_CONNECTION = "scm:https://github.com/drallgood/jpasskit.git"
+val JPASSKIT_SCM_DEV_CONNECTION = "scm:git@github.com:drallgood/jpasskit.git"
+
 plugins {
     `java-library`
     `maven-publish`
@@ -30,9 +36,9 @@ afterEvaluate {
             project {
                 name.set("jpasskit")
                 description.set("Java Library for Apple PassKit Web Service")
-                website.set("https://github.com/drallgood/jpasskit")
+                website.set(JPASSKIT_WEBSITE)
                 license.set("Apache-2.0")
-                authors.set(listOf("Patrice Brend'amour"))
+                authors.set(listOf(JPASSKIT_AUTHOR))
             }
 
             release {
@@ -122,7 +128,7 @@ publishing {
     publications.create<MavenPublication>("maven") {
         from(components["java"])
         pom {
-            url.set("https://github.com/drallgood/jpasskit")
+            url.set(JPASSKIT_WEBSITE)
             name.set(project.name)
             if (project.description != null) {
                 description.set(project.description)
@@ -139,16 +145,16 @@ publishing {
             developers {
                 developer {
                     id.set("patrice")
-                    name.set("Patrice Brend'amour")
+                    name.set(JPASSKIT_AUTHOR)
                     email.set("patrice@brendamour.net")
                     url.set("https://brendamour.net")
                     timezone.set("Europe/Vienna")
                 }
             }
             scm {
-                connection.set("scm:https://github.com/drallgood/jpasskit.git")
-                developerConnection.set("scm:git@github.com:drallgood/jpasskit.git")
-                url.set("https://github.com/drallgood/jpasskit")
+                connection.set(JPASSKIT_SCM_CONNECTION)
+                developerConnection.set(JPASSKIT_SCM_DEV_CONNECTION)
+                url.set(JPASSKIT_WEBSITE)
             }
         }
     }
@@ -180,11 +186,6 @@ tasks.withType<JavaCompile>() {
 tasks.withType<Javadoc>() {
     options.encoding = "UTF-8"
 }
-
-tasks.register<Wrapper>("wrapper") {
-    gradleVersion = "8.7"
-}
-tasks.register("prepareKotlinBuildScriptModel") {}
 
 license {
     header = project.file("header.txt")
