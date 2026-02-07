@@ -193,7 +193,7 @@ jreleaser {
     gitRootSearch.set(true)
     
     project {
-        name.set(providers.provider { if (project.name == "jpasskit") "jpasskit" else project.name })
+        name.set(providers.provider { if (project.name.get() == "jpasskit") "jpasskit" else project.name.get() })
         description.set(providers.provider("Java Library for Apple PassKit Web Service"))
         license.set("Apache-2.0")
         authors.set(listOf("Patrice Brend'amour"))
@@ -202,8 +202,8 @@ jreleaser {
     
     release {
         github {
-            repoOwner.set(providers.provider { if (project.name == "jpasskit") "drallgood" else "" })
-            name.set(providers.provider { if (project.name == "jpasskit") "jpasskit" else "" })
+            repoOwner.set(providers.provider { if (project.name.get() == "jpasskit") "drallgood" else "" })
+            name.set(providers.provider { if (project.name.get() == "jpasskit") "jpasskit" else "" })
             overwrite.set(true)
             skipTag.set(true)
             changelog {
@@ -214,7 +214,7 @@ jreleaser {
     }
     
     signing {
-        active.set(providers.provider { if (project.name == "jpasskit") org.jreleaser.model.Active.ALWAYS else org.jreleaser.model.Active.NEVER })
+        active.set(providers.provider { if (project.name.get() == "jpasskit") org.jreleaser.model.Active.ALWAYS else org.jreleaser.model.Active.NEVER })
         armored.set(true)
         command {
             executable.set("gpg")
@@ -228,11 +228,11 @@ jreleaser {
         maven {
             mavenCentral {
                 create("release-deploy") {
-                    active.set(providers.provider { if (project.name == "jpasskit") org.jreleaser.model.Active.RELEASE else org.jreleaser.model.Active.NEVER })
+                    active.set(providers.provider { if (project.name.get() == "jpasskit") org.jreleaser.model.Active.RELEASE else org.jreleaser.model.Active.NEVER })
                     url.set("https://central.sonatype.com/api/v1/publisher")
                     stagingRepositories.set(
                         providers.provider {
-                            if (project.name == "jpasskit") {
+                            if (project.name.get() == "jpasskit") {
                                 listOf(
                                     layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath,
                                     project(":jpasskit").layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath,
@@ -248,12 +248,12 @@ jreleaser {
             }
             nexus2 {
                 create("snapshot-deploy") {
-                    active.set(providers.provider { if (project.name == "jpasskit") org.jreleaser.model.Active.SNAPSHOT else org.jreleaser.model.Active.NEVER })
+                    active.set(providers.provider { if (project.name.get() == "jpasskit") org.jreleaser.model.Active.SNAPSHOT else org.jreleaser.model.Active.NEVER })
                     url.set("https://central.sonatype.com/api/v1/publisher")
                     snapshotUrl.set("https://central.sonatype.com/repository/maven-snapshots")
                     stagingRepositories.set(
                         providers.provider {
-                            if (project.name == "jpasskit") {
+                            if (project.name.get() == "jpasskit") {
                                 listOf(
                                     layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath,
                                     project(":jpasskit").layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath,
