@@ -1,6 +1,28 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.5.5 - 2026-02-07
+### Changed
+
+- Dependency updates:
+  - Jackson: `jackson-databind`, `jackson-datatype-jsr310` updates
+  - Apache Commons: `commons-lang3` 3.20.0, `commons-codec` 1.21.0, `commons-io` 2.21.0
+  - AssertJ 3.27.7
+  - TestNG 7.12.0
+  - Mockito 5.21.0
+  - BouncyCastle `bcpkix-jdk18on` 1.83
+  - Guava 33.5.0-jre
+  - JReleaser Gradle Plugin updates
+- Build improvements:
+  - JReleaser configuration now uses enum-based Active/Signing values
+  - Multi-module release properly aggregates staging directories
+
+### Fixed
+
+- Updated expired test certificates
+- Fixed relevantDates serialization (must be a list of objects)
+- Ensured all modules are published correctly
+
 ## 0.5.0 - 2025-09-16
 ### Added
 
