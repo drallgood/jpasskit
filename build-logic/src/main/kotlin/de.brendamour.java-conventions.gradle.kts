@@ -193,7 +193,7 @@ jreleaser {
     gitRootSearch.set(true)
     
     project {
-        name.set(providers.provider { if (project.name.get() == "jpasskit") "jpasskit" else project.name.get() })
+        name.set("jpasskit")
         description.set("Java Library for Apple PassKit Web Service")
         license.set("Apache-2.0")
         authors.set(listOf("Patrice Brend'amour"))
@@ -202,8 +202,8 @@ jreleaser {
     
     release {
         github {
-            repoOwner.set(providers.provider { if (project.name.get() == "jpasskit") "drallgood" else "" })
-            name.set(providers.provider { if (project.name.get() == "jpasskit") "jpasskit" else "" })
+            repoOwner.set("drallgood")
+            name.set("jpasskit")
             overwrite.set(true)
             skipTag.set(true)
             changelog {
@@ -214,7 +214,7 @@ jreleaser {
     }
     
     signing {
-        active.set(providers.provider { if (project.name.get() == "jpasskit") org.jreleaser.model.Active.ALWAYS else org.jreleaser.model.Active.NEVER })
+        active.set(org.jreleaser.model.Active.ALWAYS)
         armored.set(true)
         command {
             executable.set("gpg")
@@ -228,19 +228,15 @@ jreleaser {
         maven {
             mavenCentral {
                 create("release-deploy") {
-                    active.set(providers.provider { if (project.name.get() == "jpasskit") org.jreleaser.model.Active.RELEASE else org.jreleaser.model.Active.NEVER })
+                    active.set(org.jreleaser.model.Active.RELEASE)
                     url.set("https://central.sonatype.com/api/v1/publisher")
                     stagingRepositories.set(
                         providers.provider {
-                            if (project.name.get() == "jpasskit") {
-                                listOf(
-                                    layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath,
-                                    project(":jpasskit").layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath,
-                                    project(":jpasskit.server").layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath
-                                )
-                            } else {
-                                emptyList()
-                            }
+                            listOf(
+                                layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath,
+                                project(":jpasskit").layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath,
+                                project(":jpasskit.server").layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath
+                            )
                         }
                     )
                     applyMavenCentralRules.set(true)
@@ -248,20 +244,16 @@ jreleaser {
             }
             nexus2 {
                 create("snapshot-deploy") {
-                    active.set(providers.provider { if (project.name.get() == "jpasskit") org.jreleaser.model.Active.SNAPSHOT else org.jreleaser.model.Active.NEVER })
+                    active.set(org.jreleaser.model.Active.SNAPSHOT)
                     url.set("https://central.sonatype.com/api/v1/publisher")
                     snapshotUrl.set("https://central.sonatype.com/repository/maven-snapshots")
                     stagingRepositories.set(
                         providers.provider {
-                            if (project.name.get() == "jpasskit") {
-                                listOf(
-                                    layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath,
-                                    project(":jpasskit").layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath,
-                                    project(":jpasskit.server").layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath
-                                )
-                            } else {
-                                emptyList()
-                            }
+                            listOf(
+                                layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath,
+                                project(":jpasskit").layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath,
+                                project(":jpasskit.server").layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath
+                            )
                         }
                     )
                     applyMavenCentralRules.set(true)
