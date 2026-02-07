@@ -194,7 +194,7 @@ jreleaser {
     
     project {
         name.set(providers.provider { if (project.name.get() == "jpasskit") "jpasskit" else project.name.get() })
-        description.set(providers.provider("Java Library for Apple PassKit Web Service"))
+        description.set("Java Library for Apple PassKit Web Service")
         license.set("Apache-2.0")
         authors.set(listOf("Patrice Brend'amour"))
         copyright.set(providers.provider { "2012-${Calendar.getInstance().get(Calendar.YEAR)} Patrice Brend'amour" })
