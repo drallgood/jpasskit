@@ -130,15 +130,15 @@ jreleaser {
 
     deploy {
         maven {
+            val projs: List<Project> = listOf(rootProject) + rootProject.subprojects.toList()
+            val stagingPaths: List<String> = projs.map { p: Project ->
+                p.layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath
+            }
             mavenCentral {
                 create("release-deploy") {
                     active.set(Active.RELEASE)
                     url.set("https://central.sonatype.com/api/v1/publisher")
-                    stagingRepositories.set(
-                        listOf(
-                            layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath
-                        )
-                    )
+                    stagingRepositories.set(providers.provider { stagingPaths })
                     applyMavenCentralRules.set(true)
                 }
             }
@@ -147,11 +147,7 @@ jreleaser {
                     active.set(Active.SNAPSHOT)
                     url.set("https://central.sonatype.com/api/v1/publisher")
                     snapshotUrl.set("https://central.sonatype.com/repository/maven-snapshots")
-                    stagingRepositories.set(
-                        listOf(
-                            layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath
-                        )
-                    )
+                    stagingRepositories.set(providers.provider { stagingPaths })
                     applyMavenCentralRules.set(true)
                     closeRepository.set(true)
                     snapshotSupported.set(true)
