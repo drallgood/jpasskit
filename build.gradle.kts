@@ -6,6 +6,7 @@ plugins {
 
 import org.jreleaser.model.Active
 import org.jreleaser.model.Signing
+import java.util.Calendar
 
 afterEvaluate {
     jreleaser {
@@ -16,7 +17,7 @@ afterEvaluate {
             description.set("Java Library for Apple PassKit Web Service")
             license.set("Apache-2.0")
             authors.set(listOf("Patrice Brend'amour"))
-            copyright.set("2012-${java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)} Patrice Brend'amour")
+            copyright.set("2012-${Calendar.getInstance().get(Calendar.YEAR)} Patrice Brend'amour")
         }
         
         release {
