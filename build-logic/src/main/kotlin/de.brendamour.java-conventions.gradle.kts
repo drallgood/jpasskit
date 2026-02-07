@@ -12,9 +12,13 @@ plugins {
     `maven-publish`
     `jvm-test-suite`
     signing
-    id("org.jreleaser")
     id("com.benjaminsproule.license")
     jacoco
+}
+
+// Apply JReleaser plugin only to root project
+if (project == rootProject) {
+    apply(plugin = "org.jreleaser")
 }
 
 jacoco {
