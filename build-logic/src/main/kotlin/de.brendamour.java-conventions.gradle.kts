@@ -206,6 +206,8 @@ jreleaser {
             name.set("jpasskit")
             overwrite.set(true)
             skipTag.set(true)
+            // Explicitly set to false to fix JReleaser 1.21.0 bug with multi-module projects
+            immutableRelease.set(false)
             changelog {
                 preset.set("conventional-commits")
                 skipMergeCommits.set(true)

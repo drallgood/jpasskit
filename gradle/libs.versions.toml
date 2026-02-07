@@ -19,7 +19,7 @@ org-slf4j-slf4j-api = "2.0.17"
 org-testng-testng = "7.12.0"
 com-benjaminsproule-license = "0.16.2"
 io-github-gradle-nexus-publish-plugin = "2.0.0"
-org-jreleaser = "1.18.0"
+org-jreleaser = "1.21.0"
 jacoco = "0.8.13"
 
 [libraries]
