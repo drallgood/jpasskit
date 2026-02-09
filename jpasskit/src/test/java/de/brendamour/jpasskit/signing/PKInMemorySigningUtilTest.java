@@ -156,6 +156,73 @@ public class PKInMemorySigningUtilTest {
         AssertZip.assertValid(passZipFile);
     }
 
+    @Test
+    public void testWithInMemoryTemplateStreaming() throws Exception {
+        PKPassTemplateInMemory pkPassTemplateInMemory = new PKPassTemplateInMemory();
+
+        // icon
+        URL iconFileURL = PKInMemorySigningUtilTest.class.getClassLoader().getResource("StoreCard.raw/icon@2x.png");
+        File iconFile = new File(iconFileURL.getFile());
+        pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, iconFile);
+        // icon for language
+        pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, Locale.ENGLISH, iconFile);
+
+        PKPass pass = new ObjectMapper().readValue(new File(getPathFromClasspath("pass.json")), PKPass.class);
+
+        File passfile = File.createTempFile("passInMemoryStreamOutput", ".zip");
+        createZipAndAssertStream(pkPassTemplateInMemory, pass, passfile);
+    }
+
+    @Test
+    public void testWithInMemoryTemplateStreamingAndPersonalization() throws Exception {
+        PKPassTemplateInMemory pkPassTemplateInMemory = new PKPassTemplateInMemory();
+
+        // icon
+        URL iconFileURL = PKInMemorySigningUtilTest.class.getClassLoader().getResource("StoreCard.raw/icon@2x.png");
+        File iconFile = new File(iconFileURL.getFile());
+        pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, iconFile);
+        // icon for language
+        pkPassTemplateInMemory.addFile(PKPassTemplateInMemory.PK_ICON_RETINA, Locale.ENGLISH, iconFile);
+
+        PKPass pass = new ObjectMapper().readValue(new File(getPathFromClasspath("pass.json")), PKPass.class);
+
+        PKPersonalizationBuilder personalization = PKPersonalization.builder()
+                .description("desc")
+                .termsAndConditions("T&C")
+                .requiredPersonalizationField(PKPassPersonalizationField.PKPassPersonalizationFieldName);
+
+        File passfile = File.createTempFile("passInMemoryStreamOutput", ".zip");
+        createZipAndAssertStream(pkPassTemplateInMemory, pass, personalization.build(), passfile);
+    }
+
+    private void createZipAndAssertStream(IPKPassTemplate pkPassTemplate, PKPass pkPass, File passZipFile) throws Exception {
+        createZipAndAssertStream(pkPassTemplate, pkPass, null, passZipFile);
+    }
+
+    private void createZipAndAssertStream(IPKPassTemplate pkPassTemplate, PKPass pkPass, PKPersonalization personalization, File passZipFile)
+            throws Exception {
+        PKSigningInformation pkSigningInformation = new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
+                KEYSTORE_PATH, KEYSTORE_PASSWORD, APPLE_WWDRCA);
+
+        if (passZipFile.exists()) {
+            passZipFile.delete();
+        }
+
+        try (FileOutputStream outputStream = new FileOutputStream(passZipFile)) {
+            if (personalization != null) {
+                pkInMemorySigningUtil.createSignedAndZippedPersonalizedPkPassArchiveStream(pkPass, personalization,
+                        pkPassTemplate, pkSigningInformation, outputStream);
+            } else {
+                pkInMemorySigningUtil.createSignedAndZippedPkPassArchiveStream(pkPass,
+                        pkPassTemplate, pkSigningInformation, outputStream);
+            }
+        }
+
+        Assert.assertTrue(passZipFile.exists());
+        Assert.assertTrue(passZipFile.length() > 0);
+        AssertZip.assertValid(passZipFile);
+    }
+
     private String getPathFromClasspath(String path) throws Exception {
         return Paths.get(ClassLoader.getSystemResource(path).toURI()).toString();
     }

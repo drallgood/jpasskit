@@ -223,6 +223,81 @@ public class PKFileBasedSigningUtilTest {
         return Paths.get(ClassLoader.getSystemResource(path).toURI()).toString();
     }
 
+    @Test
+    public void testFileBasedStreamingWithGeneratedPass() throws Exception {
+        PKPassBuilder passBuilder = PKPass.builder()
+                .barcodeBuilder(
+                        PKBarcode.builder()
+                                .format(PKBarcodeFormat.PKBarcodeFormatQR)
+                                .message("abcdefg")
+                                .messageEncoding(Charset.forName("UTF-8"))
+                )
+                .passTypeIdentifier("pti")
+                .teamIdentifier("ti");
+
+        File passfile = File.createTempFile("passFileBasedStreamGenerated", ".zip");
+        createZipAndAssertStream(passBuilder.build(), passfile);
+    }
+
+    @Test
+    public void testFileBasedStreamingWithGeneratedPassAndPersonalization() throws Exception {
+        PKPassBuilder passBuilder = PKPass.builder()
+                .barcodeBuilder(
+                        PKBarcode.builder()
+                                .format(PKBarcodeFormat.PKBarcodeFormatQR)
+                                .message("abcdefg")
+                                .messageEncoding(Charset.forName("UTF-8"))
+                )
+                .passTypeIdentifier("pti")
+                .teamIdentifier("ti");
+
+        PKPersonalizationBuilder personalization = PKPersonalization.builder()
+                .description("desc")
+                .termsAndConditions("T&C")
+                .requiredPersonalizationField(PKPassPersonalizationField.PKPassPersonalizationFieldName);
+
+        File passfile = File.createTempFile("passFileBasedStreamGenerated", ".zip");
+        createZipAndAssertStream(passBuilder.build(), personalization.build(), passfile);
+    }
+
+    private void createZipAndAssertStream(PKPass pkPass, File passZipFile) throws Exception {
+        createZipAndAssertStream(pkPass, null, passZipFile);
+    }
+
+    private void createZipAndAssertStream(PKPass pkPass, PKPersonalization personalization, File passZipFile) throws Exception {
+        PKSigningInformation pkSigningInformation =
+                new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
+                        KEYSTORE_PATH, KEYSTORE_PASSWORD, APPLE_WWDRCA);
+        PKPassTemplateFolder pkPassTemplate = new PKPassTemplateFolder(getPathFromClasspath(PASS_TEMPLATE_FOLDER));
+        IPKSigningUtil pkSigningUtil = new PKFileBasedSigningUtil();
+
+        if (passZipFile.exists()) {
+            passZipFile.delete();
+        }
+
+        try (FileOutputStream outputStream = new FileOutputStream(passZipFile)) {
+            if (personalization != null) {
+                pkSigningUtil.createSignedAndZippedPersonalizedPkPassArchiveStream(pkPass,
+                        personalization, pkPassTemplate,
+                        pkSigningInformation, outputStream);
+            } else {
+                pkSigningUtil.createSignedAndZippedPkPassArchiveStream(pkPass, pkPassTemplate,
+                        pkSigningInformation, outputStream);
+            }
+        }
+
+        Assert.assertTrue(passZipFile.exists());
+        Assert.assertTrue(passZipFile.length() > 0);
+        AssertZip.assertValid(passZipFile);
+
+        Path pkpassFile = passZipFile.toPath();
+        FileSystem fs = FileSystems.newFileSystem(pkpassFile, (ClassLoader) null);
+        Path bgFilePath = fs.getPath(PKPassTemplateInMemory.PK_ICON);
+        Assert.assertTrue(Files.exists(bgFilePath));
+        Path ignoredFilePath = fs.getPath(".ignored_file");
+        Assert.assertFalse(Files.exists(ignoredFilePath));
+    }
+
     private ObjectMapper getObjectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
 
