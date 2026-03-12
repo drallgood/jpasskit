@@ -421,8 +421,13 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
         return this;
     }
 
+    @Deprecated
     public PKPassBuilder transitProviderWebsiteUrl(URL transitProviderWebsiteUrl) {
-        this.pkPass.transitProviderWebsiteUrl = transitProviderWebsiteUrl;
+        return transitProviderWebsiteURL(transitProviderWebsiteUrl);
+    }
+
+    public PKPassBuilder transitProviderWebsiteURL(URL transitProviderWebsiteURL) {
+        this.pkPass.transitProviderWebsiteURL = transitProviderWebsiteURL;
         return this;
     }
 
