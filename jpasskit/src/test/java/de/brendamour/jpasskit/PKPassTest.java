@@ -378,6 +378,40 @@ public class PKPassTest {
         });
     }
 
+    @Test
+    public void test_transitProviderWebsiteURL_serializationAndAliasDeserialization() throws MalformedURLException {
+        var website = new URL("https://example.com/transit");
+        var pass = this.builder
+                .serialNumber("123")
+                .passTypeIdentifier("com.test.pass")
+                .teamIdentifier("TEAM123")
+                .description("Test Pass")
+                .organizationName("Test Org")
+                .pass(PKGenericPass.builder())
+                .transitProviderWebsiteURL(website)
+                .build();
+
+        assertThat(pass.getTransitProviderWebsiteURL()).isEqualTo(website);
+        assertThat(pass.getTransitProviderWebsiteUrl()).isEqualTo(website);
+
+        var mapper = new ObjectMapper();
+        var serializedPass = mapper.convertValue(pass, Map.class);
+        assertThat(serializedPass).containsKey("transitProviderWebsiteURL");
+        assertThat(serializedPass).doesNotContainKey("transitProviderWebsiteUrl");
+
+        var aliasInput = ImmutableMap.<String, Object>of(
+                "serialNumber", "123",
+                "passTypeIdentifier", "com.test.pass",
+                "teamIdentifier", "TEAM123",
+                "description", "Test Pass",
+                "organizationName", "Test Org",
+                "generic", ImmutableMap.of(),
+                "transitProviderWebsiteUrl", website.toString()
+        );
+        var fromAlias = mapper.convertValue(aliasInput, PKPass.class);
+        assertThat(fromAlias.getTransitProviderWebsiteURL()).isEqualTo(website);
+    }
+
     private static URL asUrl(String value) {
         try {
             return new URL(value);
