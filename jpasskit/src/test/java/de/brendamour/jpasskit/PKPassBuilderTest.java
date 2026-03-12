@@ -514,6 +514,35 @@ public class PKPassBuilderTest {
     }
 
     @Test
+    public void testTransitProviderWebsiteURLBuilderMethods() throws MalformedURLException {
+        URL website = new URL("https://example.com/transit");
+
+        PKPass pass = builder
+                .serialNumber("123")
+                .passTypeIdentifier("com.test.pass")
+                .teamIdentifier("TEAM123")
+                .description("Test Pass")
+                .organizationName("Test Org")
+                .pass(PKGenericPass.builder())
+                .transitProviderWebsiteURL(website)
+                .build();
+
+        Assert.assertEquals(pass.getTransitProviderWebsiteURL(), website);
+
+        PKPass passFromDeprecated = PKPass.builder()
+                .serialNumber("123")
+                .passTypeIdentifier("com.test.pass")
+                .teamIdentifier("TEAM123")
+                .description("Test Pass")
+                .organizationName("Test Org")
+                .pass(PKGenericPass.builder())
+                .transitProviderWebsiteUrl(website)
+                .build();
+
+        Assert.assertEquals(passFromDeprecated.getTransitProviderWebsiteURL(), website);
+    }
+
+    @Test
     public void testExpirationDateSetter() {
         Date expirationDate = new Date();
         builder.expirationDate(expirationDate);
