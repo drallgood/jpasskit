@@ -1,6 +1,33 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.5.6 - 2026-05-26
+### Added
+
+- Added tests for `transitProviderWebsiteURL` JSON mapping and builder delegation (#672)
+- Increased test coverage for certificate and signing utility classes (#673)
+
+### Changed
+
+- Standardized transit provider website API naming on `transitProviderWebsiteURL` (#672)
+- Updated dependencies:
+  - Jackson: `jackson-databind`, `jackson-datatype-jsr310` to 2.21.3 (#666, #667, #676, #682, #683)
+  - Apache Commons: `commons-codec` 1.22.0, `commons-io` 2.22.0 (#681, #680)
+  - Guava 33.6.0-jre (#679)
+  - Mockito 5.23.0 (#674)
+  - BouncyCastle `bcpkix-jdk18on` 1.84 (#678)
+  - Log4j `log4j-slf4j-impl` 2.26.0 (#677, #687)
+  - JReleaser Gradle plugin/core 1.24.0 (#669, #670, #685, #686)
+
+### Deprecated
+
+- Deprecated `PKPassBuilder.transitProviderWebsiteUrl(URL)` in favor of `PKPassBuilder.transitProviderWebsiteURL(URL)` (#672)
+
+### Fixed
+
+- Corrected transit provider website field naming while preserving backward compatibility (`@JsonAlias` support) (#672)
+- Addressed JReleaser `immutableRelease` release-flow issues (182553f)
+
 ## 0.5.5 - 2026-02-07
 ### Changed
 
