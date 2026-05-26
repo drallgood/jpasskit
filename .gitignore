@@ -64,7 +64,7 @@ gradle-app.setting
 *.hprof
 
 # End of https://www.toptal.com/developers/gitignore/api/java,gradle
-**/gradle/wrapper/
+**/gradle/wrapper/dists/
 
 build-logic/bin
 jpasskit.server/bin
