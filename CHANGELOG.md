@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Fixed
+
+## 0.5.7 - 2026-05-26
+### Added
+
 - Added tests for `transitProviderWebsiteURL` JSON mapping and builder delegation (#672)
 - Increased test coverage for certificate and signing utility classes (#673)
 
