@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 0.5.6 - 2026-02-08
+## Unreleased
 ### Added
 
 - Added tests for `transitProviderWebsiteURL` JSON mapping and builder delegation (#672)
@@ -18,6 +18,8 @@ All notable changes to this project will be documented in this file.
   - BouncyCastle `bcpkix-jdk18on` 1.84 (#678)
   - Log4j `log4j-slf4j-impl` 2.26.0 (#677, #687)
   - JReleaser Gradle plugin/core 1.24.0 (#669, #670, #685, #686)
+- Updated the manual release workflow to use Gradle-based version/tag preparation instead of Maven release goals
+- Replaced deprecated `actions/cache@v2` with `actions/cache@v4` in the manual release workflow
 
 ### Deprecated
 
@@ -26,7 +28,19 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Corrected transit provider website field naming while preserving backward compatibility (`@JsonAlias` support) (#672)
-- Addressed JReleaser `immutableRelease` release-flow issues (182553f)
+
+## 0.5.6 - 2026-02-08
+### Changed
+
+- Release automation and JReleaser configuration updates:
+  - Moved JReleaser plugin usage to the root `build.gradle.kts`
+  - Added explicit JReleaser plugin version declaration
+  - Wrapped JReleaser configuration in `afterEvaluate` and removed deprecated website usage
+  - Set `immutableRelease` handling and upgraded JReleaser to 1.22.0
+
+### Fixed
+
+- Addressed JReleaser `immutableRelease` release-flow issues
 
 ## 0.5.5 - 2026-02-07
 ### Changed
