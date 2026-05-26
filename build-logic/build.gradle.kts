@@ -1,4 +1,5 @@
 import org.gradle.kotlin.dsl.`kotlin-dsl`
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -23,10 +24,8 @@ java {
 }
 
 tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions {
-        jvmTarget = "11"
-        apiVersion = "1.8"
-        languageVersion = "1.8"
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_11)
     }
 }
 
