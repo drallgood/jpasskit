@@ -12,11 +12,14 @@ on:
         default: "X.Y.Z-SNAPSHOT"
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   prepare-release:
     runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: write
     steps:
     - uses: actions/checkout@v4
       with:
@@ -33,10 +36,28 @@ jobs:
         git config user.email "actions@github.com"
         git config user.name "GitHub Actions"
 
+    - name: Validate release inputs
+      run: |
+        set -euo pipefail
+        RELEASE_VERSION='${{ github.event.inputs.releaseVersion }}'
+        DEVELOPMENT_VERSION='${{ github.event.inputs.developmentVersion }}'
+        SEMVER_RE='^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'
+        SNAPSHOT_RE='^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?-SNAPSHOT$'
+
+        [[ "$RELEASE_VERSION" =~ $SEMVER_RE ]] || {
+          echo "Invalid releaseVersion: $RELEASE_VERSION"
+          exit 1
+        }
+        [[ "$DEVELOPMENT_VERSION" =~ $SNAPSHOT_RE ]] || {
+          echo "Invalid developmentVersion: $DEVELOPMENT_VERSION"
+          exit 1
+        }
+
     - name: Prepare release commits and tag
       run: |
-        RELEASE_VERSION="${{ github.event.inputs.releaseVersion }}"
-        DEVELOPMENT_VERSION="${{ github.event.inputs.developmentVersion }}"
+        set -euo pipefail
+        RELEASE_VERSION='${{ github.event.inputs.releaseVersion }}'
+        DEVELOPMENT_VERSION='${{ github.event.inputs.developmentVersion }}'
 
         sed -i "s/^version=.*/version=$RELEASE_VERSION/" gradle.properties
         git add gradle.properties

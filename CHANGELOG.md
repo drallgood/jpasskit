@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 0.5.6 - 2026-05-26
+## 0.5.6 - 2026-02-08
 ### Added
 
 - Added tests for `transitProviderWebsiteURL` JSON mapping and builder delegation (#672)
