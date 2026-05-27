@@ -2,7 +2,7 @@
 # https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
 
 [versions]
-com-eatthepath-pushy = "0.15.4"
+com-eatthepath-pushy = "0.15.6"
 com-fasterxml-jackson-core-jackson-databind = "2.21.3"
 com-fasterxml-jackson-datatype-jackson-datatype-jsr310 = "2.21.3"
 com-google-guava-guava = "33.6.0-jre"
