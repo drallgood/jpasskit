@@ -15,6 +15,10 @@
  */
 package de.brendamour.jpasskit;
 
+ import com.fasterxml.jackson.annotation.JsonAlias;
+ import com.fasterxml.jackson.annotation.JsonIgnore;
+ import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 import java.net.URL;
 import java.time.Instant;
@@ -55,7 +59,7 @@ public class PKPass implements Cloneable, Serializable {
 
     protected List<PKBeacon> beacons;
     protected List<PKLocation> locations;
-    protected PKRelevantDates relevantDates;
+    protected List<PKRelevantDate> relevantDates;
 
     protected List<PKBarcode> barcodes;
 
@@ -103,7 +107,9 @@ public class PKPass implements Cloneable, Serializable {
     protected URL managementURL;
     protected String transitProviderPhoneNumber;
     protected String transitProviderEmail;
-    protected URL transitProviderWebsiteUrl;
+    @JsonProperty("transitProviderWebsiteURL")
+    @JsonAlias("transitProviderWebsiteUrl")
+    protected URL transitProviderWebsiteURL;
     protected URL upgradeURL;
     protected URL bagPolicyURL;
     protected URL accessibilityURL;
@@ -183,7 +189,7 @@ public class PKPass implements Cloneable, Serializable {
         return locations;
     }
 
-    public PKRelevantDates getRelevantDates() {
+    public List<PKRelevantDate> getRelevantDates() {
         return relevantDates;
     }
 
@@ -284,8 +290,13 @@ public class PKPass implements Cloneable, Serializable {
     public String getTransitProviderEmail() {
         return transitProviderEmail;
     }
+    @Deprecated
+    @JsonIgnore
     public URL getTransitProviderWebsiteUrl() {
-        return transitProviderWebsiteUrl;
+        return getTransitProviderWebsiteURL();
+    }
+    public URL getTransitProviderWebsiteURL() {
+        return transitProviderWebsiteURL;
     }
     public URL getUpgradeURL() {
         return upgradeURL;

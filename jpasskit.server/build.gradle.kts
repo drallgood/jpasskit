@@ -19,3 +19,8 @@ project.description = "Java Server Example for Apple PassBook Web Service API"
 java {
     withJavadocJar()
 }
+
+tasks.named<Test>("test") {
+    failOnNoDiscoveredTests = false
+}
+

@@ -22,13 +22,13 @@ import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class PKRelevantDatesTest {
+public class PKRelevantDateTest {
 
     private static final Instant DATE = Instant.parse("2024-01-15T10:00:00Z");
     private static final Instant START_DATE = Instant.parse("2024-01-10T09:00:00Z");
     private static final Instant END_DATE = Instant.parse("2024-01-20T18:00:00Z");
 
-    private PKRelevantDatesBuilder builder;
+    private PKRelevantDateBuilder builder;
 
     private void fillProperties() {
         builder.date(DATE)
@@ -38,7 +38,7 @@ public class PKRelevantDatesTest {
 
     @BeforeMethod
     public void prepareTest() {
-        builder = PKRelevantDates.builder();
+        builder = PKRelevantDate.builder();
         fillProperties();
     }
 
@@ -52,7 +52,7 @@ public class PKRelevantDatesTest {
 
     @Test
     public void test_getters() {
-        PKRelevantDates relevantDates = builder.build();
+        PKRelevantDate relevantDates = builder.build();
 
         assertThat(relevantDates.getDate()).isEqualTo(DATE);
         assertThat(relevantDates.getStartDate()).isEqualTo(START_DATE);
@@ -61,8 +61,8 @@ public class PKRelevantDatesTest {
 
     @Test
     public void test_clone() {
-        PKRelevantDates relevantDates = builder.build();
-        PKRelevantDates copy = PKRelevantDates.builder(relevantDates).build();
+        PKRelevantDate relevantDates = builder.build();
+        PKRelevantDate copy = PKRelevantDate.builder(relevantDates).build();
 
         assertThat(copy)
                 .isNotSameAs(relevantDates)
@@ -75,7 +75,7 @@ public class PKRelevantDatesTest {
 
     @Test
     public void test_toString() {
-        PKRelevantDates relevantDates = builder.build();
+        PKRelevantDate relevantDates = builder.build();
         assertThat(relevantDates.toString())
                 .contains(DATE.toString())
                 .contains(START_DATE.toString())
@@ -84,7 +84,7 @@ public class PKRelevantDatesTest {
 
     @Test
     public void test_builder_partial() {
-        PKRelevantDates relevantDates = PKRelevantDates.builder()
+        PKRelevantDate relevantDates = PKRelevantDate.builder()
                 .date(DATE)
                 .build();
 
@@ -95,7 +95,7 @@ public class PKRelevantDatesTest {
 
     @Test
     public void test_builder_of_null() {
-        PKRelevantDates relevantDates = PKRelevantDates.builder()
+        PKRelevantDate relevantDates = PKRelevantDate.builder()
                 .of(null)
                 .date(DATE)
                 .build();

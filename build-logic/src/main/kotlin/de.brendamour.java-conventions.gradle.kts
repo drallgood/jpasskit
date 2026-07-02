@@ -1,18 +1,21 @@
 import java.util.*
 import org.gradle.api.publish.maven.MavenPublication
-import org.jreleaser.model.Active
-import org.jreleaser.model.Signing
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.api.tasks.wrapper.Wrapper
+
+// Constants for JReleaser configuration
+val JPASSKIT_WEBSITE = "https://github.com/drallgood/jpasskit"
+val JPASSKIT_AUTHOR = "Patrice Brend'amour"
+val JPASSKIT_SCM_CONNECTION = "scm:https://github.com/drallgood/jpasskit.git"
+val JPASSKIT_SCM_DEV_CONNECTION = "scm:git@github.com:drallgood/jpasskit.git"
 
 plugins {
     `java-library`
     `maven-publish`
     `jvm-test-suite`
     signing
-    id("org.jreleaser")
     id("com.benjaminsproule.license")
     jacoco
 }
@@ -49,7 +52,7 @@ publishing {
     publications.create<MavenPublication>("maven") {
         from(components["java"])
         pom {
-            url.set("https://github.com/drallgood/jpasskit")
+            url.set(JPASSKIT_WEBSITE)
             name.set(project.name)
             if (project.description != null) {
                 description.set(project.description)
@@ -66,88 +69,22 @@ publishing {
             developers {
                 developer {
                     id.set("patrice")
-                    name.set("Patrice Brend'amour")
+                    name.set(JPASSKIT_AUTHOR)
                     email.set("patrice@brendamour.net")
                     url.set("https://brendamour.net")
                     timezone.set("Europe/Vienna")
                 }
             }
             scm {
-                connection.set("scm:https://github.com/drallgood/jpasskit.git")
-                developerConnection.set("scm:git@github.com:drallgood/jpasskit.git")
-                url.set("https://github.com/drallgood/jpasskit")
+                connection.set(JPASSKIT_SCM_CONNECTION)
+                developerConnection.set(JPASSKIT_SCM_DEV_CONNECTION)
+                url.set(JPASSKIT_WEBSITE)
             }
         }
     }
     repositories {
         maven {
             url = uri(layout.buildDirectory.dir("staging-deploy").get().asFile)
-        }
-    }
-}
-
-if (project == rootProject) {
-    jreleaser {
-        gitRootSearch.set(true)
-
-        project {
-            name.set("jpasskit")
-            description.set("Java Library for Apple PassKit Web Service")
-            website.set("https://github.com/drallgood/jpasskit")
-            license.set("Apache-2.0")
-            authors.set(listOf("Patrice Brend'amour"))
-        }
-
-        release {
-            github {
-                repoOwner.set("drallgood")
-                name.set("jpasskit")
-                overwrite.set(true)
-                skipTag.set(true)  // We're creating the tag manually
-                changelog {
-                    preset.set("conventional-commits")
-                    skipMergeCommits.set(true)
-                }
-            }
-        }
-
-        signing {
-            active.set(Active.ALWAYS)
-            armored.set(true)
-            command {
-                executable.set("gpg")
-                args.set(listOf("--batch", "--yes", "--pinentry-mode", "loopback"))
-                keyName.set("9474B9FCBDF93BEE7CC4B69B4CE3C3B7A5E5FCC2")
-            }
-            mode.set(Signing.Mode.COMMAND)
-        }
-
-        deploy {
-            maven {
-                val projs: List<Project> = listOf(rootProject) + rootProject.subprojects.toList()
-                val stagingPaths: List<String> = projs.map { p: Project ->
-                    p.layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath
-                }
-                mavenCentral {
-                    create("release-deploy") {
-                        active.set(Active.RELEASE)
-                        url.set("https://central.sonatype.com/api/v1/publisher")
-                        stagingRepositories.set(providers.provider { stagingPaths })
-                        applyMavenCentralRules.set(true)
-                    }
-                }
-                nexus2 {
-                    create("snapshot-deploy") {
-                        active.set(Active.SNAPSHOT)
-                        url.set("https://central.sonatype.com/api/v1/publisher")
-                        snapshotUrl.set("https://central.sonatype.com/repository/maven-snapshots")
-                        stagingRepositories.set(providers.provider { stagingPaths })
-                        applyMavenCentralRules.set(true)
-                        closeRepository.set(true)
-                        snapshotSupported.set(true)
-                    }
-                }
-            }
         }
     }
 }
@@ -173,11 +110,6 @@ tasks.withType<JavaCompile>() {
 tasks.withType<Javadoc>() {
     options.encoding = "UTF-8"
 }
-
-tasks.register<Wrapper>("wrapper") {
-    gradleVersion = "8.7"
-}
-tasks.register("prepareKotlinBuildScriptModel") {}
 
 license {
     header = project.file("header.txt")

@@ -1,43 +1,73 @@
-name: Release package to the Maven Central Repository
+name: Prepare and push release
 on:
   workflow_dispatch:
     inputs:
       releaseVersion:
-        description: "Default version to use when preparing a release."
+        description: "Release version to cut (for example 0.5.7)."
         required: true
         default: "X.Y.Z"
       developmentVersion:
-        description: "Default version to use for new local working copy."
+        description: "Next development version (for example 0.5.8-SNAPSHOT)."
         required: true
         default: "X.Y.Z-SNAPSHOT"
+
+permissions:
+  contents: read
+
 jobs:
-  release:
+  prepare-release:
     runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: write
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Apache Maven Central
-      uses: actions/setup-java@v2
-      with: # running setup-java again overwrites the settings.xml
-        distribution: 'adopt'
-        java-version: '11'
-        server-id: ossrh
-        server-username: MAVEN_USERNAME
-        server-password: MAVEN_PASSWORD
-        gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }} # Value of the GPG private key to import
-        gpg-passphrase: MAVEN_GPG_PASSPHRASE # env variable for GPG private key passphrase
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: '17'
+
     - name: Configure Git User
       run: |
         git config user.email "actions@github.com"
         git config user.name "GitHub Actions"
-    - name: Cache Maven packages
-      uses: actions/cache@v2
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
-    - name: Publish Snapshot package
-      run: mvn --batch-mode -DskipTests --activate-profiles signgpg --no-transfer-progress -B  -DreleaseVersion=${{ github.event.inputs.releaseVersion }} -DdevelopmentVersion=${{ github.event.inputs.developmentVersion }} release:prepare release:perform 
-      env:
-        MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-        MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
-        MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+
+    - name: Validate release inputs
+      run: |
+        set -euo pipefail
+        RELEASE_VERSION='${{ github.event.inputs.releaseVersion }}'
+        DEVELOPMENT_VERSION='${{ github.event.inputs.developmentVersion }}'
+        SEMVER_RE='^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'
+        SNAPSHOT_RE='^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?-SNAPSHOT$'
+
+        [[ "$RELEASE_VERSION" =~ $SEMVER_RE ]] || {
+          echo "Invalid releaseVersion: $RELEASE_VERSION"
+          exit 1
+        }
+        [[ "$DEVELOPMENT_VERSION" =~ $SNAPSHOT_RE ]] || {
+          echo "Invalid developmentVersion: $DEVELOPMENT_VERSION"
+          exit 1
+        }
+
+    - name: Prepare release commits and tag
+      run: |
+        set -euo pipefail
+        RELEASE_VERSION='${{ github.event.inputs.releaseVersion }}'
+        DEVELOPMENT_VERSION='${{ github.event.inputs.developmentVersion }}'
+
+        sed -i "s/^version=.*/version=$RELEASE_VERSION/" gradle.properties
+        git add gradle.properties
+        git commit -m "chore(release): prepare $RELEASE_VERSION"
+        git tag "v$RELEASE_VERSION"
+
+        sed -i "s/^version=.*/version=$DEVELOPMENT_VERSION/" gradle.properties
+        git add gradle.properties
+        git commit -m "chore: bump version to $DEVELOPMENT_VERSION"
+
+    - name: Push release commit and tag
+      run: |
+        git push --follow-tags origin HEAD:${{ github.ref_name }}

@@ -16,7 +16,6 @@
 package de.brendamour.jpasskit;
 
 import de.brendamour.jpasskit.enums.PKBarcodeFormat;
-import de.brendamour.jpasskit.enums.PKPassType;
 import de.brendamour.jpasskit.passes.*;
 import de.brendamour.jpasskit.semantics.PKCurrencyAmount;
 import org.testng.Assert;
@@ -152,7 +151,7 @@ public class PKPassBuilderTest {
 
     @Test
     public void testOfWithRelevantDates() {
-        PKRelevantDates relevantDates = PKRelevantDates.builder()
+        PKRelevantDate relevantDates = PKRelevantDate.builder()
             .date(Instant.now())
             .build();
         
@@ -162,7 +161,7 @@ public class PKPassBuilderTest {
             .teamIdentifier("TEAM123")
             .description("Test Pass")
             .organizationName("Test Org")
-            .relevantDates(relevantDates)
+            .relevantDates(List.of(relevantDates))
             .pass(PKGenericPass.builder())
             .build();
         
@@ -512,6 +511,35 @@ public class PKPassBuilderTest {
         } catch (Exception e) {
             Assert.fail("Failed to create test URL: " + e.getMessage());
         }
+    }
+
+    @Test
+    public void testTransitProviderWebsiteURLBuilderMethods() throws MalformedURLException {
+        URL website = new URL("https://example.com/transit");
+
+        PKPass pass = builder
+                .serialNumber("123")
+                .passTypeIdentifier("com.test.pass")
+                .teamIdentifier("TEAM123")
+                .description("Test Pass")
+                .organizationName("Test Org")
+                .pass(PKGenericPass.builder())
+                .transitProviderWebsiteURL(website)
+                .build();
+
+        Assert.assertEquals(pass.getTransitProviderWebsiteURL(), website);
+
+        PKPass passFromDeprecated = PKPass.builder()
+                .serialNumber("123")
+                .passTypeIdentifier("com.test.pass")
+                .teamIdentifier("TEAM123")
+                .description("Test Pass")
+                .organizationName("Test Org")
+                .pass(PKGenericPass.builder())
+                .transitProviderWebsiteUrl(website)
+                .build();
+
+        Assert.assertEquals(passFromDeprecated.getTransitProviderWebsiteURL(), website);
     }
 
     @Test

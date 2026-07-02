@@ -24,7 +24,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.brendamour.jpasskit.PKBarcode;
 import de.brendamour.jpasskit.PKPass;
 import de.brendamour.jpasskit.PKPassBuilder;
-import de.brendamour.jpasskit.PKRelevantDates;
+import de.brendamour.jpasskit.PKRelevantDate;
 import de.brendamour.jpasskit.enums.PKBarcodeFormat;
 import de.brendamour.jpasskit.enums.PKPassPersonalizationField;
 import de.brendamour.jpasskit.personalization.PKPersonalization;
@@ -43,6 +43,7 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 public class PKFileBasedSigningUtilTest {
 
@@ -59,7 +60,7 @@ public class PKFileBasedSigningUtilTest {
 
         PKSigningInformation pkSigningInformation =
                 new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
-                KEYSTORE_PATH, KEYSTORE_PASSWORD, APPLE_WWDRCA);
+                        KEYSTORE_PATH, KEYSTORE_PASSWORD, APPLE_WWDRCA);
         PKFileBasedSigningUtil pkSigningUtil = new PKFileBasedSigningUtil();
         pkSigningUtil.signManifestFileAndWriteToDirectory(temporaryPassDir, manifestJSONFile, pkSigningInformation);
     }
@@ -181,14 +182,14 @@ public class PKFileBasedSigningUtilTest {
         Instant startDate = Instant.parse("2025-01-15T09:00:00Z");
         Instant endDate = Instant.parse("2025-01-15T11:00:00Z");
 
-        PKRelevantDates relevantDates = PKRelevantDates.builder()
+        PKRelevantDate relevantDate = PKRelevantDate.builder()
                 .date(date)
                 .startDate(startDate)
                 .endDate(endDate)
                 .build();
 
         PKPassBuilder passBuilder = PKPass.builder()
-                .relevantDates(relevantDates)
+                .relevantDates(List.of(relevantDate))
                 .barcodeBuilder(
                         PKBarcode.builder()
                                 .format(PKBarcodeFormat.PKBarcodeFormatQR)
@@ -205,7 +206,7 @@ public class PKFileBasedSigningUtilTest {
         String json = objectMapper.writeValueAsString(pass);
 
         // Verify the relevantDates object is serialized correctly
-        Assert.assertTrue(json.contains("\"relevantDates\""));
+        Assert.assertTrue(json.contains("\"relevantDates\":[{"));
         Assert.assertTrue(json.contains("\"date\":\"2025-01-15T10:00:00Z\""));
         Assert.assertTrue(json.contains("\"startDate\":\"2025-01-15T09:00:00Z\""));
         Assert.assertTrue(json.contains("\"endDate\":\"2025-01-15T11:00:00Z\""));
@@ -213,9 +214,9 @@ public class PKFileBasedSigningUtilTest {
         // Test deserialization back to object
         PKPass deserializedPass = objectMapper.readValue(json, PKPass.class);
         Assert.assertNotNull(deserializedPass.getRelevantDates());
-        Assert.assertEquals(deserializedPass.getRelevantDates().getDate(), date);
-        Assert.assertEquals(deserializedPass.getRelevantDates().getStartDate(), startDate);
-        Assert.assertEquals(deserializedPass.getRelevantDates().getEndDate(), endDate);
+        Assert.assertEquals(deserializedPass.getRelevantDates().get(0).getDate(), date);
+        Assert.assertEquals(deserializedPass.getRelevantDates().get(0).getStartDate(), startDate);
+        Assert.assertEquals(deserializedPass.getRelevantDates().get(0).getEndDate(), endDate);
     }
 
     private String getPathFromClasspath(String path) throws Exception {

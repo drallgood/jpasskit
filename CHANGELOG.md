@@ -1,6 +1,78 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+### Added
+
+### Changed
+
+### Deprecated
+
+### Fixed
+
+## 0.5.7 - 2026-05-26
+### Added
+
+- Added tests for `transitProviderWebsiteURL` JSON mapping and builder delegation (#672)
+- Increased test coverage for certificate and signing utility classes (#673)
+
+### Changed
+
+- Standardized transit provider website API naming on `transitProviderWebsiteURL` (#672)
+- Updated dependencies:
+  - Jackson: `jackson-databind`, `jackson-datatype-jsr310` to 2.21.3 (#666, #667, #676, #682, #683)
+  - Apache Commons: `commons-codec` 1.22.0, `commons-io` 2.22.0 (#681, #680)
+  - Guava 33.6.0-jre (#679)
+  - Mockito 5.23.0 (#674)
+  - BouncyCastle `bcpkix-jdk18on` 1.84 (#678)
+  - Log4j `log4j-slf4j-impl` 2.26.0 (#677, #687)
+  - JReleaser Gradle plugin/core 1.24.0 (#669, #670, #685, #686)
+- Updated the manual release workflow to use Gradle-based version/tag preparation instead of Maven release goals
+- Replaced deprecated `actions/cache@v2` with `actions/cache@v4` in the manual release workflow
+
+### Deprecated
+
+- Deprecated `PKPassBuilder.transitProviderWebsiteUrl(URL)` in favor of `PKPassBuilder.transitProviderWebsiteURL(URL)` (#672)
+
+### Fixed
+
+- Corrected transit provider website field naming while preserving backward compatibility (`@JsonAlias` support) (#672)
+
+## 0.5.6 - 2026-02-08
+### Changed
+
+- Release automation and JReleaser configuration updates:
+  - Moved JReleaser plugin usage to the root `build.gradle.kts`
+  - Added explicit JReleaser plugin version declaration
+  - Wrapped JReleaser configuration in `afterEvaluate` and removed deprecated website usage
+  - Set `immutableRelease` handling and upgraded JReleaser to 1.22.0
+
+### Fixed
+
+- Addressed JReleaser `immutableRelease` release-flow issues
+
+## 0.5.5 - 2026-02-07
+### Changed
+
+- Dependency updates:
+  - Jackson: `jackson-databind`, `jackson-datatype-jsr310` updates
+  - Apache Commons: `commons-lang3` 3.20.0, `commons-codec` 1.21.0, `commons-io` 2.21.0
+  - AssertJ 3.27.7
+  - TestNG 7.12.0
+  - Mockito 5.21.0
+  - BouncyCastle `bcpkix-jdk18on` 1.83
+  - Guava 33.5.0-jre
+  - JReleaser Gradle Plugin updates
+- Build improvements:
+  - JReleaser configuration now uses enum-based Active/Signing values
+  - Multi-module release properly aggregates staging directories
+
+### Fixed
+
+- Updated expired test certificates
+- Fixed relevantDates serialization (must be a list of objects)
+- Ensured all modules are published correctly
+
 ## 0.5.0 - 2025-09-16
 ### Added
 

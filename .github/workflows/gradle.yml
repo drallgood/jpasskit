@@ -11,18 +11,20 @@ on:
     branches: [ main, master ]
 
 permissions:
-  pull-requests: write
+  contents: read
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK 11
-      uses: actions/setup-java@v2
+    - uses: actions/checkout@v4
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
       with:
-        java-version: '11'
-        distribution: 'adopt'
+        java-version: '17'
+        distribution: 'temurin'
     - name: Setup Gradle
       uses: gradle/gradle-build-action@v2.11.1
       with:
@@ -61,6 +63,9 @@ jobs:
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
     needs: build
+    environment: release
+    permissions:
+      contents: write
     steps:
     - uses: actions/checkout@v4
     - name: Set up Java
@@ -89,8 +94,8 @@ jobs:
       run: |
         VERSION_NO_V=${GITHUB_REF_NAME#v}
         echo "Releasing version: $VERSION_NO_V"
-        ./gradlew clean :jpasskit:publish -Pversion=$VERSION_NO_V --info --stacktrace
-        ./gradlew :jpasskit:jreleaserFullRelease -Pversion=$VERSION_NO_V --info --stacktrace
+        ./gradlew clean publish -Pversion=$VERSION_NO_V --info --stacktrace
+        ./gradlew :jreleaserFullRelease -Pversion=$VERSION_NO_V --info --stacktrace
 
     - name: JReleaser output
       if: always()
@@ -105,6 +110,9 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/')
     needs: build
+    environment: snapshot
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - name: Set up Java
@@ -139,8 +147,8 @@ jobs:
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
         run: |
-          ./gradlew clean :jpasskit:publish --info --stacktrace
-          ./gradlew :jpasskit:jreleaserDeploy --info --stacktrace
+          ./gradlew clean publish --info --stacktrace
+          ./gradlew :jreleaserDeploy --info --stacktrace
 
       - name: JReleaser output (SNAPSHOT)
         if: always()

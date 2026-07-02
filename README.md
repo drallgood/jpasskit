@@ -7,9 +7,9 @@ There are two separate projects:
 1. jPasskit - Which contains the Pass objects and useful utilities. It is designed to be included in existing Webservices, thus not including any request handling.
 2. jPasskit Server -  Which contains an additional REST Webservice, that can be included in existing Applications that do not use their own Webservice already. Note: This is still no standalone implementation. Things like storing passes and handling device (un)registrations are left open for the Application to implement.
 
-**Current stable release:** 0.4.2
+**Current stable release:** 0.5.7
 
-**Development Version:** 0.4.3-SNAPSHOT [![Build Status][image-1]][1] 
+**Development Version:** 0.5.8-SNAPSHOT [![Build Status][image-1]][1] 
 [![Codacy Badge][image-2]][2]
 [![DepShield Badge][image-3]][3]
 
@@ -37,13 +37,13 @@ Snapshot versions can be found here: https://oss.sonatype.org/content/repositori
 ### Using Gradle
 	
 	dependencies {
-    	api("de.brendamour:jpasskit:0.4.0")
+    	api("de.brendamour:jpasskit:0.5.7")
 	}
 
 or:
 
 	dependencies {
-    	api("de.brendamour:jpasskit.server:0.4.0")
+    	api("de.brendamour:jpasskit.server:0.5.7")
 	}
 
 
@@ -213,7 +213,7 @@ The process in broad strokes works as follows:
 4. You store the provided information and link it to the `serialNumber`
 5. Next time the user's device downloads a new version of the pass, you provide a custom pass with his information (Make sure you DON'T provide a personalizable pass this time!)
 
-[1]:	https://github.com/drallgood/jpasskit/actions/workflows/maven.yml
+[1]:	https://github.com/drallgood/jpasskit/actions/workflows/gradle.yml
 [2]:	https://app.codacy.com/app/drallgood/jpasskit?utm_source=github.com&utm_medium=referral&utm_content=drallgood/jpasskit&utm_campaign=Badge_Grade_Settings
 [3]:	https://depshield.github.io
 
