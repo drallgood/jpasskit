@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -38,7 +39,10 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 
-public class PKPassTemplateInMemory implements IPKPassTemplate {
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class PKPassTemplateInMemory implements IPKPassTemplate, Serializable {
 
     public static final String PK_ICON_RETINAHD = "icon@3x.png";
     public static final String PK_ICON_RETINA = "icon@2x.png";
@@ -68,7 +72,21 @@ public class PKPassTemplateInMemory implements IPKPassTemplate {
     public static final String PK_PERSONALIZATION_LOGO_RETINA = "personalizationLogo@2x.png";
     public static final String PK_PERSONALIZATION_LOGO = "personalizationLogo.png";
 
-    private final Map<String, byte[]> files = new ConcurrentHashMap<>();
+    private final Map<String, byte[]> files;
+
+    public PKPassTemplateInMemory() {
+        this.files = new ConcurrentHashMap<>();
+    }
+
+    @JsonCreator
+    public PKPassTemplateInMemory(@JsonProperty("files") Map<String, byte[]> files) {
+        this.files = new ConcurrentHashMap<>(files);
+    }
+
+    @JsonProperty("files")
+    public Map<String, byte[]> getFilesMap() {
+        return new HashMap<>(files);
+    }
 
     @Override
     public void provisionPassAtDirectory(File tempPassDir) throws IOException {
