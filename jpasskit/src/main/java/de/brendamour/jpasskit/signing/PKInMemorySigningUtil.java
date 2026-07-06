@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.invoke.MethodHandles;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -72,8 +73,22 @@ public final class PKInMemorySigningUtil extends PKAbstractSigningUtil {
     }
 
     @Override
+    public void createSignedAndZippedPkPassArchiveStream(PKPass pass, IPKPassTemplate passTemplate, PKSigningInformation signingInformation, OutputStream outputStream)
+            throws PKSigningException {
+        createSignedAndZippedPersonalizedPkPassArchiveStream(pass, null, passTemplate, signingInformation, outputStream);
+    }
+
+    @Override
     public byte[] createSignedAndZippedPersonalizedPkPassArchive(PKPass pass, PKPersonalization personalization, IPKPassTemplate passTemplate,
             PKSigningInformation signingInformation) throws PKSigningException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        createSignedAndZippedPersonalizedPkPassArchiveStream(pass, personalization, passTemplate, signingInformation, byteArrayOutputStream);
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    @Override
+    public void createSignedAndZippedPersonalizedPkPassArchiveStream(PKPass pass, PKPersonalization personalization, IPKPassTemplate passTemplate,
+            PKSigningInformation signingInformation, OutputStream outputStream) throws PKSigningException {
         Map<String, ByteBuffer> allFiles;
         try {
             allFiles = passTemplate.getAllFiles();
@@ -104,7 +119,7 @@ public final class PKInMemorySigningUtil extends PKAbstractSigningUtil {
         ByteBuffer signature = ByteBuffer.wrap(signManifestFile(manifestJSONFile.array(), signingInformation));
         allFiles.put(SIGNATURE_FILE_NAME, signature);
 
-        return createZippedPassAndReturnAsByteArray(allFiles);
+        createZippedPassAndWriteToStream(allFiles, outputStream);
     }
 
     private ByteBuffer createPassJSONFile(final PKPass pass) throws PKSigningException {
@@ -144,9 +159,8 @@ public final class PKInMemorySigningUtil extends PKAbstractSigningUtil {
         return fileWithHashMap;
     }
 
-    private byte[] createZippedPassAndReturnAsByteArray(final Map<String, ByteBuffer> files) throws PKSigningException {
-        ByteArrayOutputStream byteArrayOutputStreamForZippedPass = new ByteArrayOutputStream();
-        try (ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStreamForZippedPass)) {
+    private void createZippedPassAndWriteToStream(final Map<String, ByteBuffer> files, final OutputStream outputStream) throws PKSigningException {
+        try (ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream)) {
             for (Entry<String, ByteBuffer> passResourceFile : files.entrySet()) {
                 ZipEntry entry = new ZipEntry(getRelativePathOfZipEntry(passResourceFile.getKey(), ""));
                 zipOutputStream.putNextEntry(entry);
@@ -155,6 +169,5 @@ public final class PKInMemorySigningUtil extends PKAbstractSigningUtil {
         } catch (IOException e) {
             throw new PKSigningException("Error while creating a zip package", e);
         }
-        return byteArrayOutputStreamForZippedPass.toByteArray();
     }
 }

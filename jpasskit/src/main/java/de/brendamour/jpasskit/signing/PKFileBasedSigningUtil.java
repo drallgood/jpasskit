@@ -78,8 +78,20 @@ public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
     }
 
     @Override
+    public void createSignedAndZippedPkPassArchiveStream(PKPass pass, IPKPassTemplate passTemplate, PKSigningInformation signingInformation, OutputStream outputStream) throws PKSigningException {
+        this.createSignedAndZippedPersonalizedPkPassArchiveStream(pass, null, passTemplate, signingInformation, outputStream);
+    }
+
+    @Override
     public byte[] createSignedAndZippedPersonalizedPkPassArchive(PKPass pass, PKPersonalization personalization, IPKPassTemplate passTemplate,
             PKSigningInformation signingInformation) throws PKSigningException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        createSignedAndZippedPersonalizedPkPassArchiveStream(pass, personalization, passTemplate, signingInformation, byteArrayOutputStream);
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    @Override
+    public void createSignedAndZippedPersonalizedPkPassArchiveStream(PKPass pass, PKPersonalization personalization, IPKPassTemplate passTemplate, PKSigningInformation signingInformation, OutputStream outputStream) throws PKSigningException {
 
         File tempPassDir = Files.createTempDir();
         try {
@@ -90,21 +102,20 @@ public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
 
         createPassJSONFile(pass, tempPassDir);
 
-        if(personalization != null) {
+        if (personalization != null) {
             createPersonalizationJSONFile(personalization, tempPassDir);
         }
 
         File manifestJSONFile = createManifestJSONFile(tempPassDir);
         signManifestFileAndWriteToDirectory(tempPassDir, manifestJSONFile, signingInformation);
 
-        byte[] zippedPass = createZippedPassAndReturnAsByteArray(tempPassDir);
+        createZippedPassAndWriteToStream(tempPassDir, outputStream);
 
         try {
             FileUtils.deleteDirectory(tempPassDir);
         } catch (IOException e) {
             LOGGER.warn("Removing the temporary directory failed", e);
         }
-        return zippedPass;
     }
 
     public byte[] createSignedAndZippedPkPassArchive(final PKPass pass, final URL fileUrlOfTemplateDirectory,
@@ -181,9 +192,8 @@ public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
         return fileWithHashMap;
     }
 
-    private byte[] createZippedPassAndReturnAsByteArray(final File tempPassDir) throws PKSigningException {
-        ByteArrayOutputStream byteArrayOutputStreamForZippedPass = new ByteArrayOutputStream(); // closed with the parent ZipOutputStream
-        try (ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStreamForZippedPass)) {
+    private void createZippedPassAndWriteToStream(final File tempPassDir, final OutputStream outputStream) throws PKSigningException {
+        try (ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream)) {
             String base = tempPassDir.getCanonicalPath() + File.separator;
             ZipEntry entry;
             for (File file : FileUtils.listFiles(tempPassDir, new RegexFileFilter("^(?!\\.).*"), TrueFileFilter.TRUE)) {
@@ -196,6 +206,5 @@ public final class PKFileBasedSigningUtil extends PKAbstractSigningUtil {
         } catch (IOException e) {
             throw new PKSigningException("Error when creating a zip package", e);
         }
-        return byteArrayOutputStreamForZippedPass.toByteArray();
     }
 }

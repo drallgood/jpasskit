@@ -18,11 +18,13 @@ package de.brendamour.jpasskit.signing;
 import de.brendamour.jpasskit.PKPass;
 import de.brendamour.jpasskit.personalization.PKPersonalization;
 
+import java.io.OutputStream;
+
 public interface IPKSigningUtil {
 
     /**
      * Creates a signed and zipped pass using a template
-     * 
+     *
      * @param pass
      *            The pass to sign
      * @param passTemplate
@@ -37,8 +39,25 @@ public interface IPKSigningUtil {
             throws PKSigningException;
 
     /**
+     * Creates a signed and zipped pass using a template and writes it to the provided output stream
+     *
+     * @param pass
+     *            The pass to sign
+     * @param passTemplate
+     *            A {@link IPKPassTemplate} object
+     * @param signingInformation
+     *            A {@link PKSigningInformation} object containing the signing info
+     * @param outputStream
+     *            The output stream to write the signed and zipped .pkpass file to
+     * @throws PKSigningException
+     *             will throw any underlying exception in case something goes wrong (i.e. template not found)
+     */
+    void createSignedAndZippedPkPassArchiveStream(PKPass pass, IPKPassTemplate passTemplate, PKSigningInformation signingInformation, OutputStream outputStream)
+            throws PKSigningException;
+
+    /**
      * Creates a signed and zipped personalized pass using a template
-     * 
+     *
      * @param pass
      *            The pass to sign
      * @param personalization
@@ -55,8 +74,27 @@ public interface IPKSigningUtil {
             PKSigningInformation signingInformation) throws PKSigningException;
 
     /**
+     * Creates a signed and zipped personalized pass using a template and writes it to the provided output stream
+     *
+     * @param pass
+     *            The pass to sign
+     * @param personalization
+     *            Personalization info
+     * @param passTemplate
+     *            A {@link IPKPassTemplate} object
+     * @param signingInformation
+     *            A {@link PKSigningInformation} object containing the signing info
+     * @param outputStream
+     *            The output stream to write the signed and zipped .pkpass file to
+     * @throws PKSigningException
+     *             will throw any underlying exception in case something goes wrong (i.e. template not found)
+     */
+    void createSignedAndZippedPersonalizedPkPassArchiveStream(PKPass pass, PKPersonalization personalization, IPKPassTemplate passTemplate,
+            PKSigningInformation signingInformation, OutputStream outputStream) throws PKSigningException;
+
+    /**
      * Sign the manifest file
-     * 
+     *
      * @param manifestJSON
      *            JSON file as byte array
      * @param signingInformation
