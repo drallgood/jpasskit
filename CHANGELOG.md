@@ -10,6 +10,18 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+## 0.5.8 - 2026-07-23
+### Changed
+
+- Updated dependencies:
+  - Jackson: `jackson-databind`, `jackson-datatype-jsr310` to 2.22.1 (#701, #700)
+  - BouncyCastle `bcpkix-jdk18on` 1.84 → 1.85 (#702)
+  - Log4j `log4j-slf4j-impl` 2.26.0 → 2.26.1 (#699)
+  - SLF4J `slf4j-api` 2.0.17 → 2.0.18 (#689)
+  - Pushy 0.15.4 → 0.15.6 (#690)
+  - JReleaser Gradle plugin/core 1.24.0 → 1.25.0 (#696, #698)
+  - Gradle wrapper 9.5.1 → 9.6.1 (#697)
+
 ## 0.5.7 - 2026-05-26
 ### Added
 
