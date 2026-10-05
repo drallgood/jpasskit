@@ -20,6 +20,7 @@ jobs:
     environment: release
     permissions:
       contents: write
+      actions: write
     steps:
     - uses: actions/checkout@v4
       with:
@@ -62,7 +63,7 @@ jobs:
         sed -i "s/^version=.*/version=$RELEASE_VERSION/" gradle.properties
         git add gradle.properties
         git commit -m "chore(release): prepare $RELEASE_VERSION"
-        git tag "v$RELEASE_VERSION"
+        git tag -a "v$RELEASE_VERSION" -m "Release $RELEASE_VERSION"
 
         sed -i "s/^version=.*/version=$DEVELOPMENT_VERSION/" gradle.properties
         git add gradle.properties
@@ -70,4 +71,15 @@ jobs:
 
     - name: Push release commit and tag
       run: |
-        git push --follow-tags origin HEAD:${{ github.ref_name }}
+        set -euo pipefail
+        RELEASE_VERSION='${{ github.event.inputs.releaseVersion }}'
+        git push --atomic origin "HEAD:${{ github.ref_name }}" "refs/tags/v$RELEASE_VERSION"
+
+    # Tags pushed with GITHUB_TOKEN don't trigger push workflows, so start the deploy explicitly.
+    - name: Trigger release build for tag
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        set -euo pipefail
+        RELEASE_VERSION='${{ github.event.inputs.releaseVersion }}'
+        gh workflow run gradle.yml --ref "v$RELEASE_VERSION"

@@ -9,6 +9,12 @@ on:
     tags: [ 'v*' ]
   pull_request:
     branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      skipDeploy:
+        description: "Skip the Maven Central deploy and only create the GitHub release (run against an already-deployed tag)."
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -82,9 +88,10 @@ jobs:
     - name: Setup Gradle
       uses: gradle/gradle-build-action@v2.11.1
 
-    - name: Publish
+    - name: Deploy to Maven Central
+      if: ${{ !inputs.skipDeploy }}
       env:
-        JRELEASER_GITHUB_TOKEN: ${{ secrets.JRL_GITHUB_TOKEN }}
+        JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         JRELEASER_NEXUS2_USERNAME: ${{ secrets.OSSRH_USERNAME }}
         JRELEASER_NEXUS2_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
         JRELEASER_MAVENCENTRAL_USERNAME: ${{ secrets.OSSRH_USERNAME }}
@@ -93,9 +100,20 @@ jobs:
         JRELEASER_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
       run: |
         VERSION_NO_V=${GITHUB_REF_NAME#v}
-        echo "Releasing version: $VERSION_NO_V"
+        echo "Deploying version: $VERSION_NO_V"
         ./gradlew clean publish -Pversion=$VERSION_NO_V --info --stacktrace
-        ./gradlew :jreleaserFullRelease -Pversion=$VERSION_NO_V --info --stacktrace
+        ./gradlew :jreleaserDeploy -Pversion=$VERSION_NO_V --info --stacktrace
+
+    - name: Create GitHub release
+      env:
+        JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        JRELEASER_GPG_SECRET_KEY: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+        JRELEASER_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+      run: |
+        VERSION_NO_V=${GITHUB_REF_NAME#v}
+        echo "Creating GitHub release for version: $VERSION_NO_V"
+        # Deploy already happened in the previous step (or for an earlier run when skipDeploy is set).
+        ./gradlew :jreleaserRelease -Pversion=$VERSION_NO_V --exclude-deployer-name=release-deploy --info --stacktrace
 
     - name: JReleaser output
       if: always()
@@ -103,8 +121,8 @@ jobs:
       with:
         name: jreleaser-release
         path: |
-          out/jreleaser/trace.log
-          out/jreleaser/output.properties
+          build/jreleaser/trace.log
+          build/jreleaser/output.properties
 
   snapshot-deploy:
     runs-on: ubuntu-latest
@@ -139,7 +157,7 @@ jobs:
       - name: Publish SNAPSHOT (only if -SNAPSHOT)
         if: contains(steps.read_version.outputs.version, '-SNAPSHOT')
         env:
-          JRELEASER_GITHUB_TOKEN: ${{ secrets.JRL_GITHUB_TOKEN }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JRELEASER_NEXUS2_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           JRELEASER_NEXUS2_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
           JRELEASER_MAVENCENTRAL_USERNAME: ${{ secrets.OSSRH_USERNAME }}
@@ -156,5 +174,5 @@ jobs:
         with:
           name: jreleaser-deploy-snapshot
           path: |
-            out/jreleaser/trace.log
-            out/jreleaser/output.properties
+            build/jreleaser/trace.log
+            build/jreleaser/output.properties
