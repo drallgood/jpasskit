@@ -429,21 +429,25 @@ public class PKPassBuilderTest {
 
     @Test
     public void testGroupingIdentifierValidation() {
-        // Test grouping identifier with generic pass
-        PKGenericPassBuilder eventTicket = PKGenericPass.builder();
-        builder.serialNumber("123")
-               .passTypeIdentifier("com.test.pass")
-               .teamIdentifier("TEAM123")
-               .description("Test Pass")
-               .organizationName("Test Org")
-               .groupingIdentifier("GROUP123")
-               .pass(eventTicket);
-        
-        // Should not have grouping identifier error for event tickets
-        List<String> errors = builder.getValidationErrors();
-        boolean hasGroupingError = errors.stream().anyMatch(error -> 
-            error.contains("groupingIdentifier"));
-        // Note: The validation logic might need to be checked - this tests the current behavior
+        List<String> genericErrors = builderWithGroupingIdentifier(PKGenericPass.builder()).getValidationErrors();
+        Assert.assertTrue(genericErrors.stream().anyMatch(error -> error.contains("groupingIdentifier")));
+
+        List<String> eventTicketErrors = builderWithGroupingIdentifier(PKEventTicket.builder()).getValidationErrors();
+        Assert.assertFalse(eventTicketErrors.stream().anyMatch(error -> error.contains("groupingIdentifier")));
+
+        List<String> boardingPassErrors = builderWithGroupingIdentifier(PKBoardingPass.builder()).getValidationErrors();
+        Assert.assertFalse(boardingPassErrors.stream().anyMatch(error -> error.contains("groupingIdentifier")));
+    }
+
+    private PKPassBuilder builderWithGroupingIdentifier(PKGenericPassBuilder passBuilder) {
+        return PKPass.builder()
+                .serialNumber("synthetic-serial")
+                .passTypeIdentifier("pass.synthetic.example")
+                .teamIdentifier("SYNTHETIC")
+                .description("Inert synthetic pass")
+                .organizationName("Synthetic example")
+                .groupingIdentifier("synthetic-group")
+                .pass(passBuilder);
     }
 
     @Test
