@@ -21,6 +21,7 @@ import org.testng.annotations.Test;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.security.cert.CertificateException;
+import java.security.cert.CertificateExpiredException;
 import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,15 +34,28 @@ public class PKSigningInformationUtilTest {
     private static final String APPLE_WWDRCA_CERT_PATH = "passbook/ca-chain.cert.pem";
 
     @Test
-    public void testLoadSigningInformationFromPKCS12AndIntermediateCertificate_classpath() throws Exception {
-        PKSigningInformation info = new PKSigningInformationUtil()
-                .loadSigningInformationFromPKCS12AndIntermediateCertificate(KEYSTORE_PATH, KEYSTORE_PASSWORD, APPLE_WWDRCA_CERT_PATH);
+    public void testLoadSigningInformationFromPKCS12AndIntermediateCertificate_syntheticStreams() throws Exception {
+        PKSigningInformation info = SigningTestCertificates.loadSigningInformation();
 
         Assert.assertNotNull(info);
         Assert.assertTrue(info.isValid());
         Assert.assertNotNull(info.getSigningPrivateKey());
         Assert.assertNotNull(info.getSigningCert());
         Assert.assertNotNull(info.getAppleWWDRCACert());
+    }
+
+    @Test
+    public void testClasspathExpiredCertificateIsRejected() {
+        assertThatThrownBy(() -> new PKSigningInformationUtil()
+                .loadSigningInformationFromPKCS12AndIntermediateCertificate(
+                        KEYSTORE_PATH, KEYSTORE_PASSWORD, APPLE_WWDRCA_CERT_PATH))
+                .isInstanceOf(CertificateExpiredException.class);
+    }
+
+    @Test
+    public void testSyntheticExpiredSigningCertificateIsRejected() {
+        assertThatThrownBy(() -> SigningTestCertificates.loadSigningInformation(true))
+                .isInstanceOf(CertificateExpiredException.class);
     }
 
     @Test
