@@ -16,6 +16,8 @@
 package de.brendamour.jpasskit;
 
 import de.brendamour.jpasskit.enums.PKEventType;
+import de.brendamour.jpasskit.enums.PKPassengerCapability;
+import de.brendamour.jpasskit.enums.PKTransitSecurityProgram;
 import de.brendamour.jpasskit.semantics.PKCurrencyAmount;
 import de.brendamour.jpasskit.semantics.PKPersonNameComponents;
 import de.brendamour.jpasskit.semantics.PKSeat;
@@ -61,6 +63,18 @@ public class PKSemanticsBuilderTest {
         
         PKSemantics result = builder.of(source).build();
         assertThat(result.eventName).isEqualTo("Test Event");
+    }
+
+    @Test
+    public void testCopyBuilderAndToString() {
+        PKSemantics source = builder.eventName("Test Event").build();
+
+        PKSemantics copy = PKSemantics.builder(source).build();
+
+        assertThat(copy)
+            .isNotSameAs(source)
+            .isEqualToComparingFieldByFieldRecursively(source);
+        assertThat(copy.toString()).contains("Test Event");
     }
 
     @Test
@@ -533,5 +547,61 @@ public class PKSemanticsBuilderTest {
         assertThat(result.venueName).isEqualTo("Test Venue");
         assertThat(result.eventType).isEqualTo(PKEventType.PKEventTypeGeneric);
         assertThat(result.eventStartDate).isEqualTo(testDate);
+    }
+
+    @Test
+    public void testAdditionalBoardingAndPassengerFields() {
+        PKLocation departureAirportLocation = PKLocation.builder().latitude(1).longitude(2).build();
+        PKLocation destinationAirportLocation = PKLocation.builder().latitude(3).longitude(4).build();
+        List<PKTransitSecurityProgram> departurePrograms = Arrays.asList(PKTransitSecurityProgram.PKTransitSecurityProgramTSAPreCheck);
+        List<PKTransitSecurityProgram> destinationPrograms = Arrays.asList(PKTransitSecurityProgram.PKTransitSecurityProgramGlobalEntry);
+        List<PKTransitSecurityProgram> eligiblePrograms = Arrays.asList(PKTransitSecurityProgram.PKTransitSecurityProgramCLEAR);
+        List<PKPassengerCapability> passengerCapabilities = Arrays.asList(PKPassengerCapability.PKPassengerCapabilityPreboarding);
+        List<String> serviceSsrs = Arrays.asList("WCHR");
+        List<String> informationSsrs = Arrays.asList("DOCS");
+        List<String> airlineSsrs = Arrays.asList("CHLD");
+        List<String> loungePlaceIds = Arrays.asList("lounge-1");
+
+        PKSemantics result = builder
+            .boardingZone("A")
+            .membershipProgramStatus("active")
+            .departureCityName("New York")
+            .departureLocationTimeZone("America/New_York")
+            .departureAirportLocation(departureAirportLocation)
+            .departureLocationSecurityPrograms(departurePrograms)
+            .destinationLocationSecurityPrograms(destinationPrograms)
+            .destinationCityName("London")
+            .destinationLocationTimeZone("Europe/London")
+            .destinationAirportLocation(destinationAirportLocation)
+            .passengerCapabilities(passengerCapabilities)
+            .passengerEligibleSecurityPrograms(eligiblePrograms)
+            .ticketFareClass("business")
+            .internationalDocumentsAreVerified(true)
+            .internationalDocumentsVerifiedDeclarationName("Verified")
+            .passengerServiceSSRs(serviceSsrs)
+            .passengerInformationSSRs(informationSsrs)
+            .passengerAirlineSSRs(airlineSsrs)
+            .loungePlaceIDs(loungePlaceIds)
+            .build();
+
+        assertThat(result.getBoardingZone()).isEqualTo("A");
+        assertThat(result.getMembershipProgramStatus()).isEqualTo("active");
+        assertThat(result.getDepartureCityName()).isEqualTo("New York");
+        assertThat(result.getDepartureLocationTimeZone()).isEqualTo("America/New_York");
+        assertThat(result.getDepartureAirportLocation()).isEqualTo(departureAirportLocation);
+        assertThat(result.getDepartureLocationSecurityPrograms()).isEqualTo(departurePrograms);
+        assertThat(result.getDestinationLocationSecurityPrograms()).isEqualTo(destinationPrograms);
+        assertThat(result.getDestinationCityName()).isEqualTo("London");
+        assertThat(result.getDestinationLocationTimeZone()).isEqualTo("Europe/London");
+        assertThat(result.getDestinationAirportLocation()).isEqualTo(destinationAirportLocation);
+        assertThat(result.getPassengerCapabilities()).isEqualTo(passengerCapabilities);
+        assertThat(result.getPassengerEligibleSecurityPrograms()).isEqualTo(eligiblePrograms);
+        assertThat(result.getTicketFareClass()).isEqualTo("business");
+        assertThat(result.getInternationalDocumentsAreVerified()).isTrue();
+        assertThat(result.getInternationalDocumentsVerifiedDeclarationName()).isEqualTo("Verified");
+        assertThat(result.getPassengerServiceSSRs()).isEqualTo(serviceSsrs);
+        assertThat(result.getPassengerInformationSSRs()).isEqualTo(informationSsrs);
+        assertThat(result.getPassengerAirlineSSRs()).isEqualTo(airlineSsrs);
+        assertThat(result.getLoungePlaceIDs()).isEqualTo(loungePlaceIds);
     }
 }
