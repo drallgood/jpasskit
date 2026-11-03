@@ -481,8 +481,8 @@ public class PKPassBuilder implements IPKValidateable, IPKBuilder<PKPass> {
         // groupingIdentifier key is optional for event tickets and boarding passes;
         // otherwise not allowed
         if (StringUtils.isNotEmpty(this.pkPass.groupingIdentifier)
-                && this.pass.getPassType() == PKPassType.PKEventTicket
-                && this.pass.getPassType() == PKPassType.PKBoardingPass) {
+                && this.pass.getPassType() != PKPassType.PKEventTicket
+                && this.pass.getPassType() != PKPassType.PKBoardingPass) {
             validationErrors.add(
                     "The groupingIdentifier is optional for event tickets and boarding passes, otherwise not allowed");
         }
