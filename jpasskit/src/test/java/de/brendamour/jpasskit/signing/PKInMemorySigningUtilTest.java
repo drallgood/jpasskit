@@ -46,9 +46,6 @@ import de.brendamour.jpasskit.personalization.PKPersonalization;
 public class PKInMemorySigningUtilTest {
 
     private static final String PASS_TEMPLATE_FOLDER = PKPassTemplateFolderTest.class.getClassLoader().getResource("StoreCard.raw").getPath();
-    private static final String APPLE_WWDRCA = "passbook/ca-chain.cert.pem";
-    private static final String KEYSTORE_PATH = "passbook/jpasskittest.p12";
-    private static final String KEYSTORE_PASSWORD = "password";
 
     private PKInMemorySigningUtil pkInMemorySigningUtil;
 
@@ -134,8 +131,7 @@ public class PKInMemorySigningUtilTest {
 
     private void createZipAndAssert(IPKPassTemplate pkPassTemplate, PKPass pkPass, PKPersonalization personalization, File passZipFile)
             throws Exception {
-        PKSigningInformation pkSigningInformation = new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
-                KEYSTORE_PATH, KEYSTORE_PASSWORD, APPLE_WWDRCA);
+        PKSigningInformation pkSigningInformation = SigningTestCertificates.loadSigningInformation();
         byte[] signedAndZippedPkPassArchive;
 
         if (personalization != null) {
@@ -201,8 +197,7 @@ public class PKInMemorySigningUtilTest {
 
     private void createZipAndAssertStream(IPKPassTemplate pkPassTemplate, PKPass pkPass, PKPersonalization personalization, File passZipFile)
             throws Exception {
-        PKSigningInformation pkSigningInformation = new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
-                KEYSTORE_PATH, KEYSTORE_PASSWORD, APPLE_WWDRCA);
+        PKSigningInformation pkSigningInformation = SigningTestCertificates.loadSigningInformation();
 
         if (passZipFile.exists()) {
             passZipFile.delete();
