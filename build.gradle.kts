@@ -5,7 +5,7 @@ import java.util.Calendar
 plugins {
     `maven-publish`
     id("de.brendamour.java-conventions")
-    id("org.jreleaser") version "1.26.0"
+    id("org.jreleaser") version "1.27.0"
 }
 
 allprojects {
