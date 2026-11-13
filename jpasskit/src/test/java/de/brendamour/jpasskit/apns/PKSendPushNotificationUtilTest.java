@@ -43,7 +43,6 @@ public class PKSendPushNotificationUtilTest {
     private static final String SERVER_CERTIFICATES_FILENAME = "/server-certs.pem";
     private static final String SERVER_KEY_FILENAME = "/server-key.pem";
     private static final String HOST = "localhost";
-    private static final int PORT = 8443;
 
     private PKSendPushNotificationUtil badCertPushUtil;
     private PKSendPushNotificationUtil mockPushUtil;
@@ -53,18 +52,19 @@ public class PKSendPushNotificationUtilTest {
     public void prepareTest() throws Exception {
         badCertPushUtil = new PKSendPushNotificationUtil(keyStorePathNoTopics, keyStorePasswordNoTopics);
         mockPushUtil = new PKSendPushNotificationUtil(keyStorePath, keyStorePassword);
+        apnsServer = new MockApnsServerBuilder()
+                .setHandlerFactory(new AcceptAllPushNotificationHandlerFactory())
+                .setServerCredentials(getClass().getResourceAsStream(SERVER_CERTIFICATES_FILENAME), getClass().getResourceAsStream(SERVER_KEY_FILENAME), null)
+                .build();
+        int port = apnsServer.start(0).get();
         try (InputStream certificateStream = toInputStream(keyStorePath)) {
-            ApnsClient client = new ApnsClientBuilder().setApnsServer(HOST, PORT)
+            ApnsClient client = new ApnsClientBuilder().setApnsServer(HOST, port)
                     .setClientCredentials(certificateStream, String.valueOf(keyStorePassword))
                     .setTrustedServerCertificateChain(getClass().getResourceAsStream(CA_CERTIFICATE_FILENAME))
                     .build();
             mockPushUtil.setClient(client);
         }
-        apnsServer = new MockApnsServerBuilder()
-                .setHandlerFactory(new AcceptAllPushNotificationHandlerFactory())
-                .setServerCredentials(getClass().getResourceAsStream(SERVER_CERTIFICATES_FILENAME), getClass().getResourceAsStream(SERVER_KEY_FILENAME), null)
-                .build();
-        apnsServer.start(PORT).get();
+
     }
 
     @Test
