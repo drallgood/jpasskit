@@ -48,9 +48,6 @@ import java.util.List;
 public class PKFileBasedSigningUtilTest {
 
     private static final String PASS_TEMPLATE_FOLDER = "StoreCard.raw";
-    private static final String APPLE_WWDRCA = "passbook/ca-chain.cert.pem";
-    private static final String KEYSTORE_PATH = "passbook/jpasskittest.p12";
-    private static final String KEYSTORE_PASSWORD = "password";
 
     @Test
     public void testManifest() throws Exception {
@@ -59,8 +56,7 @@ public class PKFileBasedSigningUtilTest {
         File manifestJSONFile = new File(getPathFromClasspath("pass.json"));
 
         PKSigningInformation pkSigningInformation =
-                new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
-                        KEYSTORE_PATH, KEYSTORE_PASSWORD, APPLE_WWDRCA);
+                SigningTestCertificates.loadSigningInformation();
         PKFileBasedSigningUtil pkSigningUtil = new PKFileBasedSigningUtil();
         pkSigningUtil.signManifestFileAndWriteToDirectory(temporaryPassDir, manifestJSONFile, pkSigningInformation);
     }
@@ -145,8 +141,7 @@ public class PKFileBasedSigningUtilTest {
 
     private void createZipAndAssert(PKPass pkPass, PKPersonalization personalization, File passZipFile) throws Exception {
         PKSigningInformation pkSigningInformation =
-                new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
-                        KEYSTORE_PATH, KEYSTORE_PASSWORD, APPLE_WWDRCA);
+                SigningTestCertificates.loadSigningInformation();
         PKPassTemplateFolder pkPassTemplate = new PKPassTemplateFolder(getPathFromClasspath(PASS_TEMPLATE_FOLDER));
         IPKSigningUtil pkSigningUtil = new PKFileBasedSigningUtil();
         byte[] signedAndZippedPkPassArchive;
@@ -266,8 +261,7 @@ public class PKFileBasedSigningUtilTest {
 
     private void createZipAndAssertStream(PKPass pkPass, PKPersonalization personalization, File passZipFile) throws Exception {
         PKSigningInformation pkSigningInformation =
-                new PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
-                        KEYSTORE_PATH, KEYSTORE_PASSWORD, APPLE_WWDRCA);
+                SigningTestCertificates.loadSigningInformation();
         PKPassTemplateFolder pkPassTemplate = new PKPassTemplateFolder(getPathFromClasspath(PASS_TEMPLATE_FOLDER));
         IPKSigningUtil pkSigningUtil = new PKFileBasedSigningUtil();
 
